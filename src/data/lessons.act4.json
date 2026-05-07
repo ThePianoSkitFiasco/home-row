@@ -25,7 +25,10 @@
     {
       "id": "act4_do_not_turn_around",
       "displayTitle": "Dictation 5:",
-      "assignedText": "do not turn around"
+      "assignedText": "do not turn around",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
     },
     {
       "id": "act4_good_children_finish",
@@ -40,7 +43,10 @@
     {
       "id": "act4_heard_her_no",
       "displayTitle": "Dictation 8:",
-      "assignedText": "you heard her say no"
+      "assignedText": "you heard her say no",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
     }
   ]
 }

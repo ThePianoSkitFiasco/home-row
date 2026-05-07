@@ -11,11 +11,7 @@ export function getFinalStatement(memoryState) {
   const heardHerSayNo = flags.heardHerSayNo;
   const emilyStatementPreserved = flags.emilyStatementPreserved;
   const keptTypingStatementAccepted = flags.keptTypingStatementAccepted;
-  const recordCompletionStarted = flags.recordCompletionStarted;
   const doNotTurnAroundRevealed = flags.doNotTurnAroundRevealed;
-  const playerImplicationStarted = flags.playerImplicationStarted;
-  // These flags are read here for final-statement context; current route rules do not branch on them directly.
-  Boolean(recordCompletionStarted || playerImplicationStarted);
 
   if (
     witnessAcceptance >= 10 &&

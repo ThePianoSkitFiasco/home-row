@@ -1,3 +1,9 @@
+const GLOBAL_INTENT_CAPS = {
+  mistake_generic: 3,
+  deletion_generic: 3,
+  pause_generic: 1
+};
+
 export default class IntentEngine {
   constructor(memoryState, mrFingers) {
     this.intents = [];
@@ -5,10 +11,15 @@ export default class IntentEngine {
     this.memoryState = memoryState;
     this.mrFingers = mrFingers;
     this.onResponse = null;
+    this.lessonEffectCounts = {};
   }
 
   loadIntents(intentsJson) {
     this.intents = intentsJson;
+  }
+
+  resetLessonCaps() {
+    this.lessonEffectCounts = {};
   }
 
   processEvent(eventType, data, currentLessonId) {
@@ -23,8 +34,14 @@ export default class IntentEngine {
 
       if (!this._matchPatterns(intent, eventType, data)) continue;
 
-      if (intent.effects) {
+      const cap = GLOBAL_INTENT_CAPS[intent.id];
+      const capped = cap !== undefined && (this.lessonEffectCounts[intent.id] || 0) >= cap;
+
+      if (intent.effects && !capped) {
         this.memoryState.applyEffects(intent.effects);
+        if (cap !== undefined) {
+          this.lessonEffectCounts[intent.id] = (this.lessonEffectCounts[intent.id] || 0) + 1;
+        }
       }
 
       if (intent.flags) {

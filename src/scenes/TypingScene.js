@@ -186,12 +186,15 @@ export default class TypingScene extends Phaser.Scene {
     this.cursorVisible = true;
     this._disclosureShaken = {};
     this.finalEnding = null;
+    this.debugVisible = false;
+    this.inputLocked = false;
 
     this._buildUI();
     this._wireEvents();
     this._updateMrFingersVisual(this.mrFingers.getState(), this.mrFingers.getLabel(), this.mrFingers.getStateConfig());
     this._startLesson();
     this._setupAtmosphere();
+    this._setDebugVisible(this.debugVisible);
 
     this.time.addEvent({
       delay: 530,
@@ -346,7 +349,7 @@ export default class TypingScene extends Phaser.Scene {
     // Event log
     this.eventDivider = this.add.rectangle(512, 468, W - 80, 2, 0x222233).setOrigin(0.5, 0);
 
-    this.add.text(60, 476, '[ EVENT LOG ]', {
+    this.eventLogLabel = this.add.text(60, 476, '[ EVENT LOG ]', {
       fontFamily: 'Courier New, monospace',
       fontSize: '11px',
       color: '#333355'
@@ -418,7 +421,12 @@ export default class TypingScene extends Phaser.Scene {
     };
 
     this.input.keyboard.on('keydown', (event) => {
-      if (this.actComplete) return;
+      if (event.key === '`') {
+        this.debugVisible = !this.debugVisible;
+        this._setDebugVisible(this.debugVisible);
+        return;
+      }
+      if (this.actComplete || this.inputLocked) return;
       this.typingEngine.handleKey(event);
     });
   }
@@ -428,6 +436,8 @@ export default class TypingScene extends Phaser.Scene {
   _startLesson() {
     const lesson = this.lessonManager.getCurrentLesson();
     if (!lesson) return;
+
+    this.intentEngine.resetLessonCaps();
 
     const act = this.lessonManager.getCurrentAct();
     const theme = this._getThemeForAct(act);
@@ -441,16 +451,55 @@ export default class TypingScene extends Phaser.Scene {
     this._applyActTheme(theme);
     this.titleText.setText(`ACT ${this.lessonManager.getActNumber()}: ${this.lessonManager.getActTitle()}`);
     this.lessonTitle.setText(lesson.displayTitle);
-    this.assignedText.setText(assignedText);
     this.typingEngine.loadLine(assignedText);
     this.typedTextDisplay.setText('');
     this._renderTypedText();
     this._updateStats();
     this._updateDebug();
+
+    if (lesson.revealDelayMs) {
+      this.inputLocked = true;
+      this.assignedText.setText('...');
+      this.time.delayedCall(lesson.revealDelayMs, () => {
+        this.assignedText.setText(assignedText);
+        this._flickerOnReveal();
+        this.inputLocked = false;
+      });
+    } else {
+      this.assignedText.setText(assignedText);
+    }
   }
 
   _onLineComplete() {
-    this.time.delayedCall(1500, () => {
+    const lesson = this.lessonManager.getCurrentLesson();
+    const holdMs = (lesson && lesson.holdMs) || 1500;
+
+    this.inputLocked = true;
+
+    if (lesson && lesson.lingerResponse) {
+      if (this.responseTimer) {
+        this.responseTimer.remove(false);
+        this.responseTimer = null;
+      }
+      this.tweens.killTweensOf(this.responseText);
+      this.responseText.setAlpha(1);
+    }
+
+    this.time.delayedCall(holdMs, () => {
+      this.inputLocked = false;
+
+      if (lesson && lesson.lingerResponse) {
+        this.tweens.add({
+          targets: this.responseText,
+          alpha: 0,
+          duration: 600,
+          onComplete: () => {
+            this.responseTimer = null;
+            this._showNextResponse();
+          }
+        });
+      }
+
       const next = this.lessonManager.advance();
       if (next) {
         this._startLesson();
@@ -495,27 +544,27 @@ export default class TypingScene extends Phaser.Scene {
         '[ Press any key to continue ]'
       );
     } else if (!isFinalStatement) {
-      const statLines = Object.entries(snap.stats)
-        .map(([k, v]) => `${k}: ${v}`);
-      const flagLines = Object.entries(snap.flags)
-        .map(([k, v]) => `${k}: ${v}`);
-
-      lines.push(
-        '',
-        'FINAL STATS',
-        ...statLines,
-        `typingAccuracy: ${stats.accuracy}%`,
-        `typingCorrect: ${stats.correct}`,
-        `typingMistakes: ${stats.mistakes}`,
-        `typingBackspaces: ${stats.backspaces}`,
-        `typingPauseMs: ${stats.pauseTime}`,
-        `typingLinesCompleted: ${stats.completedLines}`,
-        '',
-        'FINAL FLAGS',
-        ...flagLines,
-        '',
-        'You may close this program.'
-      );
+      if (this.debugVisible) {
+        const statLines = Object.entries(snap.stats)
+          .map(([k, v]) => `${k}: ${v}`);
+        const flagLines = Object.entries(snap.flags)
+          .map(([k, v]) => `${k}: ${v}`);
+        lines.push(
+          '',
+          'FINAL STATS',
+          ...statLines,
+          `typingAccuracy: ${stats.accuracy}%`,
+          `typingCorrect: ${stats.correct}`,
+          `typingMistakes: ${stats.mistakes}`,
+          `typingBackspaces: ${stats.backspaces}`,
+          `typingPauseMs: ${stats.pauseTime}`,
+          `typingLinesCompleted: ${stats.completedLines}`,
+          '',
+          'FINAL FLAGS',
+          ...flagLines
+        );
+      }
+      lines.push('', 'You may close this program.');
     }
 
     this._applyCompletionTheme(overlayTheme);
@@ -523,7 +572,7 @@ export default class TypingScene extends Phaser.Scene {
     this.completionText.setText(lines.join('\n')).setAlpha(1);
 
     if (hasNextAct) {
-      this.time.delayedCall(1000, () => {
+      this.time.delayedCall(3000, () => {
         this.input.keyboard.once('keydown', () => {
           this.completionBg.setAlpha(0);
           this.completionText.setAlpha(0);
@@ -538,12 +587,8 @@ export default class TypingScene extends Phaser.Scene {
 
   _buildFinalEndingLines(stats, snap) {
     const ending = this.finalEnding || getFinalStatement(this.memory);
-    const statLines = Object.entries(snap.stats)
-      .map(([k, v]) => `${k}: ${v}`);
-    const flagLines = Object.entries(snap.flags)
-      .map(([k, v]) => `${k}: ${v}`);
 
-    return [
+    const lines = [
       `=== ${ending.title} ===`,
       '',
       `FINAL STATEMENT`,
@@ -553,18 +598,28 @@ export default class TypingScene extends Phaser.Scene {
       '',
       ending.body,
       '',
-      `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`,
-      '',
-      '[ diagnostics ]',
-      `routeId: ${ending.routeId}`,
-      `stats: ${statLines.join(' | ')}`,
-      `typing: accuracy ${stats.accuracy}% | correct ${stats.correct} | mistakes ${stats.mistakes} | backspaces ${stats.backspaces} | pauseMs ${stats.pauseTime} | lines ${stats.completedLines}`,
-      '',
-      '[ flags ]',
-      ...flagLines,
-      '',
-      'You may close this program.'
+      `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`
     ];
+
+    if (this.debugVisible) {
+      const statLines = Object.entries(snap.stats)
+        .map(([k, v]) => `${k}: ${v}`);
+      const flagLines = Object.entries(snap.flags)
+        .map(([k, v]) => `${k}: ${v}`);
+      lines.push(
+        '',
+        '[ diagnostics ]',
+        `routeId: ${ending.routeId}`,
+        `stats: ${statLines.join(' | ')}`,
+        `typing: accuracy ${stats.accuracy}% | correct ${stats.correct} | mistakes ${stats.mistakes} | backspaces ${stats.backspaces} | pauseMs ${stats.pauseTime} | lines ${stats.completedLines}`,
+        '',
+        '[ flags ]',
+        ...flagLines
+      );
+    }
+
+    lines.push('', 'You may close this program.');
+    return lines;
   }
 
   _getActTransitionLines(nextActNumber) {
@@ -877,6 +932,30 @@ export default class TypingScene extends Phaser.Scene {
         this.eventLogTexts[i].setText('');
       }
     }
+  }
+
+  _setDebugVisible(visible) {
+    const elements = [
+      this.debugDivider,
+      this.debugLabel,
+      this.debugStats,
+      this.eventDivider,
+      this.eventLogLabel,
+      ...this.eventLogTexts
+    ];
+    for (const el of elements) {
+      if (el) el.setVisible(visible);
+    }
+  }
+
+  _flickerOnReveal() {
+    const theme = this.currentTheme;
+    if (!theme) return;
+    const glitchColor = Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
+    this.assignedText.setColor(glitchColor);
+    this.time.delayedCall(120, () => {
+      this.assignedText.setColor(theme.accent);
+    });
   }
 
   // --- ATMOSPHERE ESCALATION ---

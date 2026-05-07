@@ -40,7 +40,10 @@
     {
       "id": "act2_she_not_absent",
       "displayTitle": "Record 8: Correction",
-      "assignedText": "she was not absent"
+      "assignedText": "she was not absent",
+      "revealDelayMs": 1200,
+      "holdMs": 2500,
+      "lingerResponse": true
     }
   ]
 }

@@ -5,7 +5,10 @@
     {
       "id": "final_statement_line",
       "displayTitle": "Final Statement:",
-      "assignedText": "final statement pending"
+      "assignedText": "final statement pending",
+      "revealDelayMs": 2500,
+      "holdMs": 3500,
+      "lingerResponse": true
     }
   ]
 }

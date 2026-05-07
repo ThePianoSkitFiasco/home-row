@@ -40,7 +40,10 @@
     {
       "id": "act3_typing_pattern_match",
       "displayTitle": "Log 8:",
-      "assignedText": "typing pattern match found"
+      "assignedText": "typing pattern match found",
+      "revealDelayMs": 1500,
+      "holdMs": 2500,
+      "lingerResponse": true
     }
   ]
 }

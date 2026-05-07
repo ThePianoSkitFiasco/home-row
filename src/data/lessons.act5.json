@@ -5,7 +5,10 @@
     {
       "id": "act5_not_a_lesson",
       "displayTitle": "Statement 1:",
-      "assignedText": "this is not a lesson"
+      "assignedText": "this is not a lesson",
+      "revealDelayMs": 1500,
+      "holdMs": 2500,
+      "lingerResponse": true
     },
     {
       "id": "act5_emily_name",
@@ -35,12 +38,18 @@
     {
       "id": "act5_do_not_correct_me",
       "displayTitle": "Statement 7:",
-      "assignedText": "please do not correct me"
+      "assignedText": "please do not correct me",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
     },
     {
       "id": "act5_record_what_happened",
       "displayTitle": "Statement 8:",
-      "assignedText": "please record what happened"
+      "assignedText": "please record what happened",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
     }
   ]
 }

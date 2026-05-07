@@ -5,7 +5,10 @@
     {
       "id": "act7_emily_absent",
       "displayTitle": "Exam 1:",
-      "assignedText": "emily vale was absent"
+      "assignedText": "emily vale was absent",
+      "revealDelayMs": 1500,
+      "holdMs": 2500,
+      "lingerResponse": true
     },
     {
       "id": "act7_classroom_supervised",
@@ -25,7 +28,10 @@
     {
       "id": "act7_heard_nothing",
       "displayTitle": "Exam 5:",
-      "assignedText": "the second user heard nothing"
+      "assignedText": "the second user heard nothing",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
     },
     {
       "id": "act7_kept_typing",
@@ -40,7 +46,10 @@
     {
       "id": "act7_records_completed",
       "displayTitle": "Exam 8:",
-      "assignedText": "records must be completed"
+      "assignedText": "records must be completed",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
     }
   ]
 }
