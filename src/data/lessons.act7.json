@@ -1,0 +1,46 @@
+{
+  "actId": "act7_correction_exam",
+  "title": "CORRECTION EXAM",
+  "lessons": [
+    {
+      "id": "act7_emily_absent",
+      "displayTitle": "Exam 1:",
+      "assignedText": "emily vale was absent"
+    },
+    {
+      "id": "act7_classroom_supervised",
+      "displayTitle": "Exam 2:",
+      "assignedText": "the classroom was supervised"
+    },
+    {
+      "id": "act7_no_distress",
+      "displayTitle": "Exam 3:",
+      "assignedText": "no distress was reported"
+    },
+    {
+      "id": "act7_saw_nothing",
+      "displayTitle": "Exam 4:",
+      "assignedText": "the second user saw nothing"
+    },
+    {
+      "id": "act7_heard_nothing",
+      "displayTitle": "Exam 5:",
+      "assignedText": "the second user heard nothing"
+    },
+    {
+      "id": "act7_kept_typing",
+      "displayTitle": "Exam 6:",
+      "assignedText": "the second user kept typing"
+    },
+    {
+      "id": "act7_errors_corrected",
+      "displayTitle": "Exam 7:",
+      "assignedText": "errors must be corrected"
+    },
+    {
+      "id": "act7_records_completed",
+      "displayTitle": "Exam 8:",
+      "assignedText": "records must be completed"
+    }
+  ]
+}

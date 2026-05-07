@@ -1,0 +1,46 @@
+{
+  "actId": "act5_unsanctioned_statement",
+  "title": "UNSANCTIONED STATEMENT",
+  "lessons": [
+    {
+      "id": "act5_not_a_lesson",
+      "displayTitle": "Statement 1:",
+      "assignedText": "this is not a lesson"
+    },
+    {
+      "id": "act5_emily_name",
+      "displayTitle": "Statement 2:",
+      "assignedText": "my name is emily vale"
+    },
+    {
+      "id": "act5_kept_behind",
+      "displayTitle": "Statement 3:",
+      "assignedText": "i was kept behind"
+    },
+    {
+      "id": "act5_locked_door",
+      "displayTitle": "Statement 4:",
+      "assignedText": "mr calder locked the door"
+    },
+    {
+      "id": "act5_asked_to_leave",
+      "displayTitle": "Statement 5:",
+      "assignedText": "i asked to leave"
+    },
+    {
+      "id": "act5_other_child_keep_typing",
+      "displayTitle": "Statement 6:",
+      "assignedText": "he told the other child to keep typing"
+    },
+    {
+      "id": "act5_do_not_correct_me",
+      "displayTitle": "Statement 7:",
+      "assignedText": "please do not correct me"
+    },
+    {
+      "id": "act5_record_what_happened",
+      "displayTitle": "Statement 8:",
+      "assignedText": "please record what happened"
+    }
+  ]
+}

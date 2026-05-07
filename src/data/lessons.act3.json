@@ -1,0 +1,46 @@
+{
+  "actId": "act3_system_log",
+  "title": "SYSTEM LOG",
+  "lessons": [
+    {
+      "id": "act3_workstation_one",
+      "displayTitle": "Log 1:",
+      "assignedText": "workstation one active"
+    },
+    {
+      "id": "act3_workstation_two",
+      "displayTitle": "Log 2:",
+      "assignedText": "workstation two active"
+    },
+    {
+      "id": "act3_after_final_bell",
+      "displayTitle": "Log 3:",
+      "assignedText": "session began after final bell"
+    },
+    {
+      "id": "act3_teacher_override",
+      "displayTitle": "Log 4:",
+      "assignedText": "teacher override accepted"
+    },
+    {
+      "id": "act3_audio_unavailable",
+      "displayTitle": "Log 5:",
+      "assignedText": "audio input unavailable"
+    },
+    {
+      "id": "act3_screen_focus",
+      "displayTitle": "Log 6:",
+      "assignedText": "screen focus maintained"
+    },
+    {
+      "id": "act3_second_user_completed",
+      "displayTitle": "Log 7:",
+      "assignedText": "second user completed exercise"
+    },
+    {
+      "id": "act3_typing_pattern_match",
+      "displayTitle": "Log 8:",
+      "assignedText": "typing pattern match found"
+    }
+  ]
+}

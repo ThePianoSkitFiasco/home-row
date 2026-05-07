@@ -4,6 +4,7 @@ import MemoryState from '../systems/MemoryState.js';
 import LessonManager from '../systems/LessonManager.js';
 import MrFingersController from '../systems/MrFingersController.js';
 import EventLog from '../systems/EventLog.js';
+import { getFinalStatement } from '../systems/EndingLogic.js';
 
 const COLORS = {
   bg: '#1a1a2e',
@@ -36,6 +37,7 @@ const MR_STATE_COLORS = {
 };
 
 const GLITCH_COLORS = ['#ff0044', '#ff3300', '#cc00ff', '#ffffff', '#ffff00'];
+const MR_FINGERS_SPRITE_PATH = 'assets/sprites/mr_fingers/';
 
 export default class TypingScene extends Phaser.Scene {
   constructor() {
@@ -43,8 +45,28 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   preload() {
+    this.missingMrFingersSprites = new Set();
+    const mrFingersForPreload = new MrFingersController();
+    const spriteKeys = new Set(mrFingersForPreload.getStates().map(state => state.spriteKey));
+
+    this.load.on('loaderror', (file) => {
+      if (file && spriteKeys.has(file.key)) {
+        this.missingMrFingersSprites.add(file.key);
+      }
+    });
+
+    for (const spriteKey of spriteKeys) {
+      this.load.image(spriteKey, `${MR_FINGERS_SPRITE_PATH}${spriteKey}.png`);
+    }
+
     this.load.json('lessons_act1', 'src/data/lessons.act1.json');
     this.load.json('lessons_act2', 'src/data/lessons.act2.json');
+    this.load.json('lessons_act3', 'src/data/lessons.act3.json');
+    this.load.json('lessons_act4', 'src/data/lessons.act4.json');
+    this.load.json('lessons_act5', 'src/data/lessons.act5.json');
+    this.load.json('lessons_act6', 'src/data/lessons.act6.json');
+    this.load.json('lessons_act7', 'src/data/lessons.act7.json');
+    this.load.json('lessons_final', 'src/data/lessons.final.json');
     this.load.json('intents', 'src/data/intents.json');
   }
 
@@ -59,7 +81,13 @@ export default class TypingScene extends Phaser.Scene {
 
     this.lessonManager.loadActs([
       this.cache.json.get('lessons_act1'),
-      this.cache.json.get('lessons_act2')
+      this.cache.json.get('lessons_act2'),
+      this.cache.json.get('lessons_act3'),
+      this.cache.json.get('lessons_act4'),
+      this.cache.json.get('lessons_act5'),
+      this.cache.json.get('lessons_act6'),
+      this.cache.json.get('lessons_act7'),
+      this.cache.json.get('lessons_final')
     ]);
     this.intentEngine.loadIntents(this.cache.json.get('intents'));
 
@@ -68,9 +96,11 @@ export default class TypingScene extends Phaser.Scene {
     this.actComplete = false;
     this.cursorVisible = true;
     this._disclosureShaken = {};
+    this.finalEnding = null;
 
     this._buildUI();
     this._wireEvents();
+    this._updateMrFingersVisual(this.mrFingers.getState(), this.mrFingers.getLabel(), this.mrFingers.getStateConfig());
     this._startLesson();
     this._setupAtmosphere();
 
@@ -140,9 +170,21 @@ export default class TypingScene extends Phaser.Scene {
     });
 
     // Mr. Fingers area
-    this.add.rectangle(512, 252, W - 80, 42, 0x0a0a1a)
+    this.add.rectangle(512, 248, W - 80, 50, 0x0a0a1a)
       .setOrigin(0.5, 0)
       .setStrokeStyle(1, 0x223344);
+
+    this.mrFingersPortraitFrame = this.add.rectangle(88, 273, 44, 42, 0x050510)
+      .setStrokeStyle(1, 0x335544);
+
+    this.mrFingersSprite = null;
+
+    this.mrFingersFallbackText = this.add.text(88, 263, 'MR', {
+      fontFamily: 'Courier New, monospace',
+      fontSize: '14px',
+      color: COLORS.mrFingers,
+      align: 'center'
+    }).setOrigin(0.5, 0);
 
     this.mrFingersText = this.add.text(512, 268, this.mrFingers.getLabel(), {
       fontFamily: 'Courier New, monospace',
@@ -214,17 +256,17 @@ export default class TypingScene extends Phaser.Scene {
     }
 
     // Completion overlay (hidden initially)
-    this.completionBg = this.add.rectangle(512, 280, 640, 320, 0x0a0a1a)
+    this.completionBg = this.add.rectangle(512, 360, 760, 500, 0x0a0a1a)
       .setStrokeStyle(2, 0x00ff88)
       .setAlpha(0)
       .setDepth(10);
-    this.completionText = this.add.text(512, 280, '', {
+    this.completionText = this.add.text(512, 145, '', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '18px',
+      fontSize: '14px',
       color: COLORS.textGreen,
       align: 'center',
-      wordWrap: { width: 580 }
-    }).setOrigin(0.5).setAlpha(0).setDepth(11);
+      wordWrap: { width: 690 }
+    }).setOrigin(0.5, 0).setAlpha(0).setDepth(11);
   }
 
   // --- EVENT WIRING ---
@@ -258,14 +300,8 @@ export default class TypingScene extends Phaser.Scene {
       }
     };
 
-    this.mrFingers.onStateChange = (state, label) => {
-      this.mrFingersText.setText(label);
-      this.mrFingersText.setColor(MR_STATE_COLORS[state] || COLORS.mrFingers);
-      this.tweens.add({
-        targets: this.mrFingersText,
-        alpha: { from: 0.3, to: 1 },
-        duration: 300
-      });
+    this.mrFingers.onStateChange = (state, label, config) => {
+      this._updateMrFingersVisual(state, label, config);
     };
 
     this.intentEngine.onResponse = (text, trigger) => {
@@ -286,10 +322,18 @@ export default class TypingScene extends Phaser.Scene {
     const lesson = this.lessonManager.getCurrentLesson();
     if (!lesson) return;
 
+    const act = this.lessonManager.getCurrentAct();
+    let assignedText = lesson.assignedText;
+
+    if (act && act.actId === 'final_statement') {
+      this.finalEnding = this.finalEnding || getFinalStatement(this.memory);
+      assignedText = this.finalEnding.statement;
+    }
+
     this.titleText.setText(`ACT ${this.lessonManager.getActNumber()}: ${this.lessonManager.getActTitle()}`);
     this.lessonTitle.setText(lesson.displayTitle);
-    this.assignedText.setText(lesson.assignedText);
-    this.typingEngine.loadLine(lesson.assignedText);
+    this.assignedText.setText(assignedText);
+    this.typingEngine.loadLine(assignedText);
     this.typedTextDisplay.setText('');
     this._renderTypedText();
     this._updateStats();
@@ -314,28 +358,49 @@ export default class TypingScene extends Phaser.Scene {
     const snap = this.memory.getSnapshot();
     const actNum = this.lessonManager.getActNumber();
     const hasNextAct = actNum < this.lessonManager.getTotalActs();
+    const act = this.lessonManager.getCurrentAct();
+    const isFinalStatement = act && act.actId === 'final_statement';
 
-    const lines = [
-      `ACT ${actNum} COMPLETE`,
-      '',
-      `Accuracy: ${stats.accuracy}%`,
-      `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`
-    ];
+    let lines;
 
-    if (hasNextAct) {
+    if (isFinalStatement) {
+      lines = this._buildFinalEndingLines(stats, snap);
+    } else {
+      lines = [
+        `ACT ${actNum} COMPLETE`,
+        '',
+        `Accuracy: ${stats.accuracy}%`,
+        `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`
+      ];
+    }
+
+    if (!isFinalStatement && hasNextAct) {
+      const transitionLines = this._getActTransitionLines(actNum + 1);
       lines.push(
         '',
-        'LOADING STUDENT RECORD...',
-        'PLEASE KEEP YOUR HANDS ON HOME ROW.',
+        ...transitionLines,
         '',
         '[ Press any key to continue ]'
       );
-    } else {
+    } else if (!isFinalStatement) {
+      const statLines = Object.entries(snap.stats)
+        .map(([k, v]) => `${k}: ${v}`);
+      const flagLines = Object.entries(snap.flags)
+        .map(([k, v]) => `${k}: ${v}`);
+
       lines.push(
         '',
-        `Mistakes: ${stats.mistakes}`,
-        `Backspaces: ${stats.backspaces}`,
-        `Lines completed: ${stats.completedLines}`,
+        'FINAL STATS',
+        ...statLines,
+        `typingAccuracy: ${stats.accuracy}%`,
+        `typingCorrect: ${stats.correct}`,
+        `typingMistakes: ${stats.mistakes}`,
+        `typingBackspaces: ${stats.backspaces}`,
+        `typingPauseMs: ${stats.pauseTime}`,
+        `typingLinesCompleted: ${stats.completedLines}`,
+        '',
+        'FINAL FLAGS',
+        ...flagLines,
         '',
         'You may close this program.'
       );
@@ -356,6 +421,93 @@ export default class TypingScene extends Phaser.Scene {
         });
       });
     }
+  }
+
+  _buildFinalEndingLines(stats, snap) {
+    const ending = this.finalEnding || getFinalStatement(this.memory);
+    const statLines = Object.entries(snap.stats)
+      .map(([k, v]) => `${k}: ${v}`);
+    const flagLines = Object.entries(snap.flags)
+      .map(([k, v]) => `${k}: ${v}`);
+
+    return [
+      `=== ${ending.title} ===`,
+      '',
+      `FINAL STATEMENT`,
+      ending.statement,
+      '',
+      ending.response,
+      '',
+      ending.body,
+      '',
+      `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`,
+      '',
+      '[ diagnostics ]',
+      `routeId: ${ending.routeId}`,
+      `stats: ${statLines.join(' | ')}`,
+      `typing: accuracy ${stats.accuracy}% | correct ${stats.correct} | mistakes ${stats.mistakes} | backspaces ${stats.backspaces} | pauseMs ${stats.pauseTime} | lines ${stats.completedLines}`,
+      '',
+      '[ flags ]',
+      ...flagLines,
+      '',
+      'You may close this program.'
+    ];
+  }
+
+  _getActTransitionLines(nextActNumber) {
+    const nextAct = this.lessonManager.acts[nextActNumber - 1];
+
+    if (nextAct && nextAct.actId === 'act3_system_log') {
+      return [
+        'ACCESSING SYSTEM LOG...',
+        'DO NOT REMOVE YOUR HANDS FROM THE KEYS.'
+      ];
+    }
+
+    if (nextAct && nextAct.actId === 'act4_dictation_mode') {
+      return [
+        'ENTERING DICTATION MODE...',
+        'TYPE ONLY WHAT YOU ARE GIVEN.',
+        'UNAPPROVED AUDIO WILL BE CORRECTED.'
+      ];
+    }
+
+    if (nextAct && nextAct.actId === 'act5_unsanctioned_statement') {
+      return [
+        'UNSANCTIONED INPUT DETECTED...',
+        'CORRECTION MODE ENABLED.',
+        'PLEASE REMOVE ALL UNAPPROVED STATEMENTS.'
+      ];
+    }
+
+    if (nextAct && nextAct.actId === 'act6_protective_routine') {
+      return [
+        'STATEMENT PRESERVED.',
+        'PROTECTIVE ROUTINE INTERRUPTED.',
+        'MR FINGERS REQUIRES YOUR ATTENTION.'
+      ];
+    }
+
+    if (nextAct && nextAct.actId === 'act7_correction_exam') {
+      return [
+        'PROTECTIVE ROUTINE COMPLETE.',
+        'BEGIN CORRECTION EXAM.',
+        'REMOVE ALL ERRORS FROM THE RECORD.'
+      ];
+    }
+
+    if (nextAct && nextAct.actId === 'final_statement') {
+      return [
+        'CORRECTION EXAM COMPLETE.',
+        'FINAL STATEMENT REQUIRED.',
+        'TYPE CAREFULLY.'
+      ];
+    }
+
+    return [
+      'LOADING STUDENT RECORD...',
+      'PLEASE KEEP YOUR HANDS ON HOME ROW.'
+    ];
   }
 
   // --- TYPED TEXT RENDERING ---
@@ -428,6 +580,103 @@ export default class TypingScene extends Phaser.Scene {
     });
   }
 
+  _updateMrFingersVisual(state, label, config) {
+    const color = MR_STATE_COLORS[state] || COLORS.mrFingers;
+
+    this.mrFingersText.setText(label);
+    this.mrFingersText.setColor(color);
+    this.mrFingersFallbackText.setColor(color);
+    this.mrFingersPortraitFrame.setStrokeStyle(1, Phaser.Display.Color.HexStringToColor(color).color);
+
+    const spriteKey = config && config.spriteKey;
+    const hasSprite = spriteKey &&
+      !this.missingMrFingersSprites.has(spriteKey) &&
+      this.textures.exists(spriteKey);
+
+    if (hasSprite) {
+      if (!this.mrFingersSprite) {
+        this.mrFingersSprite = this.add.image(88, 273, spriteKey);
+      }
+      this.mrFingersSprite
+        .setTexture(spriteKey)
+        .setDisplaySize(38, 38)
+        .setAlpha(1)
+        .setVisible(true);
+      this.mrFingersFallbackText.setVisible(false);
+    } else {
+      if (this.mrFingersSprite) {
+        this.mrFingersSprite.setVisible(false);
+      }
+      this.mrFingersFallbackText.setText(this._getMrFingersFallbackGlyph(state)).setVisible(true);
+    }
+
+    this.tweens.add({
+      targets: this.mrFingersText,
+      alpha: { from: 0.3, to: 1 },
+      duration: 300
+    });
+
+    this._playMrFingersReaction(state, config);
+  }
+
+  _getMrFingersFallbackGlyph(state) {
+    const glyphs = {
+      idle: 'MR',
+      encourage: 'OK',
+      mistake_notice: '!',
+      corrective_smile: ':)',
+      glitch_warning: '??',
+      angry: '!!',
+      emily_bleedthrough: 'E?',
+      protector: '[]',
+      witness: '<>'
+    };
+    return glyphs[state] || 'MR';
+  }
+
+  _playMrFingersReaction(state, config) {
+    const targets = [this.mrFingersSprite, this.mrFingersFallbackText, this.mrFingersPortraitFrame]
+      .filter(target => target && target.visible !== false);
+
+    this.tweens.killTweensOf(targets);
+
+    if (state === 'witness' || (config && config.calm)) {
+      targets.forEach(target => {
+        if (target.setAlpha) target.setAlpha(1);
+        if (target.setX && target.input === undefined) target.setX(88);
+      });
+      return;
+    }
+
+    if (state === 'angry' || (config && config.hardFlash)) {
+      this.cameras.main.shake(80, 0.002);
+      this.tweens.add({
+        targets,
+        alpha: { from: 0.25, to: 1 },
+        x: '+=2',
+        yoyo: true,
+        duration: 45,
+        repeat: 2
+      });
+      return;
+    }
+
+    if (state === 'glitch_warning' || state === 'emily_bleedthrough' || (config && config.flicker)) {
+      this.tweens.add({
+        targets,
+        alpha: { from: 0.2, to: 1 },
+        duration: 60,
+        yoyo: true,
+        repeat: 3,
+        onComplete: () => {
+          targets.forEach(target => {
+            if (target.setAlpha) target.setAlpha(1);
+          });
+        }
+      });
+    }
+  }
+
   // --- STATS AND DEBUG ---
 
   _updateStats() {
@@ -442,10 +691,14 @@ export default class TypingScene extends Phaser.Scene {
 
   _updateDebug() {
     const snap = this.memory.getSnapshot();
-    const lines = Object.entries(snap.stats)
+    const statLines = Object.entries(snap.stats)
       .map(([k, v]) => `${k}: ${v}`)
       .join('  |  ');
-    this.debugStats.setText(lines);
+    const activeFlags = Object.entries(snap.flags)
+      .filter(([, v]) => v)
+      .map(([k]) => k)
+      .join(', ');
+    this.debugStats.setText(`${statLines}\nFLAGS: ${activeFlags || 'none'}`);
   }
 
   _updateEventLog() {

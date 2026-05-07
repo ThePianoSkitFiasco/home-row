@@ -30,7 +30,11 @@ export default class TypingEngine {
     const elapsed = now - this.lastKeyTime;
     if (this.lastKeyTime > 0 && elapsed > this.pauseThreshold) {
       this.totalPauseTime += elapsed;
-      this._emit('pause', { duration: elapsed });
+      this._emit('pause', {
+        duration: elapsed,
+        typed: this.getTypedText(),
+        assignedText: this.assignedText
+      });
     }
     this.lastKeyTime = now;
 

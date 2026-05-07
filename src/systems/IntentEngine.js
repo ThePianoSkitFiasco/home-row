@@ -27,6 +27,10 @@ export default class IntentEngine {
         this.memoryState.applyEffects(intent.effects);
       }
 
+      if (intent.flags) {
+        this.memoryState.applyFlags(intent.flags);
+      }
+
       if (intent.mrTrigger) {
         this.mrFingers.setState(intent.mrTrigger);
       }
@@ -50,8 +54,13 @@ export default class IntentEngine {
       return data.correctStreak > 0 && data.correctStreak % intent.triggerOnCorrectStreak === 0;
     }
 
-    if (intent.pauseThreshold && eventType === 'pause') {
-      return data.duration >= intent.pauseThreshold;
+    const minPauseMs = intent.minPauseMs || intent.pauseThreshold;
+    if (minPauseMs && eventType === 'pause' && data.duration < minPauseMs) {
+      return false;
+    }
+
+    if (minPauseMs && eventType === 'pause' && (!intent.patterns || intent.patterns.length === 0)) {
+      return true;
     }
 
     if (!intent.patterns || intent.patterns.length === 0) {
@@ -60,7 +69,7 @@ export default class IntentEngine {
 
     const textToMatch = eventType === 'deleted' && data.previousTyped
       ? data.previousTyped
-      : (data.typed || '');
+      : [data.typed, data.assignedText].filter(Boolean).join(' ');
     const typed = textToMatch.toLowerCase();
 
     for (const pattern of intent.patterns) {

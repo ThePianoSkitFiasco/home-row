@@ -55,6 +55,15 @@ export default class EventLog {
       if (effectParts) {
         entry += ` | ${effectParts}`;
       }
+
+      const flagParts = firedIntents
+        .filter(intent => intent.flags)
+        .flatMap(intent => Object.entries(intent.flags))
+        .map(([k, v]) => `${k}=${v}`);
+
+      if (flagParts.length > 0) {
+        entry += ` | flags: ${flagParts.join(' ')}`;
+      }
     }
 
     this.add(entry);

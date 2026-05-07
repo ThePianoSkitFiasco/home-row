@@ -1,0 +1,46 @@
+{
+  "actId": "act4_dictation_mode",
+  "title": "DICTATION MODE",
+  "lessons": [
+    {
+      "id": "act4_type_what_you_hear",
+      "displayTitle": "Dictation 1:",
+      "assignedText": "please type what you hear"
+    },
+    {
+      "id": "act4_classroom_quiet",
+      "displayTitle": "Dictation 2:",
+      "assignedText": "the classroom is quiet"
+    },
+    {
+      "id": "act4_calder_keep_typing",
+      "displayTitle": "Dictation 3:",
+      "assignedText": "mr calder says keep typing"
+    },
+    {
+      "id": "act4_emily_please_wait",
+      "displayTitle": "Dictation 4:",
+      "assignedText": "emily says please wait"
+    },
+    {
+      "id": "act4_do_not_turn_around",
+      "displayTitle": "Dictation 5:",
+      "assignedText": "do not turn around"
+    },
+    {
+      "id": "act4_good_children_finish",
+      "displayTitle": "Dictation 6:",
+      "assignedText": "good children finish the exercise"
+    },
+    {
+      "id": "act4_kept_eyes_screen",
+      "displayTitle": "Dictation 7:",
+      "assignedText": "you kept your eyes on the screen"
+    },
+    {
+      "id": "act4_heard_her_no",
+      "displayTitle": "Dictation 8:",
+      "assignedText": "you heard her say no"
+    }
+  ]
+}

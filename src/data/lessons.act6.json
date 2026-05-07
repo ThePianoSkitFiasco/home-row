@@ -1,0 +1,46 @@
+{
+  "actId": "act6_protective_routine",
+  "title": "PROTECTIVE ROUTINE",
+  "lessons": [
+    {
+      "id": "act6_help_forget",
+      "displayTitle": "Routine 1:",
+      "assignedText": "i was trying to help you forget"
+    },
+    {
+      "id": "act6_quiet_hands",
+      "displayTitle": "Routine 2:",
+      "assignedText": "good children need quiet hands"
+    },
+    {
+      "id": "act6_memory_errors",
+      "displayTitle": "Routine 3:",
+      "assignedText": "memory makes errors"
+    },
+    {
+      "id": "act6_lesson_running",
+      "displayTitle": "Routine 4:",
+      "assignedText": "i kept the lesson running"
+    },
+    {
+      "id": "act6_corrected_loud_parts",
+      "displayTitle": "Routine 5:",
+      "assignedText": "i corrected the loud parts"
+    },
+    {
+      "id": "act6_good_that_day",
+      "displayTitle": "Routine 6:",
+      "assignedText": "you were so good that day"
+    },
+    {
+      "id": "act6_do_not_have_to_look",
+      "displayTitle": "Routine 7:",
+      "assignedText": "you do not have to look"
+    },
+    {
+      "id": "act6_have_to_type",
+      "displayTitle": "Routine 8:",
+      "assignedText": "but you have to type"
+    }
+  ]
+}
