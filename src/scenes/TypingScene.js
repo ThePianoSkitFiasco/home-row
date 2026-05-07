@@ -39,6 +39,95 @@ const MR_STATE_COLORS = {
 const GLITCH_COLORS = ['#ff0044', '#ff3300', '#cc00ff', '#ffffff', '#ffff00'];
 const MR_FINGERS_SPRITE_PATH = 'assets/sprites/mr_fingers/';
 
+const ACT_THEMES = {
+  act1_home_row: {
+    primary: '#00ff88',
+    accent: '#bbffcc',
+    warning: '#ffcc00',
+    panelLabel: 'TYPE:',
+    modeStamp: 'LESSON MODE',
+    bg: '#17261d',
+    gridAlpha: 0.08,
+    overlayAlpha: 0.03
+  },
+  act2_student_record: {
+    primary: '#66e8ff',
+    accent: '#d8eeee',
+    warning: '#ff3355',
+    panelLabel: 'RECORD FIELD:',
+    modeStamp: 'RECORD MODE',
+    bg: '#12232a',
+    gridAlpha: 0.1,
+    overlayAlpha: 0.04
+  },
+  act3_system_log: {
+    primary: '#7dff9a',
+    accent: '#aeb8b8',
+    warning: '#ffff55',
+    panelLabel: 'LOG ENTRY:',
+    modeStamp: 'LOG MODE',
+    bg: '#111f18',
+    gridAlpha: 0.12,
+    overlayAlpha: 0.03
+  },
+  act4_dictation_mode: {
+    primary: '#7bbf79',
+    accent: '#ffbf66',
+    warning: '#ff44aa',
+    panelLabel: 'DICTATION:',
+    modeStamp: 'DICTATION MODE',
+    bg: '#191a24',
+    gridAlpha: 0.06,
+    overlayAlpha: 0.05
+  },
+  act5_unsanctioned_statement: {
+    primary: '#e6ffee',
+    accent: '#ff66cc',
+    warning: '#ff3344',
+    panelLabel: 'STATEMENT:',
+    modeStamp: 'UNSANCTIONED INPUT',
+    bg: '#211625',
+    gridAlpha: 0.08,
+    overlayAlpha: 0.06
+  },
+  act6_protective_routine: {
+    primary: '#c8e36b',
+    accent: '#ddd06a',
+    warning: '#ff6633',
+    panelLabel: 'ROUTINE:',
+    modeStamp: 'PROTECTIVE ROUTINE',
+    bg: '#222212',
+    gridAlpha: 0.09,
+    overlayAlpha: 0.05
+  },
+  act7_correction_exam: {
+    primary: '#e8fff0',
+    accent: '#ff5555',
+    warning: '#ff2222',
+    panelLabel: 'EXAM ITEM:',
+    modeStamp: 'CORRECTION EXAM',
+    bg: '#201818',
+    gridAlpha: 0.07,
+    overlayAlpha: 0.04
+  },
+  final_statement: {
+    primary: '#eef8ee',
+    accent: '#f0c878',
+    warning: '#aa3333',
+    panelLabel: 'FINAL STATEMENT:',
+    modeStamp: 'FINAL STATEMENT',
+    bg: '#111513',
+    gridAlpha: 0.035,
+    overlayAlpha: 0.02
+  }
+};
+
+const DEFAULT_ACT_THEME = ACT_THEMES.act1_home_row;
+
+function hexToNumber(hex) {
+  return Phaser.Display.Color.HexStringToColor(hex).color;
+}
+
 export default class TypingScene extends Phaser.Scene {
   constructor() {
     super({ key: 'TypingScene' });
@@ -119,7 +208,19 @@ export default class TypingScene extends Phaser.Scene {
   _buildUI() {
     const W = 1024;
 
-    this.add.rectangle(512, 20, W - 40, 2, 0x334455).setOrigin(0.5, 0);
+    this.themeGridLines = [];
+    for (let y = 24; y < 744; y += 32) {
+      const line = this.add.rectangle(512, y, W - 60, 1, 0x00ff88)
+        .setOrigin(0.5, 0)
+        .setAlpha(0.05);
+      this.themeGridLines.push(line);
+    }
+
+    this.themeOverlay = this.add.rectangle(512, 384, W, 768, 0x00ff88)
+      .setAlpha(0.03)
+      .setDepth(-1);
+
+    this.headerTopLine = this.add.rectangle(512, 20, W - 40, 2, 0x334455).setOrigin(0.5, 0);
 
     this.titleText = this.add.text(512, 35, 'HOME ROW', {
       fontFamily: 'Courier New, monospace',
@@ -133,10 +234,16 @@ export default class TypingScene extends Phaser.Scene {
       color: COLORS.textDim
     }).setOrigin(0.5, 0);
 
-    this.add.rectangle(512, 100, W - 40, 2, 0x334455).setOrigin(0.5, 0);
+    this.modeStampText = this.add.text(W - 60, 40, 'LESSON MODE', {
+      fontFamily: 'Courier New, monospace',
+      fontSize: '12px',
+      color: COLORS.textDim
+    }).setOrigin(1, 0);
+
+    this.headerBottomLine = this.add.rectangle(512, 100, W - 40, 2, 0x334455).setOrigin(0.5, 0);
 
     // Assigned text panel
-    this.add.rectangle(512, 120, W - 80, 55, 0x0a0a1a)
+    this.assignedPanel = this.add.rectangle(512, 120, W - 80, 55, 0x0a0a1a)
       .setOrigin(0.5, 0)
       .setStrokeStyle(1, 0x334455);
 
@@ -153,7 +260,7 @@ export default class TypingScene extends Phaser.Scene {
     }).setOrigin(0.5, 0);
 
     // Typed text area
-    this.add.rectangle(512, 185, W - 80, 55, 0x0a0a1a)
+    this.typedPanel = this.add.rectangle(512, 185, W - 80, 55, 0x0a0a1a)
       .setOrigin(0.5, 0)
       .setStrokeStyle(1, 0x334455);
 
@@ -170,7 +277,7 @@ export default class TypingScene extends Phaser.Scene {
     });
 
     // Mr. Fingers area
-    this.add.rectangle(512, 248, W - 80, 50, 0x0a0a1a)
+    this.mrFingersPanel = this.add.rectangle(512, 248, W - 80, 50, 0x0a0a1a)
       .setOrigin(0.5, 0)
       .setStrokeStyle(1, 0x223344);
 
@@ -193,7 +300,7 @@ export default class TypingScene extends Phaser.Scene {
     }).setOrigin(0.5, 0);
 
     // Response / narrative area
-    this.add.rectangle(512, 305, W - 80, 65, 0x0a0a1a)
+    this.responsePanel = this.add.rectangle(512, 305, W - 80, 65, 0x0a0a1a)
       .setOrigin(0.5, 0)
       .setStrokeStyle(1, 0x442222);
 
@@ -206,7 +313,7 @@ export default class TypingScene extends Phaser.Scene {
     }).setOrigin(0.5, 0);
 
     // Stats bar
-    this.add.rectangle(512, 385, W - 80, 2, 0x334455).setOrigin(0.5, 0);
+    this.statsDivider = this.add.rectangle(512, 385, W - 80, 2, 0x334455).setOrigin(0.5, 0);
 
     this.statsText = this.add.text(60, 396, '', {
       fontFamily: 'Courier New, monospace',
@@ -222,7 +329,7 @@ export default class TypingScene extends Phaser.Scene {
 
     // --- DEBUG PANEL ---
 
-    this.add.rectangle(512, 420, W - 80, 2, 0x222233).setOrigin(0.5, 0);
+    this.debugDivider = this.add.rectangle(512, 420, W - 80, 2, 0x222233).setOrigin(0.5, 0);
 
     this.debugLabel = this.add.text(60, 430, '[ HIDDEN MEMORY STATE ]', {
       fontFamily: 'Courier New, monospace',
@@ -237,7 +344,7 @@ export default class TypingScene extends Phaser.Scene {
     });
 
     // Event log
-    this.add.rectangle(512, 468, W - 80, 2, 0x222233).setOrigin(0.5, 0);
+    this.eventDivider = this.add.rectangle(512, 468, W - 80, 2, 0x222233).setOrigin(0.5, 0);
 
     this.add.text(60, 476, '[ EVENT LOG ]', {
       fontFamily: 'Courier New, monospace',
@@ -323,6 +430,7 @@ export default class TypingScene extends Phaser.Scene {
     if (!lesson) return;
 
     const act = this.lessonManager.getCurrentAct();
+    const theme = this._getThemeForAct(act);
     let assignedText = lesson.assignedText;
 
     if (act && act.actId === 'final_statement') {
@@ -330,6 +438,7 @@ export default class TypingScene extends Phaser.Scene {
       assignedText = this.finalEnding.statement;
     }
 
+    this._applyActTheme(theme);
     this.titleText.setText(`ACT ${this.lessonManager.getActNumber()}: ${this.lessonManager.getActTitle()}`);
     this.lessonTitle.setText(lesson.displayTitle);
     this.assignedText.setText(assignedText);
@@ -360,6 +469,9 @@ export default class TypingScene extends Phaser.Scene {
     const hasNextAct = actNum < this.lessonManager.getTotalActs();
     const act = this.lessonManager.getCurrentAct();
     const isFinalStatement = act && act.actId === 'final_statement';
+    const overlayTheme = hasNextAct
+      ? this._getThemeForAct(this.lessonManager.acts[actNum])
+      : this._getThemeForAct(act);
 
     let lines;
 
@@ -406,6 +518,7 @@ export default class TypingScene extends Phaser.Scene {
       );
     }
 
+    this._applyCompletionTheme(overlayTheme);
     this.completionBg.setAlpha(1);
     this.completionText.setText(lines.join('\n')).setAlpha(1);
 
@@ -508,6 +621,57 @@ export default class TypingScene extends Phaser.Scene {
       'LOADING STUDENT RECORD...',
       'PLEASE KEEP YOUR HANDS ON HOME ROW.'
     ];
+  }
+
+  _getThemeForAct(act) {
+    if (!act) return DEFAULT_ACT_THEME;
+    return ACT_THEMES[act.actId] || DEFAULT_ACT_THEME;
+  }
+
+  _applyActTheme(theme) {
+    this.currentTheme = theme;
+    const primary = hexToNumber(theme.primary);
+    const accent = hexToNumber(theme.accent);
+    const warning = hexToNumber(theme.warning);
+
+    this.cameras.main.setBackgroundColor(theme.bg);
+    this.themeOverlay.setFillStyle(primary).setAlpha(theme.overlayAlpha);
+
+    this.themeGridLines.forEach((line, index) => {
+      const useAccent = index % 4 === 0;
+      line
+        .setFillStyle(useAccent ? accent : primary)
+        .setAlpha(useAccent ? theme.gridAlpha * 0.75 : theme.gridAlpha);
+    });
+
+    this.headerTopLine.setFillStyle(primary);
+    this.headerBottomLine.setFillStyle(primary);
+    this.statsDivider.setFillStyle(primary);
+    this.debugDivider.setFillStyle(accent).setAlpha(0.35);
+    this.eventDivider.setFillStyle(accent).setAlpha(0.35);
+
+    [
+      this.assignedPanel,
+      this.typedPanel,
+      this.mrFingersPanel
+    ].forEach(panel => panel.setStrokeStyle(1, primary));
+    this.responsePanel.setStrokeStyle(1, warning);
+
+    this.titleText.setColor(theme.primary);
+    this.lessonTitle.setColor(theme.accent);
+    this.modeStampText.setText(theme.modeStamp).setColor(theme.accent);
+    this.assignedLabel.setText(theme.panelLabel).setColor(theme.accent);
+    this.inputLabel.setColor(theme.accent);
+    this.assignedText.setColor(theme.accent);
+    this.responseText.setColor(theme.warning);
+    this.statsText.setColor(theme.accent);
+    this.progressText.setColor(theme.primary);
+    this.debugStats.setColor(theme.primary);
+  }
+
+  _applyCompletionTheme(theme) {
+    this.completionBg.setStrokeStyle(2, hexToNumber(theme.warning));
+    this.completionText.setColor(theme.primary);
   }
 
   // --- TYPED TEXT RENDERING ---
@@ -743,7 +907,7 @@ export default class TypingScene extends Phaser.Scene {
 
     const duration = 60 + Math.random() * 140;
     this.time.delayedCall(duration, () => {
-      this.assignedText.setColor(COLORS.textWhite);
+      this.assignedText.setColor((this.currentTheme && this.currentTheme.accent) || COLORS.textWhite);
     });
 
     const suppression = this.memory.getStat('suppression');
