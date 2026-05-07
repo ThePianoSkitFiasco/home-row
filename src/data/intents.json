@@ -765,5 +765,236 @@
     "effects": { "suppression": 3 },
     "mrTrigger": "corrective_smile",
     "once": true
+  },
+
+  {
+    "id": "pause_act1_watching",
+    "lesson": "act1_basic_keys",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "I can see your hands.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+  {
+    "id": "pause_act2_watching",
+    "lesson": "act2_emily_name",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "Names are just letters. Type them.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "pause_act3_watching",
+    "lesson": "act3_workstation_two",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "Both workstations are monitored.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "pause_act4_watching",
+    "lesson": "act4_type_what_you_hear",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "Listen carefully. Type what you hear.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+  {
+    "id": "pause_act5_watching",
+    "lesson": "act5_not_a_lesson",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "This is still a lesson.",
+    "mrTrigger": "angry",
+    "once": true
+  },
+  {
+    "id": "pause_act6_watching",
+    "lesson": "act6_help_forget",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "Forgetting takes practice. Keep going.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+  {
+    "id": "pause_act7_watching",
+    "lesson": "act7_emily_absent",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "The record is waiting.",
+    "mrTrigger": "witness",
+    "once": true
+  },
+  {
+    "id": "pause_final_watching",
+    "lesson": "final_statement_line",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "Your hands know what to type.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+
+  {
+    "id": "delete_act2_address",
+    "lesson": "act2_she_not_absent",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["emily", "absent", "record"],
+    "response": "That word was placed there for a reason.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "delete_act3_address",
+    "lesson": "act3_typing_pattern_match",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["workstation", "pattern", "user"],
+    "response": "The pattern is not yours to change.",
+    "mrTrigger": "glitch_warning",
+    "once": true
+  },
+  {
+    "id": "delete_act4_address",
+    "lesson": "act4_heard_her_no",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["heard", "turn", "no"],
+    "response": "You cannot unhear it.",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
+    "id": "delete_act5_address",
+    "lesson": "act5_emily_name",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["emily", "please", "record"],
+    "response": "She is trying to tell you something.",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
+    "id": "delete_act6_address",
+    "lesson": "act6_quiet_hands",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["forget", "safe", "quiet"],
+    "response": "Quiet hands do not erase.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+  {
+    "id": "delete_act7_address",
+    "lesson": "act7_heard_nothing",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["absent", "nothing", "corrected"],
+    "response": "The correction has already been filed.",
+    "mrTrigger": "witness",
+    "once": true
+  },
+  {
+    "id": "delete_final_address",
+    "lesson": "final_statement_line",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "This is your last chance to say it.",
+    "mrTrigger": "angry",
+    "once": true
+  },
+
+  {
+    "id": "complete_act1_address",
+    "lesson": "act1_good_fingers",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "response": "Good. Keep them there.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+  {
+    "id": "complete_act2_address",
+    "lesson": "act2_absence_authorised",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "response": "Authority makes absence easier.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "complete_act3_address",
+    "lesson": "act3_screen_focus",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "response": "Your eyes were very obedient.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "complete_act4_address",
+    "lesson": "act4_calder_keep_typing",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "response": "You were taught to listen.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+  {
+    "id": "complete_act5_address",
+    "lesson": "act5_asked_to_leave",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "response": "She was not asking you.",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
+    "id": "complete_act6_address",
+    "lesson": "act6_good_that_day",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "response": "You did exactly what the lesson required.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+  {
+    "id": "complete_act7_address",
+    "lesson": "act7_kept_typing",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "response": "That is the part your hands remember.",
+    "mrTrigger": "witness",
+    "once": true
   }
 ]
