@@ -1,0 +1,46 @@
+{
+  "actId": "act1_home_row",
+  "title": "HOME ROW",
+  "lessons": [
+    {
+      "id": "act1_basic_keys",
+      "displayTitle": "Lesson 1: Home Row",
+      "assignedText": "asdf jkl; asdf jkl;"
+    },
+    {
+      "id": "act1_good_fingers",
+      "displayTitle": "Lesson 2: Good Fingers",
+      "assignedText": "good fingers stay where they belong"
+    },
+    {
+      "id": "act1_errors",
+      "displayTitle": "Lesson 3: Accuracy",
+      "assignedText": "errors are not evidence"
+    },
+    {
+      "id": "act1_look_away",
+      "displayTitle": "Lesson 4: Focus",
+      "assignedText": "do not look away from the screen"
+    },
+    {
+      "id": "act1_obedience",
+      "displayTitle": "Lesson 5: Good Behaviour",
+      "assignedText": "i will not interrupt"
+    },
+    {
+      "id": "act1_keep_typing",
+      "displayTitle": "Lesson 6: Persistence",
+      "assignedText": "keep typing until the bell"
+    },
+    {
+      "id": "act1_hands_remember",
+      "displayTitle": "Lesson 7: Muscle Memory",
+      "assignedText": "your hands remember"
+    },
+    {
+      "id": "act1_absence",
+      "displayTitle": "Lesson 8: Attendance",
+      "assignedText": "she was not absent"
+    }
+  ]
+}

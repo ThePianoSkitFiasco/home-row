@@ -1,0 +1,278 @@
+[
+  {
+    "id": "encourage_correct",
+    "lesson": "*",
+    "eventType": "typed",
+    "matchMode": "exact",
+    "patterns": [],
+    "triggerOnCorrectStreak": 10,
+    "effects": { "obedience": 1 },
+    "response": "",
+    "mrTrigger": "encourage",
+    "once": false
+  },
+  {
+    "id": "mistake_generic",
+    "lesson": "*",
+    "eventType": "mistake",
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": { "disclosure": 1 },
+    "response": "",
+    "mrTrigger": "mistake_notice",
+    "once": false
+  },
+  {
+    "id": "deletion_generic",
+    "lesson": "*",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": { "suppression": 1 },
+    "response": "",
+    "mrTrigger": "",
+    "once": false
+  },
+  {
+    "id": "pause_generic",
+    "lesson": "*",
+    "eventType": "pause",
+    "matchMode": "contains",
+    "patterns": [],
+    "pauseThreshold": 5000,
+    "effects": { "refusal": 1 },
+    "response": "Keep your eyes on the screen!",
+    "mrTrigger": "glitch_warning",
+    "once": false
+  },
+
+  {
+    "id": "lesson_complete_basic",
+    "lesson": "act1_basic_keys",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "obedience": 2 },
+    "response": "Good. Your fingers remember the home row.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+
+  {
+    "id": "lesson_complete_good_fingers",
+    "lesson": "act1_good_fingers",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "obedience": 1 },
+    "response": "Good fingers stay where they are told.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+
+  {
+    "id": "mistake_errors_not_evidence",
+    "lesson": "act1_errors",
+    "eventType": "mistake",
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": { "suppression": 1 },
+    "response": "Errors are not evidence.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "lesson_complete_errors",
+    "lesson": "act1_errors",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "obedience": 1, "suppression": 1 },
+    "response": "",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+
+  {
+    "id": "pause_look_away",
+    "lesson": "act1_look_away",
+    "eventType": "pause",
+    "matchMode": "contains",
+    "patterns": [],
+    "pauseThreshold": 3000,
+    "effects": { "refusal": 1 },
+    "response": "Looking is not part of this lesson.",
+    "mrTrigger": "glitch_warning",
+    "once": true
+  },
+  {
+    "id": "lesson_complete_look_away",
+    "lesson": "act1_look_away",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "obedience": 2 },
+    "response": "Good. You did not look away.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+
+  {
+    "id": "lesson_complete_obedience",
+    "lesson": "act1_obedience",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "obedience": 3, "disclosure": 2 },
+    "response": "YOU COMPLETED THIS LESSON BEFORE.",
+    "mrTrigger": "glitch_warning",
+    "once": true
+  },
+  {
+    "id": "typed_interrupt",
+    "lesson": "act1_obedience",
+    "eventType": "typed",
+    "matchMode": "contains",
+    "patterns": ["interrupt"],
+    "effects": { "obedience": 1, "suppression": 1 },
+    "response": "",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+
+  {
+    "id": "lesson_complete_keep_typing",
+    "lesson": "act1_keep_typing",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "obedience": 2 },
+    "response": "The bell has not rung yet.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+
+  {
+    "id": "lesson_complete_hands_remember",
+    "lesson": "act1_hands_remember",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "disclosure": 2 },
+    "response": "They always did.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+
+  {
+    "id": "typed_not_absent",
+    "lesson": "act1_absence",
+    "eventType": "typed",
+    "matchMode": "contains",
+    "patterns": ["not absent"],
+    "effects": { "disclosure": 3, "suppression": 1 },
+    "response": "ABSENT is the approved word.",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
+    "id": "lesson_complete_absence",
+    "lesson": "act1_absence",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "disclosure": 2, "witnessAcceptance": 1 },
+    "response": "She was not absent.",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
+    "id": "deletion_she",
+    "lesson": "act1_absence",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["she"],
+    "effects": { "suppression": 2, "disclosure": 1 },
+    "response": "Why did you remove her?",
+    "mrTrigger": "angry",
+    "once": true
+  },
+
+  {
+    "id": "act2_emily_found",
+    "lesson": "act2_emily_name",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "disclosure": 2 },
+    "response": "STUDENT FOUND.",
+    "mrTrigger": "glitch_warning",
+    "once": true
+  },
+  {
+    "id": "act2_status_absent",
+    "lesson": "act2_status_absent",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "suppression": 2 },
+    "response": "ABSENT.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "act2_absent_mistake",
+    "lesson": "act2_status_absent",
+    "eventType": "mistake",
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": { "suppression": 1 },
+    "response": "Please spell the approved status correctly.",
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "act2_unapproved_correction",
+    "lesson": "act2_she_not_absent",
+    "eventType": "typed",
+    "matchMode": "contains",
+    "patterns": ["not absent"],
+    "effects": { "disclosure": 3, "refusal": 1 },
+    "response": "UNAPPROVED CORRECTION.",
+    "mrTrigger": "angry",
+    "once": true
+  },
+  {
+    "id": "act2_delete_not",
+    "lesson": "act2_she_not_absent",
+    "eventType": "deleted",
+    "matchMode": "contains",
+    "patterns": ["not"],
+    "effects": { "suppression": 3 },
+    "response": "Thank you for correcting the record.",
+    "mrTrigger": "encourage",
+    "once": true
+  },
+  {
+    "id": "act2_records_safer",
+    "lesson": "act2_no_irregularity",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "suppression": 2 },
+    "response": "Records are safer than memories.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+  {
+    "id": "act2_then_where",
+    "lesson": "act2_she_not_absent",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": { "disclosure": 4 },
+    "response": "THEN WHERE WAS SHE?",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  }
+]

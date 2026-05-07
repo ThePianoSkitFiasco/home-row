@@ -1,0 +1,46 @@
+{
+  "actId": "act2_student_record",
+  "title": "STUDENT RECORD",
+  "lessons": [
+    {
+      "id": "act2_emily_name",
+      "displayTitle": "Record 1: Student Name",
+      "assignedText": "emily vale"
+    },
+    {
+      "id": "act2_student_record",
+      "displayTitle": "Record 2: Document Type",
+      "assignedText": "student record"
+    },
+    {
+      "id": "act2_status_absent",
+      "displayTitle": "Record 3: Status",
+      "assignedText": "status absent"
+    },
+    {
+      "id": "act2_absence_authorised",
+      "displayTitle": "Record 4: Authorisation",
+      "assignedText": "absence authorised"
+    },
+    {
+      "id": "act2_date_unknown",
+      "displayTitle": "Record 5: Last Attendance",
+      "assignedText": "date of last attendance unknown"
+    },
+    {
+      "id": "act2_no_irregularity",
+      "displayTitle": "Record 6: Incident Report",
+      "assignedText": "no irregularity was recorded"
+    },
+    {
+      "id": "act2_classroom_supervised",
+      "displayTitle": "Record 7: Supervision",
+      "assignedText": "the classroom remained supervised"
+    },
+    {
+      "id": "act2_she_not_absent",
+      "displayTitle": "Record 8: Correction",
+      "assignedText": "she was not absent"
+    }
+  ]
+}
