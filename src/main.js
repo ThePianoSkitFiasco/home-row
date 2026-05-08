@@ -1,13 +1,13 @@
 import BootScene from './scenes/BootScene.js';
-import TypingScene from './scenes/TypingScene.js';
+import TypingTutorScene from './scenes/TypingTutorScene.js';
 
 const config = {
   type: Phaser.AUTO,
   width: 1024,
   height: 768,
   parent: 'game-container',
-  backgroundColor: '#000000',
-  scene: [BootScene, TypingScene],
+  backgroundColor: '#d8c7a1',
+  scene: [BootScene, TypingTutorScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH

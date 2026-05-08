@@ -42,7 +42,7 @@ export default class BootScene extends Phaser.Scene {
     });
 
     this.input.keyboard.once('keydown', () => {
-      this.scene.start('TypingScene');
+      this.scene.start('TypingTutorScene');
     });
   }
 }
