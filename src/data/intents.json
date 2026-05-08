@@ -397,17 +397,6 @@
     "once": true
   },
   {
-    "id": "act6_safety_ready",
-    "lesson": "act6_safety_lesson",
-    "eventType": "lesson_complete",
-    "matchMode": "contains",
-    "patterns": ["safety lesson begins"],
-    "response": "Safety routine ready.",
-    "effects": { "suppression": 1 },
-    "mrTrigger": "corrective_smile",
-    "once": true
-  },
-  {
     "id": "act6_trying_to_help_forget",
     "lesson": "act6_help_forget",
     "eventType": "lesson_complete",
@@ -424,9 +413,20 @@
     "lesson": "act6_quiet_hands",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["quiet hands help learning"],
+    "patterns": ["quiet hands make fewer errors"],
     "response": "Quiet hands do not shake.",
     "effects": { "obedience": 1, "suppression": 1 },
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "act6_good_children",
+    "lesson": "act6_good_children",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": ["good children finish the exercise"],
+    "response": "Good children finish.",
+    "effects": { "obedience": 2, "suppression": 1 },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -455,11 +455,11 @@
     "once": true
   },
   {
-    "id": "act6_bad_memories",
-    "lesson": "act6_bad_memories",
+    "id": "act6_corrected_loud_parts",
+    "lesson": "act6_corrected_loud_parts",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["bad memories need correction"],
+    "patterns": ["i corrected the loud parts"],
     "response": "THE LOUD PARTS WERE REMOVED.",
     "effects": { "suppression": 3, "disclosure": 1 },
     "flags": { "memoryCorrectionAdmitted": true },
