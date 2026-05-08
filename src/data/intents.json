@@ -293,6 +293,28 @@
     "once": true
   },
   {
+    "id": "act5_correction_ready",
+    "lesson": "act5_correct_sentence",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": ["correct the sentence"],
+    "response": "Correction mode ready.",
+    "effects": { "suppression": 1 },
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
+    "id": "act5_bad_input_response",
+    "lesson": "act5_bad_input",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": ["bad input must be fixed"],
+    "response": "Unapproved input will be corrected.",
+    "effects": { "suppression": 2 },
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
     "id": "act5_statement_compromised",
     "lesson": "act5_not_a_lesson",
     "eventType": "lesson_complete",
@@ -329,15 +351,14 @@
     "once": true
   },
   {
-    "id": "act5_second_user_instruction",
-    "lesson": "act5_other_child_keep_typing",
+    "id": "act5_kept_behind_response",
+    "lesson": "act5_kept_behind",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["he told the other child to keep typing"],
-    "response": "SECOND USER INSTRUCTION CONFIRMED.",
-    "effects": { "disclosure": 3, "suppression": 1 },
-    "flags": { "otherChildCommanded": true },
-    "mrTrigger": "protector",
+    "patterns": ["i was kept behind"],
+    "response": "UNAPPROVED MEMORY DETECTED.",
+    "effects": { "disclosure": 2, "witnessAcceptance": 1 },
+    "mrTrigger": "emily_bleedthrough",
     "once": true
   },
   {
@@ -675,6 +696,18 @@
     "once": true
   },
   {
+    "id": "pause_act5_emily_name",
+    "lesson": "act5_emily_name",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "response": "She is using the lesson.",
+    "effects": { "disclosure": 1, "suppression": 1 },
+    "mrTrigger": "angry",
+    "once": true
+  },
+  {
     "id": "pause_act6_watching",
     "lesson": "act6_help_forget",
     "eventType": "pause",
@@ -744,7 +777,7 @@
     "eventType": "deleted",
     "matchMode": "contains",
     "patterns": ["emily", "please", "record"],
-    "response": "She is trying to tell you something.",
+    "response": "You are removing her again.",
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -818,16 +851,6 @@
     "patterns": [],
     "response": "You were taught to listen.",
     "mrTrigger": "protector",
-    "once": true
-  },
-  {
-    "id": "complete_act5_address",
-    "lesson": "act5_asked_to_leave",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
-    "patterns": [],
-    "response": "She was not asking you.",
-    "mrTrigger": "emily_bleedthrough",
     "once": true
   },
   {

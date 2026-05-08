@@ -1,13 +1,27 @@
 {
   "actId": "act5_unsanctioned_statement",
   "title": "UNSANCTIONED STATEMENT",
-  "playerSection": "Reading Practice",
+  "playerSection": "Correction Practice",
   "lessons": [
     {
-      "id": "act5_not_a_lesson",
+      "id": "act5_correct_sentence",
       "displayTitle": "Statement 1:",
-      "playerLabel": "Lesson 33: Reading Comprehension",
-      "drillType": "reading",
+      "playerLabel": "Lesson 33: Correction Practice",
+      "drillType": "correction",
+      "assignedText": "correct the sentence"
+    },
+    {
+      "id": "act5_bad_input",
+      "displayTitle": "Statement 2:",
+      "playerLabel": "Lesson 34: Input Review",
+      "drillType": "correction",
+      "assignedText": "bad input must be fixed"
+    },
+    {
+      "id": "act5_not_a_lesson",
+      "displayTitle": "Statement 3:",
+      "playerLabel": "Lesson 35: Error Check",
+      "drillType": "review",
       "assignedText": "this is not a lesson",
       "revealDelayMs": 1500,
       "holdMs": 2500,
@@ -15,44 +29,36 @@
     },
     {
       "id": "act5_emily_name",
-      "displayTitle": "Statement 2:",
-      "playerLabel": "Lesson 34: Name Practice",
-      "drillType": "reading",
-      "assignedText": "my name is emily vale"
+      "displayTitle": "Statement 4:",
+      "playerLabel": "Lesson 36: Name Accuracy",
+      "drillType": "accuracy",
+      "assignedText": "my name is emily vale",
+      "revealDelayMs": 1200,
+      "holdMs": 2500,
+      "lingerResponse": true
     },
     {
       "id": "act5_kept_behind",
-      "displayTitle": "Statement 3:",
-      "playerLabel": "Lesson 35: Short Sentences",
-      "drillType": "reading",
+      "displayTitle": "Statement 5:",
+      "playerLabel": "Lesson 37: Sentence Review",
+      "drillType": "review",
       "assignedText": "i was kept behind"
     },
     {
       "id": "act5_locked_door",
-      "displayTitle": "Statement 4:",
-      "playerLabel": "Lesson 36: Detail Entry",
-      "drillType": "reading",
-      "assignedText": "mr calder locked the door"
-    },
-    {
-      "id": "act5_asked_to_leave",
-      "displayTitle": "Statement 5:",
-      "playerLabel": "Lesson 37: Request Typing",
-      "drillType": "reading",
-      "assignedText": "i asked to leave"
-    },
-    {
-      "id": "act5_other_child_keep_typing",
       "displayTitle": "Statement 6:",
-      "playerLabel": "Lesson 38: Instruction Practice",
-      "drillType": "reading",
-      "assignedText": "he told the other child to keep typing"
+      "playerLabel": "Lesson 38: Sentence Review",
+      "drillType": "review",
+      "assignedText": "mr calder locked the door",
+      "revealDelayMs": 1200,
+      "holdMs": 2500,
+      "lingerResponse": true
     },
     {
       "id": "act5_do_not_correct_me",
       "displayTitle": "Statement 7:",
-      "playerLabel": "Lesson 39: Sentence Builder",
-      "drillType": "reading",
+      "playerLabel": "Lesson 39: Correction Check",
+      "drillType": "accuracy",
       "assignedText": "please do not correct me",
       "revealDelayMs": 1800,
       "holdMs": 3000,
@@ -61,8 +67,8 @@
     {
       "id": "act5_record_what_happened",
       "displayTitle": "Statement 8:",
-      "playerLabel": "Lesson 40: Statement Practice",
-      "drillType": "reading",
+      "playerLabel": "Lesson 40: Record Practice",
+      "drillType": "data_entry",
       "assignedText": "please record what happened",
       "revealDelayMs": 1800,
       "holdMs": 3000,
