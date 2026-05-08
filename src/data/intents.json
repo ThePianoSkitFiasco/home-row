@@ -59,95 +59,13 @@
   },
 
   {
-    "id": "lesson_complete_good_fingers",
-    "lesson": "act1_good_fingers",
+    "id": "lesson_complete_good_hands",
+    "lesson": "act1_good_hands",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
     "effects": { "obedience": 1 },
-    "response": "Good fingers stay where they are told.",
-    "mrTrigger": "encourage",
-    "once": true
-  },
-
-  {
-    "id": "mistake_errors_not_evidence",
-    "lesson": "act1_errors",
-    "eventType": "mistake",
-    "matchMode": "contains",
-    "patterns": [],
-    "effects": { "suppression": 1 },
-    "response": "Errors are not evidence.",
-    "mrTrigger": "corrective_smile",
-    "once": true
-  },
-  {
-    "id": "lesson_complete_errors",
-    "lesson": "act1_errors",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
-    "patterns": [],
-    "effects": { "obedience": 1, "suppression": 1 },
-    "response": "",
-    "mrTrigger": "corrective_smile",
-    "once": true
-  },
-
-  {
-    "id": "pause_look_away",
-    "lesson": "act1_look_away",
-    "eventType": "pause",
-    "matchMode": "contains",
-    "patterns": [],
-    "pauseThreshold": 3000,
-    "effects": { "refusal": 1 },
-    "response": "Looking is not part of this lesson.",
-    "mrTrigger": "glitch_warning",
-    "once": true
-  },
-  {
-    "id": "lesson_complete_look_away",
-    "lesson": "act1_look_away",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
-    "patterns": [],
-    "effects": { "obedience": 2 },
-    "response": "Good. You did not look away.",
-    "mrTrigger": "encourage",
-    "once": true
-  },
-
-  {
-    "id": "lesson_complete_obedience",
-    "lesson": "act1_obedience",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
-    "patterns": [],
-    "effects": { "obedience": 3, "disclosure": 2 },
-    "response": "YOU COMPLETED THIS LESSON BEFORE.",
-    "mrTrigger": "glitch_warning",
-    "once": true
-  },
-  {
-    "id": "typed_interrupt",
-    "lesson": "act1_obedience",
-    "eventType": "typed",
-    "matchMode": "contains",
-    "patterns": ["interrupt"],
-    "effects": { "obedience": 1, "suppression": 1 },
-    "response": "",
-    "mrTrigger": "corrective_smile",
-    "once": true
-  },
-
-  {
-    "id": "lesson_complete_keep_typing",
-    "lesson": "act1_keep_typing",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
-    "patterns": [],
-    "effects": { "obedience": 2 },
-    "response": "The bell has not rung yet.",
+    "response": "Good hands stay where they are told.",
     "mrTrigger": "encourage",
     "once": true
   },
@@ -158,43 +76,21 @@
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "disclosure": 2 },
-    "response": "They always did.",
-    "mrTrigger": "protector",
+    "effects": { "disclosure": 1 },
+    "response": "That is good.",
+    "mrTrigger": "glitch_warning",
     "once": true
   },
-
   {
-    "id": "typed_not_absent",
-    "lesson": "act1_absence",
-    "eventType": "typed",
+    "id": "pause_act1_hands_remember",
+    "lesson": "act1_hands_remember",
+    "eventType": "pause",
+    "minPauseMs": 3000,
     "matchMode": "contains",
-    "patterns": ["not absent"],
-    "effects": { "disclosure": 3, "suppression": 1 },
-    "response": "ABSENT is the approved word.",
-    "mrTrigger": "emily_bleedthrough",
-    "once": true
-  },
-  {
-    "id": "lesson_complete_absence",
-    "lesson": "act1_absence",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
     "patterns": [],
-    "effects": { "disclosure": 2, "witnessAcceptance": 1 },
-    "response": "She was not absent.",
-    "mrTrigger": "emily_bleedthrough",
-    "once": true
-  },
-  {
-    "id": "deletion_she",
-    "lesson": "act1_absence",
-    "eventType": "deleted",
-    "matchMode": "contains",
-    "patterns": ["she"],
-    "effects": { "suppression": 2, "disclosure": 1 },
-    "response": "Why did you remove her?",
-    "mrTrigger": "angry",
+    "effects": { "refusal": 1 },
+    "response": "Keep your fingers ready.",
+    "mrTrigger": "corrective_smile",
     "once": true
   },
 
@@ -929,11 +825,11 @@
 
   {
     "id": "complete_act1_address",
-    "lesson": "act1_good_fingers",
+    "lesson": "act1_classroom",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "response": "Good. Keep them there.",
+    "response": "Those are important words.",
     "mrTrigger": "encourage",
     "once": true
   },

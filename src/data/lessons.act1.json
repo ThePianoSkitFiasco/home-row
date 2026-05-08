@@ -11,53 +11,53 @@
       "assignedText": "asdf jkl; asdf jkl;"
     },
     {
-      "id": "act1_good_fingers",
-      "displayTitle": "Lesson 2: Good Fingers",
-      "playerLabel": "Lesson 2: Finger Placement",
-      "drillType": "phrase",
-      "assignedText": "good fingers stay where they belong"
+      "id": "act1_alternating",
+      "displayTitle": "Lesson 2: Word Practice",
+      "playerLabel": "Lesson 2: Word Practice",
+      "drillType": "words",
+      "assignedText": "dad sad lad fall ask"
     },
     {
-      "id": "act1_errors",
+      "id": "act1_accuracy",
       "displayTitle": "Lesson 3: Accuracy",
-      "playerLabel": "Lesson 3: Accuracy Practice",
+      "playerLabel": "Lesson 3: Accuracy Drill",
       "drillType": "phrase",
-      "assignedText": "errors are not evidence"
+      "assignedText": "a lad had a flask"
     },
     {
-      "id": "act1_look_away",
-      "displayTitle": "Lesson 4: Focus",
-      "playerLabel": "Lesson 4: Focus Drill",
+      "id": "act1_sentence",
+      "displayTitle": "Lesson 4: Sentences",
+      "playerLabel": "Lesson 4: Sentence Builder",
+      "drillType": "sentence",
+      "assignedText": "jill had a salad"
+    },
+    {
+      "id": "act1_speed",
+      "displayTitle": "Lesson 5: Speed",
+      "playerLabel": "Lesson 5: Speed Drill",
+      "drillType": "speed",
+      "assignedText": "ask dad as fast as you can"
+    },
+    {
+      "id": "act1_classroom",
+      "displayTitle": "Lesson 6: Classroom",
+      "playerLabel": "Lesson 6: Classroom Words",
+      "drillType": "words",
+      "assignedText": "class bell desk hall"
+    },
+    {
+      "id": "act1_good_hands",
+      "displayTitle": "Lesson 7: Good Hands",
+      "playerLabel": "Lesson 7: Good Hands",
       "drillType": "phrase",
-      "assignedText": "do not look away from the screen"
-    },
-    {
-      "id": "act1_obedience",
-      "displayTitle": "Lesson 5: Good Behaviour",
-      "playerLabel": "Lesson 5: Good Habits",
-      "drillType": "sentence",
-      "assignedText": "i will not interrupt"
-    },
-    {
-      "id": "act1_keep_typing",
-      "displayTitle": "Lesson 6: Persistence",
-      "playerLabel": "Lesson 6: Persistence Drill",
-      "drillType": "sentence",
-      "assignedText": "keep typing until the bell"
+      "assignedText": "good hands stay on home row"
     },
     {
       "id": "act1_hands_remember",
-      "displayTitle": "Lesson 7: Muscle Memory",
-      "playerLabel": "Lesson 7: Muscle Memory",
+      "displayTitle": "Lesson 8: Muscle Memory",
+      "playerLabel": "Lesson 8: Muscle Memory",
       "drillType": "phrase",
       "assignedText": "your hands remember"
-    },
-    {
-      "id": "act1_absence",
-      "displayTitle": "Lesson 8: Attendance",
-      "playerLabel": "Lesson 8: Attendance Words",
-      "drillType": "sentence",
-      "assignedText": "she was not absent"
     }
   ]
 }
