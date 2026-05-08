@@ -4,59 +4,59 @@
   "playerSection": "Data Entry Practice",
   "lessons": [
     {
+      "id": "act2_school_words",
+      "displayTitle": "Lesson 9: School Words",
+      "playerLabel": "Lesson 9: School Words",
+      "drillType": "words",
+      "assignedText": "school desk class bell"
+    },
+    {
+      "id": "act2_office_words",
+      "displayTitle": "Lesson 10: Office Words",
+      "playerLabel": "Lesson 10: Office Words",
+      "drillType": "words",
+      "assignedText": "office form record file"
+    },
+    {
+      "id": "act2_form_fields",
+      "displayTitle": "Lesson 11: Form Fields",
+      "playerLabel": "Lesson 11: Form Fields",
+      "drillType": "drill",
+      "assignedText": "name date class status"
+    },
+    {
+      "id": "act2_attendance",
+      "displayTitle": "Lesson 12: Attendance Words",
+      "playerLabel": "Lesson 12: Attendance Words",
+      "drillType": "drill",
+      "assignedText": "present absent late excused"
+    },
+    {
       "id": "act2_emily_name",
-      "displayTitle": "Record 1: Student Name",
-      "playerLabel": "Lesson 9: Name Entry",
-      "drillType": "entry",
+      "displayTitle": "Lesson 13: Name Accuracy",
+      "playerLabel": "Lesson 13: Name Accuracy",
+      "drillType": "accuracy",
       "assignedText": "emily vale"
     },
     {
-      "id": "act2_student_record",
-      "displayTitle": "Record 2: Document Type",
-      "playerLabel": "Lesson 10: Document Types",
-      "drillType": "entry",
-      "assignedText": "student record"
-    },
-    {
       "id": "act2_status_absent",
-      "displayTitle": "Record 3: Status",
-      "playerLabel": "Lesson 11: Status Fields",
-      "drillType": "entry",
+      "displayTitle": "Lesson 14: Status Entry",
+      "playerLabel": "Lesson 14: Status Entry",
+      "drillType": "data_entry",
       "assignedText": "status absent"
     },
     {
       "id": "act2_absence_authorised",
-      "displayTitle": "Record 4: Authorisation",
-      "playerLabel": "Lesson 12: Authorisation Entry",
-      "drillType": "entry",
+      "displayTitle": "Lesson 15: Record Entry",
+      "playerLabel": "Lesson 15: Record Entry",
+      "drillType": "data_entry",
       "assignedText": "absence authorised"
     },
     {
-      "id": "act2_date_unknown",
-      "displayTitle": "Record 5: Last Attendance",
-      "playerLabel": "Lesson 13: Date Fields",
-      "drillType": "entry",
-      "assignedText": "date of last attendance unknown"
-    },
-    {
-      "id": "act2_no_irregularity",
-      "displayTitle": "Record 6: Incident Report",
-      "playerLabel": "Lesson 14: Report Entry",
-      "drillType": "entry",
-      "assignedText": "no irregularity was recorded"
-    },
-    {
-      "id": "act2_classroom_supervised",
-      "displayTitle": "Record 7: Supervision",
-      "playerLabel": "Lesson 15: Supervision Notes",
-      "drillType": "entry",
-      "assignedText": "the classroom remained supervised"
-    },
-    {
       "id": "act2_she_not_absent",
-      "displayTitle": "Record 8: Correction",
-      "playerLabel": "Lesson 16: Correction Entry",
-      "drillType": "entry",
+      "displayTitle": "Lesson 16: Accuracy Review",
+      "playerLabel": "Lesson 16: Accuracy Review",
+      "drillType": "review",
       "assignedText": "she was not absent",
       "revealDelayMs": 1200,
       "holdMs": 2500,

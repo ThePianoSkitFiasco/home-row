@@ -100,8 +100,9 @@
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "disclosure": 2 },
-    "response": "STUDENT FOUND.",
+    "effects": { "disclosure": 1 },
+    "flags": { "emilyFound": true },
+    "response": "Name accepted.",
     "mrTrigger": "glitch_warning",
     "once": true
   },
@@ -111,8 +112,8 @@
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "suppression": 2 },
-    "response": "ABSENT.",
+    "effects": { "suppression": 1 },
+    "response": "Status recorded.",
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -123,7 +124,7 @@
     "matchMode": "contains",
     "patterns": [],
     "effects": { "suppression": 1 },
-    "response": "Please spell the approved status correctly.",
+    "response": "Please enter the status exactly.",
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -150,23 +151,13 @@
     "once": true
   },
   {
-    "id": "act2_records_safer",
-    "lesson": "act2_no_irregularity",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
-    "patterns": [],
-    "effects": { "suppression": 2 },
-    "response": "Records are safer than memories.",
-    "mrTrigger": "protector",
-    "once": true
-  },
-  {
     "id": "act2_then_where",
     "lesson": "act2_she_not_absent",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
     "effects": { "disclosure": 4 },
+    "flags": { "recordContradicted": true },
     "response": "THEN WHERE WAS SHE?",
     "mrTrigger": "emily_bleedthrough",
     "once": true
@@ -839,7 +830,8 @@
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "response": "Authority makes absence easier.",
+    "effects": { "suppression": 2 },
+    "response": "Authorisation confirmed.",
     "mrTrigger": "corrective_smile",
     "once": true
   },
