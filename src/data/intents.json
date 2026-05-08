@@ -502,26 +502,25 @@
     "once": true
   },
   {
-    "id": "act7_final_test",
-    "lesson": "act7_final_test",
+    "id": "act7_final_review",
+    "lesson": "act7_final_review",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["final accuracy test"],
-    "response": "Final test ready.",
+    "patterns": ["final accuracy review"],
+    "response": "Final review ready.",
     "effects": { "obedience": 1 },
     "mrTrigger": "encourage",
     "once": true
   },
   {
-    "id": "act7_correct_record",
-    "lesson": "act7_correct_record",
+    "id": "act7_errors_corrected",
+    "lesson": "act7_errors_corrected",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["correct the record"],
-    "response": "Correction mode active.",
-    "effects": { "suppression": 1, "refusal": 1 },
-    "flags": { "correctionExamStarted": true },
-    "mrTrigger": "corrective_smile",
+    "patterns": ["errors must be corrected"],
+    "response": "DEFINE ERROR.",
+    "effects": { "refusal": 2, "disclosure": 1 },
+    "mrTrigger": "angry",
     "once": true
   },
   {
@@ -532,7 +531,7 @@
     "patterns": ["emily vale was absent"],
     "response": "FALSE RECORD DETECTED.",
     "effects": { "disclosure": 3, "refusal": 1 },
-    "flags": { "officialAbsenceChallenged": true },
+    "flags": { "correctionExamStarted": true, "officialAbsenceChallenged": true },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },

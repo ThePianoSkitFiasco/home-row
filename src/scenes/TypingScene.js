@@ -25,6 +25,20 @@ const COLORS = {
   statValue: '#00ff88'
 };
 
+const COLORS_LIGHT = {
+  bg: '#d4d0c8',
+  panel: '#ffffff',
+  border: '#808080',
+  textCorrect: '#006600',
+  textWrong: '#cc0000',
+  textCursor: '#003399',
+  textWhite: '#000000',
+  mrFingers: '#003399',
+  response: '#cc0000',
+  statLabel: '#333333',
+  statValue: '#003399'
+};
+
 const MR_STATE_COLORS = {
   idle: COLORS.mrFingers,
   encourage: COLORS.mrFingers,
@@ -42,14 +56,25 @@ const MR_FINGERS_SPRITE_PATH = 'assets/sprites/mr_fingers/';
 
 const ACT_THEMES = {
   act1_home_row: {
-    primary: '#00ff88',
-    accent: '#bbffcc',
-    warning: '#ffcc00',
+    primary: '#003399',
+    accent: '#000080',
+    warning: '#cc6600',
     panelLabel: 'TYPE:',
     modeStamp: 'PRACTICE',
-    bg: '#17261d',
-    gridAlpha: 0.08,
-    overlayAlpha: 0.03
+    bg: '#d4d0c8',
+    gridAlpha: 0,
+    overlayAlpha: 0,
+    light: true,
+    panelBg: '#ffffff',
+    panelBorder: '#808080',
+    textCorrect: '#006600',
+    textWrong: '#cc0000',
+    textCursor: '#003399',
+    assignedColor: '#000000',
+    statsColor: '#333333',
+    mrColor: '#003399',
+    responseColor: '#cc3300',
+    responseBorder: '#999999'
   },
   act2_student_record: {
     primary: '#66e8ff',
@@ -306,7 +331,8 @@ export default class TypingScene extends Phaser.Scene {
     // Response / narrative area
     this.responsePanel = this.add.rectangle(512, 305, W - 80, 65, 0x0a0a1a)
       .setOrigin(0.5, 0)
-      .setStrokeStyle(1, 0x442222);
+      .setStrokeStyle(1, 0x442222)
+      .setAlpha(0);
 
     this.responseText = this.add.text(512, 330, '', {
       fontFamily: 'Courier New, monospace',
@@ -496,6 +522,7 @@ export default class TypingScene extends Phaser.Scene {
           duration: 600,
           onComplete: () => {
             this.responseTimer = null;
+            this._updateResponsePanelVisibility();
             this._showNextResponse();
           }
         });
@@ -645,6 +672,9 @@ export default class TypingScene extends Phaser.Scene {
     const primary = hexToNumber(theme.primary);
     const accent = hexToNumber(theme.accent);
     const warning = hexToNumber(theme.warning);
+    const panelBg = theme.panelBg ? hexToNumber(theme.panelBg) : hexToNumber(COLORS.panel);
+    const panelBorder = theme.panelBorder ? hexToNumber(theme.panelBorder) : primary;
+    const responseBorder = theme.responseBorder ? hexToNumber(theme.responseBorder) : warning;
 
     this.cameras.main.setBackgroundColor(theme.bg);
     this.themeOverlay.setFillStyle(primary).setAlpha(theme.overlayAlpha);
@@ -656,9 +686,9 @@ export default class TypingScene extends Phaser.Scene {
         .setAlpha(useAccent ? theme.gridAlpha * 0.75 : theme.gridAlpha);
     });
 
-    this.headerTopLine.setFillStyle(primary);
-    this.headerBottomLine.setFillStyle(primary);
-    this.statsDivider.setFillStyle(primary);
+    this.headerTopLine.setFillStyle(panelBorder);
+    this.headerBottomLine.setFillStyle(panelBorder);
+    this.statsDivider.setFillStyle(panelBorder);
     this.debugDivider.setFillStyle(accent).setAlpha(0.35);
     this.eventDivider.setFillStyle(accent).setAlpha(0.35);
 
@@ -666,24 +696,48 @@ export default class TypingScene extends Phaser.Scene {
       this.assignedPanel,
       this.typedPanel,
       this.mrFingersPanel
-    ].forEach(panel => panel.setStrokeStyle(1, primary));
-    this.responsePanel.setStrokeStyle(1, warning);
+    ].forEach(panel => {
+      panel.setFillStyle(panelBg);
+      panel.setStrokeStyle(1, panelBorder);
+    });
+    this.responsePanel.setFillStyle(panelBg);
+    this.responsePanel.setStrokeStyle(1, responseBorder);
 
     this.titleText.setColor(theme.primary);
     this.lessonTitle.setColor(theme.accent);
     this.modeStampText.setText(theme.modeStamp).setColor(theme.accent);
     this.assignedLabel.setText(theme.panelLabel).setColor(theme.accent);
     this.inputLabel.setColor(theme.accent);
-    this.assignedText.setColor(theme.accent);
-    this.responseText.setColor(theme.warning);
-    this.statsText.setColor(theme.accent);
+    this.assignedText.setColor(theme.assignedColor || theme.accent);
+    this.responseText.setColor(theme.responseColor || theme.warning);
+    this.statsText.setColor(theme.statsColor || theme.accent);
     this.progressText.setColor(theme.primary);
     this.debugStats.setColor(theme.primary);
+
+    this.mrFingersText.setColor(theme.mrColor || COLORS.mrFingers);
+    this.mrFingersFallbackText.setColor(theme.mrColor || COLORS.mrFingers);
+    this.mrFingersPortraitFrame.setFillStyle(theme.light ? panelBg : 0x050510);
+    this.mrFingersPortraitFrame.setStrokeStyle(1, panelBorder);
+
+    this._updateResponsePanelVisibility();
+  }
+
+  _updateResponsePanelVisibility() {
+    const hasResponse = this.responseText && this.responseText.text && this.responseText.text.length > 0;
+    const alpha = hasResponse ? 1 : 0;
+    this.responsePanel.setAlpha(alpha);
   }
 
   _applyCompletionTheme(theme) {
-    this.completionBg.setStrokeStyle(2, hexToNumber(theme.warning));
-    this.completionText.setColor(theme.primary);
+    if (theme.light) {
+      this.completionBg.setFillStyle(hexToNumber('#ffffff'));
+      this.completionBg.setStrokeStyle(2, hexToNumber(theme.primary));
+      this.completionText.setColor('#000000');
+    } else {
+      this.completionBg.setFillStyle(hexToNumber(COLORS.panel));
+      this.completionBg.setStrokeStyle(2, hexToNumber(theme.warning));
+      this.completionText.setColor(theme.primary);
+    }
   }
 
   // --- TYPED TEXT RENDERING ---
@@ -702,8 +756,14 @@ export default class TypingScene extends Phaser.Scene {
     const y = 210;
     const charWidth = 14.4;
 
+    const theme = this.currentTheme || DEFAULT_ACT_THEME;
+    const correctColor = theme.textCorrect || COLORS.textCorrect;
+    const wrongColor = theme.textWrong || COLORS.textWrong;
+    const cursorColor = theme.textCursor || COLORS.textCursor;
+    const wrongUnderline = hexToNumber(wrongColor);
+
     for (let i = 0; i < states.length; i++) {
-      const color = states[i].correct ? COLORS.textCorrect : COLORS.textWrong;
+      const color = states[i].correct ? correctColor : wrongColor;
       const charText = this.add.text(x, y, states[i].char, {
         fontFamily: 'Courier New, monospace',
         fontSize: '24px',
@@ -711,7 +771,7 @@ export default class TypingScene extends Phaser.Scene {
       });
 
       if (!states[i].correct) {
-        const underline = this.add.rectangle(x + charWidth / 2, y + 28, charWidth, 2, 0xff3355);
+        const underline = this.add.rectangle(x + charWidth / 2, y + 28, charWidth, 2, wrongUnderline);
         this.typedRichText.push(underline);
       }
 
@@ -723,7 +783,7 @@ export default class TypingScene extends Phaser.Scene {
       const cursor = this.add.text(x, y, '_', {
         fontFamily: 'Courier New, monospace',
         fontSize: '24px',
-        color: COLORS.textCursor
+        color: cursorColor
       });
       this.typedRichText.push(cursor);
     }
@@ -736,6 +796,7 @@ export default class TypingScene extends Phaser.Scene {
 
     const text = this.responseQueue.shift();
     this.responseText.setText(text);
+    this.responsePanel.setAlpha(1);
 
     this.tweens.add({
       targets: this.responseText,
@@ -750,6 +811,7 @@ export default class TypingScene extends Phaser.Scene {
         duration: 500,
         onComplete: () => {
           this.responseTimer = null;
+          this._updateResponsePanelVisibility();
           this._showNextResponse();
         }
       });
@@ -757,7 +819,12 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _updateMrFingersVisual(state, label, config) {
-    const color = MR_STATE_COLORS[state] || COLORS.mrFingers;
+    const theme = this.currentTheme || DEFAULT_ACT_THEME;
+    const themeBase = theme.mrColor || COLORS.mrFingers;
+    const defaultColor = (state === 'idle' || state === 'encourage' || state === 'mistake_notice')
+      ? themeBase
+      : (MR_STATE_COLORS[state] || COLORS.mrFingers);
+    const color = theme.light ? themeBase : defaultColor;
 
     this.mrFingersText.setText(label);
     this.mrFingersText.setColor(color);

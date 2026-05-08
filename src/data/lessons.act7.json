@@ -1,26 +1,36 @@
 {
   "actId": "act7_correction_exam",
   "title": "CORRECTION EXAM",
-  "playerSection": "Final Accuracy Test",
+  "playerSection": "Final Review",
   "lessons": [
     {
-      "id": "act7_final_test",
+      "id": "act7_final_review",
       "displayTitle": "Exam 1:",
-      "playerLabel": "Lesson 49: Final Accuracy Test",
-      "drillType": "test",
-      "assignedText": "final accuracy test"
+      "playerLabel": "Lesson 49: Final Review",
+      "drillType": "review",
+      "assignedText": "final accuracy review"
     },
     {
-      "id": "act7_correct_record",
+      "id": "act7_errors_corrected",
       "displayTitle": "Exam 2:",
-      "playerLabel": "Lesson 50: Correction Practice",
+      "playerLabel": "Lesson 50: Error Correction",
       "drillType": "correction",
-      "assignedText": "correct the record"
+      "assignedText": "errors must be corrected"
+    },
+    {
+      "id": "act7_records_completed",
+      "displayTitle": "Exam 3:",
+      "playerLabel": "Lesson 51: Record Practice",
+      "drillType": "accuracy",
+      "assignedText": "records must be completed",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
     },
     {
       "id": "act7_emily_absent",
-      "displayTitle": "Exam 3:",
-      "playerLabel": "Lesson 51: Record Accuracy",
+      "displayTitle": "Exam 4:",
+      "playerLabel": "Lesson 52: Attendance Review",
       "drillType": "accuracy",
       "assignedText": "emily vale was absent",
       "revealDelayMs": 1500,
@@ -29,22 +39,22 @@
     },
     {
       "id": "act7_classroom_supervised",
-      "displayTitle": "Exam 4:",
-      "playerLabel": "Lesson 52: Supervision Sentence",
+      "displayTitle": "Exam 5:",
+      "playerLabel": "Lesson 53: Sentence Accuracy",
       "drillType": "test",
       "assignedText": "the classroom was supervised"
     },
     {
       "id": "act7_no_distress",
-      "displayTitle": "Exam 5:",
-      "playerLabel": "Lesson 53: Report Sentence",
+      "displayTitle": "Exam 6:",
+      "playerLabel": "Lesson 54: Report Accuracy",
       "drillType": "test",
       "assignedText": "no distress was reported"
     },
     {
       "id": "act7_heard_nothing",
-      "displayTitle": "Exam 6:",
-      "playerLabel": "Lesson 54: Listening Accuracy",
+      "displayTitle": "Exam 7:",
+      "playerLabel": "Lesson 55: Listening Review",
       "drillType": "accuracy",
       "assignedText": "the second user heard nothing",
       "revealDelayMs": 1800,
@@ -53,20 +63,10 @@
     },
     {
       "id": "act7_kept_typing",
-      "displayTitle": "Exam 7:",
-      "playerLabel": "Lesson 55: Action Review",
-      "drillType": "review",
-      "assignedText": "the second user kept typing",
-      "revealDelayMs": 1200,
-      "holdMs": 2500,
-      "lingerResponse": true
-    },
-    {
-      "id": "act7_records_completed",
       "displayTitle": "Exam 8:",
-      "playerLabel": "Lesson 56: Completion Test",
+      "playerLabel": "Lesson 56: Final Exercise",
       "drillType": "final",
-      "assignedText": "records must be completed",
+      "assignedText": "the second user kept typing",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true

@@ -1,22 +1,22 @@
 const STATES = {
   idle: {
     id: 'idle',
-    label: '[ Mr. Fingers is watching... ]',
+    label: 'Mr. Fingers says: Keep typing!',
     spriteKey: 'mr_idle'
   },
   encourage: {
     id: 'encourage',
-    label: '[ Mr. Fingers gives a thumbs up! ]',
+    label: 'Mr. Fingers says: Great job!',
     spriteKey: 'mr_encourage'
   },
   mistake_notice: {
     id: 'mistake_notice',
-    label: '[ Mr. Fingers frowns slightly. ]',
+    label: 'Mr. Fingers says: Careful!',
     spriteKey: 'mr_mistake_notice'
   },
   corrective_smile: {
     id: 'corrective_smile',
-    label: '[ Mr. Fingers smiles. Too wide. ]',
+    label: 'Mr. Fingers says: Try that again.',
     spriteKey: 'mr_corrective_smile'
   },
   glitch_warning: {

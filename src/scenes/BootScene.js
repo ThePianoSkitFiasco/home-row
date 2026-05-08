@@ -4,7 +4,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor('#000000');
+    this.cameras.main.setBackgroundColor('#000080');
 
     const cx = this.cameras.main.centerX;
     const cy = this.cameras.main.centerY;
@@ -12,25 +12,25 @@ export default class BootScene extends Phaser.Scene {
     const title = this.add.text(cx, cy - 80, 'HOME ROW', {
       fontFamily: 'Courier New, monospace',
       fontSize: '48px',
-      color: '#00ff00'
+      color: '#ffffff'
     }).setOrigin(0.5);
 
     const subtitle = this.add.text(cx, cy - 20, 'A Friendly Typing Program for Growing Hands', {
       fontFamily: 'Courier New, monospace',
       fontSize: '16px',
-      color: '#00aa00'
+      color: '#aaaadd'
     }).setOrigin(0.5);
 
     const version = this.add.text(cx, cy + 30, 'v1.0  (c) 1997 Greyfield Educational Software', {
       fontFamily: 'Courier New, monospace',
       fontSize: '14px',
-      color: '#006600'
+      color: '#7777aa'
     }).setOrigin(0.5);
 
     const prompt = this.add.text(cx, cy + 100, 'Press any key to begin...', {
       fontFamily: 'Courier New, monospace',
       fontSize: '18px',
-      color: '#00ff00'
+      color: '#ffff88'
     }).setOrigin(0.5);
 
     this.tweens.add({
