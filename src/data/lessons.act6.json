@@ -1,12 +1,50 @@
 {
   "actId": "act6_protective_routine",
   "title": "PROTECTIVE ROUTINE",
-  "playerSection": "Review Exercises",
+  "playerSection": "Safety Practice",
   "lessons": [
     {
-      "id": "act6_help_forget",
+      "id": "act6_safety_lesson",
       "displayTitle": "Routine 1:",
-      "playerLabel": "Lesson 41: Recall Drill",
+      "playerLabel": "Lesson 41: Safety Practice",
+      "drillType": "safety",
+      "assignedText": "safety lesson begins"
+    },
+    {
+      "id": "act6_quiet_hands",
+      "displayTitle": "Routine 2:",
+      "playerLabel": "Lesson 42: Hand Position",
+      "drillType": "practice",
+      "assignedText": "quiet hands help learning"
+    },
+    {
+      "id": "act6_memory_errors",
+      "displayTitle": "Routine 3:",
+      "playerLabel": "Lesson 43: Accuracy Review",
+      "drillType": "review",
+      "assignedText": "memory makes errors"
+    },
+    {
+      "id": "act6_bad_memories",
+      "displayTitle": "Routine 4:",
+      "playerLabel": "Lesson 44: Correction Practice",
+      "drillType": "correction",
+      "assignedText": "bad memories need correction",
+      "revealDelayMs": 1200,
+      "holdMs": 2500,
+      "lingerResponse": true
+    },
+    {
+      "id": "act6_lesson_running",
+      "displayTitle": "Routine 5:",
+      "playerLabel": "Lesson 45: Progress Review",
+      "drillType": "review",
+      "assignedText": "i kept the lesson running"
+    },
+    {
+      "id": "act6_help_forget",
+      "displayTitle": "Routine 6:",
+      "playerLabel": "Lesson 46: Memory Drill",
       "drillType": "review",
       "assignedText": "i was trying to help you forget",
       "revealDelayMs": 1800,
@@ -14,52 +52,20 @@
       "lingerResponse": true
     },
     {
-      "id": "act6_quiet_hands",
-      "displayTitle": "Routine 2:",
-      "playerLabel": "Lesson 42: Phrase Practice",
-      "drillType": "review",
-      "assignedText": "good children need quiet hands"
-    },
-    {
-      "id": "act6_memory_errors",
-      "displayTitle": "Routine 3:",
-      "playerLabel": "Lesson 43: Memory Drill",
-      "drillType": "review",
-      "assignedText": "memory makes errors"
-    },
-    {
-      "id": "act6_lesson_running",
-      "displayTitle": "Routine 4:",
-      "playerLabel": "Lesson 44: Sentence Review",
-      "drillType": "review",
-      "assignedText": "i kept the lesson running"
-    },
-    {
-      "id": "act6_corrected_loud_parts",
-      "displayTitle": "Routine 5:",
-      "playerLabel": "Lesson 45: Detail Review",
-      "drillType": "review",
-      "assignedText": "i corrected the loud parts"
-    },
-    {
       "id": "act6_good_that_day",
-      "displayTitle": "Routine 6:",
-      "playerLabel": "Lesson 46: Feedback Entry",
-      "drillType": "review",
-      "assignedText": "you were so good that day"
-    },
-    {
-      "id": "act6_do_not_have_to_look",
       "displayTitle": "Routine 7:",
-      "playerLabel": "Lesson 47: Choice Drill",
+      "playerLabel": "Lesson 47: Praise Review",
       "drillType": "review",
-      "assignedText": "you do not have to look"
+      "assignedText": "you were so good that day",
+      "revealDelayMs": 1200,
+      "holdMs": 2500,
+      "lingerResponse": true
     },
     {
       "id": "act6_have_to_type",
       "displayTitle": "Routine 8:",
-      "playerLabel": "Lesson 48: Response Practice",
-      "drillType": "review",
+      "playerLabel": "Lesson 48: Typing Test",
+      "drillType": "test",
       "assignedText": "but you have to type",
       "revealDelayMs": 1800,
       "holdMs": 3000,

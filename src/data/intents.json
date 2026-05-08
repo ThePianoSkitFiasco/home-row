@@ -397,6 +397,17 @@
     "once": true
   },
   {
+    "id": "act6_safety_ready",
+    "lesson": "act6_safety_lesson",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": ["safety lesson begins"],
+    "response": "Safety routine ready.",
+    "effects": { "suppression": 1 },
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
     "id": "act6_trying_to_help_forget",
     "lesson": "act6_help_forget",
     "eventType": "lesson_complete",
@@ -413,9 +424,9 @@
     "lesson": "act6_quiet_hands",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["good children need quiet hands"],
-    "response": "QUIET HANDS DO NOT SHAKE.",
-    "effects": { "obedience": 2, "suppression": 1 },
+    "patterns": ["quiet hands help learning"],
+    "response": "Quiet hands do not shake.",
+    "effects": { "obedience": 1, "suppression": 1 },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -444,11 +455,11 @@
     "once": true
   },
   {
-    "id": "act6_corrected_loud_parts",
-    "lesson": "act6_corrected_loud_parts",
+    "id": "act6_bad_memories",
+    "lesson": "act6_bad_memories",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["i corrected the loud parts"],
+    "patterns": ["bad memories need correction"],
     "response": "THE LOUD PARTS WERE REMOVED.",
     "effects": { "suppression": 3, "disclosure": 1 },
     "flags": { "memoryCorrectionAdmitted": true },
@@ -464,17 +475,6 @@
     "response": "YOU WERE SO GOOD THAT DAY.",
     "effects": { "obedience": 3, "disclosure": 2 },
     "flags": { "playerPraisedForObedience": true },
-    "mrTrigger": "protector",
-    "once": true
-  },
-  {
-    "id": "act6_do_not_have_to_look",
-    "lesson": "act6_do_not_have_to_look",
-    "eventType": "lesson_complete",
-    "matchMode": "contains",
-    "patterns": ["you do not have to look"],
-    "response": "LOOKING WAS NEVER REQUIRED.",
-    "effects": { "suppression": 2, "witnessAcceptance": 1 },
     "mrTrigger": "protector",
     "once": true
   },
