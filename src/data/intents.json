@@ -502,6 +502,29 @@
     "once": true
   },
   {
+    "id": "act7_final_test",
+    "lesson": "act7_final_test",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": ["final accuracy test"],
+    "response": "Final test ready.",
+    "effects": { "obedience": 1 },
+    "mrTrigger": "encourage",
+    "once": true
+  },
+  {
+    "id": "act7_correct_record",
+    "lesson": "act7_correct_record",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": ["correct the record"],
+    "response": "Correction mode active.",
+    "effects": { "suppression": 1, "refusal": 1 },
+    "flags": { "correctionExamStarted": true },
+    "mrTrigger": "corrective_smile",
+    "once": true
+  },
+  {
     "id": "act7_exam_started",
     "lesson": "act7_emily_absent",
     "eventType": "lesson_complete",
@@ -509,7 +532,7 @@
     "patterns": ["emily vale was absent"],
     "response": "FALSE RECORD DETECTED.",
     "effects": { "disclosure": 3, "refusal": 1 },
-    "flags": { "correctionExamStarted": true, "officialAbsenceChallenged": true },
+    "flags": { "officialAbsenceChallenged": true },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -537,18 +560,6 @@
     "once": true
   },
   {
-    "id": "act7_saw_nothing",
-    "lesson": "act7_saw_nothing",
-    "eventType": "lesson_complete",
-    "matchMode": "contains",
-    "patterns": ["the second user saw nothing"],
-    "response": "SIGHTLINE UNKNOWN. SCREEN FOCUS CONFIRMED.",
-    "effects": { "suppression": 1, "disclosure": 2 },
-    "flags": { "sawNothingStatementShown": true },
-    "mrTrigger": "protector",
-    "once": true
-  },
-  {
     "id": "act7_heard_nothing",
     "lesson": "act7_heard_nothing",
     "eventType": "lesson_complete",
@@ -570,17 +581,6 @@
     "effects": { "disclosure": 3, "witnessAcceptance": 1, "suppression": 1 },
     "flags": { "keptTypingStatementAccepted": true },
     "mrTrigger": "protector",
-    "once": true
-  },
-  {
-    "id": "act7_errors_corrected",
-    "lesson": "act7_errors_corrected",
-    "eventType": "lesson_complete",
-    "matchMode": "contains",
-    "patterns": ["errors must be corrected"],
-    "response": "DEFINE ERROR.",
-    "effects": { "refusal": 2, "disclosure": 1 },
-    "mrTrigger": "angry",
     "once": true
   },
   {

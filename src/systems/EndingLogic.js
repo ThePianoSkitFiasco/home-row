@@ -26,10 +26,11 @@ export function getFinalStatement(memoryState) {
       title: 'WITNESS STATEMENT',
       response: 'RECORDED.',
       body: [
-        'The record does not become whole.',
-        'It becomes honest enough to keep.',
-        'Emily Vale is no longer absent.',
-        'The second user is no longer missing from the room.'
+        'The lesson ends where your hands began.',
+        'Not with rescue.',
+        'Not with innocence.',
+        'Only with her name still present,',
+        'and yours no longer missing from the room.'
       ].join('\n')
     };
   }
@@ -43,11 +44,11 @@ export function getFinalStatement(memoryState) {
       routeId: 'audio_memory',
       statement: 'I HEARD HER SAY NO',
       title: 'AUDIO MEMORY',
-      response: 'MEMORY ENTERED INTO RECORD.',
+      response: 'SOUND RECOVERED.',
       body: [
-        'The record accepts sound before sight.',
-        'What you heard remains incomplete,',
-        'but it remains.'
+        'You did not need to see everything.',
+        'The room had a sound.',
+        'You carried it longer than the program could.'
       ].join('\n')
     };
   }
@@ -57,12 +58,13 @@ export function getFinalStatement(memoryState) {
       routeId: 'completed_exercise',
       statement: 'I KEPT TYPING',
       title: 'COMPLETED EXERCISE',
-      response: 'ACTION CONFIRMED. INTENT UNKNOWN.',
+      response: 'ACTION CONFIRMED.',
       body: [
-        'The program records the action.',
-        'It cannot record why.',
-        'Your hands stayed on the keys.',
-        'The room stayed behind you.'
+        'The program records the motion.',
+        'Key after key.',
+        'Line after line.',
+        'Whatever you meant,',
+        'your hands did not stop.'
       ].join('\n')
     };
   }
@@ -76,12 +78,13 @@ export function getFinalStatement(memoryState) {
       routeId: 'sightline_error',
       statement: 'I SHOULD HAVE TURNED AROUND',
       title: 'SIGHTLINE ERROR',
-      response: 'LOOKING WAS NEVER REQUIRED. KNOWING WAS.',
+      response: 'SIGHTLINE UNRESOLVED.',
       body: [
-        'The record circles the place where looking should have been.',
-        'But you were a child.',
-        'The screen was bright.',
-        'The voice behind you was adult.'
+        'The sentence points behind you.',
+        'It always has.',
+        'But the chair was small,',
+        'the voice was adult,',
+        'and the screen was waiting.'
       ].join('\n')
     };
   }
@@ -91,11 +94,12 @@ export function getFinalStatement(memoryState) {
       routeId: 'gold_star',
       statement: 'I DID NOT SEE ANYTHING',
       title: 'GOLD STAR',
-      response: 'RECORD ACCEPTED.',
+      response: 'GOLD STAR AWARDED.',
       body: [
-        'The lesson accepts your correction.',
+        'The program accepts your answer.',
+        'Your score improves.',
         'Emily Vale remains absent.',
-        'Your hands return to home row.'
+        'Mr Fingers is very proud.'
       ].join('\n')
     };
   }
@@ -104,12 +108,12 @@ export function getFinalStatement(memoryState) {
     routeId: 'incomplete_statement',
     statement: 'I KEPT TYPING',
     title: 'INCOMPLETE STATEMENT',
-    response: 'THE RECORD REMAINS OPEN.',
+    response: 'STATEMENT INCOMPLETE.',
     body: [
-      'The record remains open.',
-      'Some lines were typed.',
-      'Some were removed.',
-      'The cursor waits.'
+      'The record does not close.',
+      'Some words stayed.',
+      'Some words were corrected.',
+      'The cursor waits where the sentence should end.'
     ].join('\n')
   };
 }
