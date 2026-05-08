@@ -175,38 +175,15 @@
     "once": true
   },
   {
-    "id": "act3_after_bell",
-    "lesson": "act3_after_final_bell",
-    "eventType": "lesson_complete",
-    "matchMode": "contains",
-    "patterns": ["session began after final bell"],
-    "response": "LESSON TIME EXTENDED BY STAFF.",
-    "effects": { "suppression": 1 },
-    "mrTrigger": "corrective_smile",
-    "once": true
-  },
-  {
     "id": "act3_teacher_override",
     "lesson": "act3_teacher_override",
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": ["teacher override accepted"],
-    "response": "MR CALDER AUTHORISED CONTINUATION.",
+    "response": "Override accepted.",
     "effects": { "disclosure": 2 },
     "flags": { "teacherOverrideSeen": true },
     "mrTrigger": "protector",
-    "once": true
-  },
-  {
-    "id": "act3_audio_pause",
-    "lesson": "act3_audio_unavailable",
-    "eventType": "pause",
-    "matchMode": "contains",
-    "patterns": ["audio input unavailable"],
-    "minPauseMs": 3000,
-    "response": "But you heard her.",
-    "effects": { "disclosure": 3, "refusal": 1 },
-    "mrTrigger": "emily_bleedthrough",
     "once": true
   },
   {
@@ -215,20 +192,9 @@
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": ["screen focus maintained"],
-    "response": "You did not turn around.",
-    "effects": { "disclosure": 3 },
+    "response": "Screen focus confirmed.",
+    "effects": { "disclosure": 1, "suppression": 1 },
     "flags": { "playerImplicationStarted": true },
-    "mrTrigger": "angry",
-    "once": true
-  },
-  {
-    "id": "act3_second_user_delete",
-    "lesson": "act3_second_user_completed",
-    "eventType": "deleted",
-    "matchMode": "contains",
-    "patterns": ["second user", "completed exercise"],
-    "response": "Incomplete records do not protect you.",
-    "effects": { "suppression": 2, "disclosure": 1 },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -837,12 +803,12 @@
   },
   {
     "id": "complete_act3_address",
-    "lesson": "act3_screen_focus",
+    "lesson": "act3_workstation_one",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "response": "Your eyes were very obedient.",
-    "mrTrigger": "corrective_smile",
+    "response": "System ready.",
+    "mrTrigger": "encourage",
     "once": true
   },
   {

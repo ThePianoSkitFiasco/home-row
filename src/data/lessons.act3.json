@@ -1,62 +1,62 @@
 {
   "actId": "act3_system_log",
   "title": "SYSTEM LOG",
-  "playerSection": "Transcription Practice",
+  "playerSection": "Computer Skills Practice",
   "lessons": [
     {
+      "id": "act3_computer_words",
+      "displayTitle": "Lesson 17: Computer Words",
+      "playerLabel": "Lesson 17: Computer Words",
+      "drillType": "words",
+      "assignedText": "file save print copy"
+    },
+    {
+      "id": "act3_login_words",
+      "displayTitle": "Lesson 18: Login Practice",
+      "playerLabel": "Lesson 18: Login Practice",
+      "drillType": "words",
+      "assignedText": "user name login time"
+    },
+    {
+      "id": "act3_session_words",
+      "displayTitle": "Lesson 19: Session Words",
+      "playerLabel": "Lesson 19: Session Words",
+      "drillType": "drill",
+      "assignedText": "session start session end"
+    },
+    {
+      "id": "act3_screen_focus",
+      "displayTitle": "Lesson 20: Screen Focus",
+      "playerLabel": "Lesson 20: Screen Focus",
+      "drillType": "drill",
+      "assignedText": "screen focus maintained"
+    },
+    {
       "id": "act3_workstation_one",
-      "displayTitle": "Log 1:",
-      "playerLabel": "Lesson 17: System Entry",
-      "drillType": "transcription",
+      "displayTitle": "Lesson 21: Workstation Terms",
+      "playerLabel": "Lesson 21: Workstation Terms",
+      "drillType": "data_entry",
       "assignedText": "workstation one active"
     },
     {
       "id": "act3_workstation_two",
-      "displayTitle": "Log 2:",
-      "playerLabel": "Lesson 18: Activity Logging",
-      "drillType": "transcription",
+      "displayTitle": "Lesson 22: Workstation Terms",
+      "playerLabel": "Lesson 22: Workstation Terms",
+      "drillType": "data_entry",
       "assignedText": "workstation two active"
     },
     {
-      "id": "act3_after_final_bell",
-      "displayTitle": "Log 3:",
-      "playerLabel": "Lesson 19: Session Records",
-      "drillType": "transcription",
-      "assignedText": "session began after final bell"
-    },
-    {
       "id": "act3_teacher_override",
-      "displayTitle": "Log 4:",
-      "playerLabel": "Lesson 20: Override Entry",
-      "drillType": "transcription",
+      "displayTitle": "Lesson 23: System Command",
+      "playerLabel": "Lesson 23: System Command",
+      "drillType": "data_entry",
       "assignedText": "teacher override accepted"
     },
     {
-      "id": "act3_audio_unavailable",
-      "displayTitle": "Log 5:",
-      "playerLabel": "Lesson 21: Input Logging",
-      "drillType": "transcription",
-      "assignedText": "audio input unavailable"
-    },
-    {
-      "id": "act3_screen_focus",
-      "displayTitle": "Log 6:",
-      "playerLabel": "Lesson 22: Focus Tracking",
-      "drillType": "transcription",
-      "assignedText": "screen focus maintained"
-    },
-    {
-      "id": "act3_second_user_completed",
-      "displayTitle": "Log 7:",
-      "playerLabel": "Lesson 23: User Records",
-      "drillType": "transcription",
-      "assignedText": "second user completed exercise"
-    },
-    {
       "id": "act3_typing_pattern_match",
-      "displayTitle": "Log 8:",
-      "playerLabel": "Lesson 24: Pattern Entry",
-      "drillType": "transcription",
+      "displayTitle": "Lesson 24: Pattern Review",
+      "playerLabel": "Lesson 24: Pattern Review",
+      "drillType": "review",
       "assignedText": "typing pattern match found",
       "revealDelayMs": 1500,
       "holdMs": 2500,
