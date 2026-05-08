@@ -212,13 +212,24 @@
   },
   {
     "id": "act4_dictation_source_unknown",
-    "lesson": "act4_type_what_you_hear",
+    "lesson": "act4_listen_type",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["please type what you hear"],
-    "response": "DICTATION SOURCE: UNKNOWN.",
-    "effects": { "disclosure": 1 },
-    "mrTrigger": "glitch_warning",
+    "patterns": ["listen and type"],
+    "response": "Dictation mode ready.",
+    "effects": { "obedience": 1 },
+    "mrTrigger": "encourage",
+    "once": true
+  },
+  {
+    "id": "act4_bell_gone",
+    "lesson": "act4_bell_gone",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": ["the bell has gone"],
+    "response": "Lesson time extended.",
+    "effects": { "obedience": 1 },
+    "mrTrigger": "encourage",
     "once": true
   },
   {
@@ -256,18 +267,6 @@
     "effects": { "refusal": 2, "disclosure": 2 },
     "flags": { "doNotTurnAroundRevealed": true },
     "mrTrigger": "emily_bleedthrough",
-    "once": true
-  },
-  {
-    "id": "act4_screen_focus_confirmed",
-    "lesson": "act4_kept_eyes_screen",
-    "eventType": "lesson_complete",
-    "matchMode": "contains",
-    "patterns": ["you kept your eyes on the screen"],
-    "response": "SCREEN FOCUS CONFIRMED.",
-    "effects": { "disclosure": 3, "suppression": 1 },
-    "flags": { "keptEyesOnScreen": true },
-    "mrTrigger": "corrective_smile",
     "once": true
   },
   {
@@ -655,7 +654,7 @@
   },
   {
     "id": "pause_act4_watching",
-    "lesson": "act4_type_what_you_hear",
+    "lesson": "act4_listen_type",
     "eventType": "pause",
     "minPauseMs": 3000,
     "matchMode": "contains",
