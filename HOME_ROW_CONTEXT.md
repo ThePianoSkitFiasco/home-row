@@ -2,175 +2,382 @@
 
 ## Current State
 
-**HOME ROW** is now a playable narrative prototype of a cursed retro typing tutor horror game.
+**HOME ROW** is a slow-burn retro typing tutor horror project. The intended player experience no longer begins as a haunted terminal. It should begin as a convincing 1990s children's typing tutor or school computer program, then gradually become unsettling and finally accusatory.
 
-The current build includes:
+Current project reality:
 
-- Acts 1-8 implemented
-- Full typing loop
-- Intent-driven story reactions
-- Memory stats and story flags
-- Mr Fingers state/reaction system
-- Mr Fingers sprite integration with safe text fallback
-- Act-specific visual themes
-- Final statement selection
-- Route-specific ending prose
-- Syntax checks passing
-- JSON data parsing cleanly
+- The narrative skeleton across Acts 1-8 still exists.
+- Acts 1-7 lesson content has been restructured toward a slower reveal.
+- The typing tutor disguise layer is implemented in the main systems.
+- Overt player-facing act labels have been removed in favor of neutral lesson/tutor language.
+- Scoring, WPM, accuracy, grades, stars, and report-card framing exist.
+- Pacing beats such as `revealDelayMs`, `holdMs`, and `lingerResponse` exist in lesson data and scene flow.
+- Debug-only diagnostics still exist, but should remain hidden in normal play.
+- A separate friendly tutor UI mockup scene exists for the new early-game aesthetic direction, while the main narrative runtime logic remains centered in `TypingScene.js`.
 
-The core loop is:
+Core direction:
 
-```text
-Player sees assigned sentence
-Player types character by character
-TypingEngine emits behaviour events
-IntentEngine evaluates events
-MemoryState stats and flags change
-Mr Fingers reacts
-Next lesson or act appears
-Final statement is selected from accumulated memory state
-```
+- Start as a believable retro typing tutor / teaching tool.
+- Make typing feel like a lesson first, not just copying ominous text.
+- Use WPM, accuracy, grades, stars, report cards, and friendly lesson labels.
+- Hide overt act/chapter framing from the player.
+- Let horror leak in through odd lesson text, Mr Fingers responses, correction language, pauses, deletions, and gradual UI degradation.
+- Make the major switch into horror feel earned.
+- Keep the existing narrative structure, but disguise it inside lesson progression.
 
 ## Core Concept
 
-HOME ROW is a cursed 1990s typing tutor built around a grounded traumatic event with ambiguous supernatural preservation.
+HOME ROW is about complicity, memory, and coercion expressed through typing drills.
 
-Years ago, Emily Vale disappeared after being kept behind in the school computer lab by Mr. Calder. The player was another child in the room. They did not harm Emily, but they were present, heard something, and were told to keep typing and not turn around.
+Years ago, Emily Vale disappeared after being kept behind in a school computer room by Mr. Calder. The player was another child in the room. They did not cause the harm, but they were present, heard enough, and kept typing. The program replays that buried event as educational software: lessons, drills, records, corrections, report cards, and final judgement.
 
-The program reveals the truth through typing drills, official records, system logs, sensory memory, Emily's preserved statement, Mr Fingers' protective/repressive behaviour, and a final statement typed by the player.
+The horror should emerge gradually from inside the teaching tool. The player should feel that their hands are participating before they fully understand what they are participating in.
 
-The supernatural layer remains ambiguous. HOME ROW may be a haunted archive, Emily's preserved testimony, the player's suppressed memory, or all of these at once.
+Supernatural explanation remains intentionally ambiguous. HOME ROW may be a haunted program, a repression machine, Emily's persistence inside the software, the player's damaged memory, or some overlap of all four.
 
-## Implemented Act Structure
+## Slow-Burn Act Structure
 
-### Act 1: HOME ROW
+Internal act IDs still exist for logic, data, and endings. They should not be exposed directly in normal player-facing UI.
 
-Theme: friendly typing tutor becoming wrong.
+### Act 1
 
-Purpose: establishes typing obedience, hidden words, and first corruption.
+Player-facing feel: normal home-row typing practice.
 
-### Act 2: STUDENT RECORD
+Implemented lesson arc:
 
-Theme: school admin/database form.
+- `asdf jkl; asdf jkl;`
+- `dad sad lad fall ask`
+- `a lad had a flask`
+- `jill had a salad`
+- `ask dad as fast as you can`
+- `class bell desk hall`
+- `good hands stay on home row`
+- `your hands remember`
 
-Purpose: introduces Emily Vale through official records and contradiction.
+Purpose:
 
-### Act 3: SYSTEM LOG
+- establish a believable tutor opening
+- teach hand position and rhythm
+- allow only the final line to become subtly wrong
 
-Theme: machine log / forensic record.
+### Act 2
 
-Purpose: reveals second workstation and typing pattern match.
+Player-facing feel: school/admin/data-entry practice.
 
-### Act 4: DICTATION MODE
+Implemented lesson arc:
 
-Theme: recovered sensory memory.
+- `school desk class bell`
+- `office form record file`
+- `name date class status`
+- `present absent late excused`
+- `emily vale`
+- `status absent`
+- `absence authorised`
+- `she was not absent`
 
-Purpose: reveals Calder's command, Emily's voice, "do not turn around," and "you heard her say no."
+Purpose:
 
-### Act 5: UNSANCTIONED STATEMENT
+- begin with plausible school and office vocabulary
+- introduce Emily's name in a clerical context
+- end with the first explicit contradiction
 
-Theme: Emily's testimony breaking through.
+### Act 3
 
-Purpose: Emily names herself, describes being kept behind, asks not to be corrected, and asks for the event to be recorded.
+Player-facing feel: computer-skills / system practice.
 
-### Act 6: PROTECTIVE ROUTINE
+Implemented lesson arc:
 
-Theme: Mr Fingers / repression / protection.
+- `file save print copy`
+- `user name login time`
+- `session start session end`
+- `screen focus maintained`
+- `workstation one active`
+- `workstation two active`
+- `teacher override accepted`
+- `typing pattern match found`
 
-Purpose: Mr Fingers breaks character and admits he was trying to help the player forget.
+Purpose:
 
-### Act 7: CORRECTION EXAM
+- shift from classroom practice to computer procedure
+- reveal second-workstation evidence
+- make system language begin functioning as testimony
 
-Theme: official false-record challenge.
+### Act 4
 
-Purpose: confronts denial statements and prepares the final statement.
+Player-facing feel: dictation / listening practice.
 
-### Act 8: FINAL STATEMENT
+Implemented lesson arc:
 
-Theme: stripped-down testimony.
+- `listen and type`
+- `the room is quiet`
+- `the bell has gone`
+- `the classroom is quiet`
+- `mr calder says keep typing`
+- `emily says please wait`
+- `do not turn around`
+- `you heard her say no`
 
-Purpose: selected final line is generated from MemoryState stats and flags, then typed by the player.
+Purpose:
 
-## Current File And Data Structure
+- keep the lesson format plausible at first
+- let room memory and voice memory leak through
+- make the player type sensory evidence rather than just read it
 
-### Scenes
+### Act 5
 
-- `src/scenes/BootScene.js`  
-  Boot/title screen. Starts the typing scene on keypress.
+Player-facing feel: correction practice invaded by Emily.
 
-- `src/scenes/TypingScene.js`  
-  Main game scene. Owns Phaser UI, act loading, lesson display, typing input wiring, visual themes, Mr Fingers presentation, transitions, final statement runtime assignment, and ending screen presentation.
+Implemented lesson arc:
 
-### Systems
+- `correct the sentence`
+- `bad input must be fixed`
+- `this is not a lesson`
+- `my name is emily vale`
+- `i was kept behind`
+- `mr calder locked the door`
+- `please do not correct me`
+- `please record what happened`
 
-- `src/systems/TypingEngine.js`  
-  Tracks typed characters, correctness, mistakes, deletions/backspaces, `previousTyped`, pauses, line completion, and emitted typing events.
+Purpose:
 
-- `src/systems/IntentEngine.js`  
-  Loads `intents.json`, matches `typed`, `deleted`, `pause`, `mistake`, and `lesson_complete` events, applies stat effects, sets flags, emits responses, and triggers Mr Fingers states.
+- shift from ordinary correction practice into direct software invasion
+- make Emily feel active, interrupted, and resistant to correction
+- avoid framing this act as a static formal testimony dump
 
-- `src/systems/MemoryState.js`  
-  Tracks hidden stats and story flags.
+### Act 6
 
-- `src/systems/LessonManager.js`  
-  Loads multiple acts in order and tracks current act/lesson progression.
+Player-facing feel: behaviour / correction routine.
 
-- `src/systems/MrFingersController.js`  
-  Maps Mr Fingers states to labels, sprite keys, and reaction hints.
+Implemented lesson arc:
 
-- `src/systems/EventLog.js`  
-  Keeps a compact debug/event log of fired typing events, intents, stat changes, and flag changes.
+- `quiet hands make fewer errors`
+- `good children finish the exercise`
+- `memory makes errors`
+- `i kept the lesson running`
+- `i corrected the loud parts`
+- `i was trying to help you forget`
+- `you were so good that day`
+- `but you have to type`
 
-- `src/systems/EndingLogic.js`  
-  Selects final statement route from MemoryState stats and flags.
+Purpose:
 
-### Data
+- recast Mr Fingers as a coercive tutor routine
+- move from discipline language into repression language
+- keep ambiguity around whether this is software, teacher logic, or both
 
-- `src/data/lessons.act1.json`  
-  Act 1: HOME ROW.
+### Act 7
 
-- `src/data/lessons.act2.json`  
-  Act 2: STUDENT RECORD.
+Player-facing feel: final typing / correction test.
 
-- `src/data/lessons.act3.json`  
-  Act 3: SYSTEM LOG.
+Current implementation is close to target, but not text-identical. Current lesson arc:
 
-- `src/data/lessons.act4.json`  
-  Act 4: DICTATION MODE.
+- `final accuracy review`
+- `errors must be corrected`
+- `records must be completed`
+- `emily vale was absent`
+- `the classroom was supervised`
+- `no distress was reported`
+- `the second user heard nothing`
+- `the second user kept typing`
 
-- `src/data/lessons.act5.json`  
-  Act 5: UNSANCTIONED STATEMENT.
+Target direction:
 
-- `src/data/lessons.act6.json`  
-  Act 6: PROTECTIVE ROUTINE.
+- final accuracy test
+- correct the record
+- emily vale was absent
+- the classroom was supervised
+- no distress was reported
+- the second user heard nothing
+- the second user kept typing
+- records must be completed
 
-- `src/data/lessons.act7.json`  
-  Act 7: CORRECTION EXAM.
+Purpose:
 
-- `src/data/lessons.final.json`  
-  Act 8: FINAL STATEMENT placeholder lesson. TypingScene replaces the placeholder assigned text at runtime using EndingLogic.
+- turn correction/testing language into official denial
+- pressure the player toward complicity and record completion
 
-- `src/data/intents.json`  
-  All story reactions, stat effects, flag updates, Mr Fingers triggers, and final statement completion intents.
+### Act 8
 
-## Core Systems
+Player-facing feel: final typing test / self-judgement.
+
+Implemented direction:
+
+- uses the runtime-selected final statement from `EndingLogic`
+- strips the experience down to the statement, response, and route-specific prose
+
+Purpose:
+
+- make the player's final typing act feel like self-judgement
+- preserve route logic based on hidden stats and flags
+
+## Typing Tutor Disguise Layer
+
+Implemented tutor-facing systems include:
+
+- `src/systems/ScoringSystem.js`
+- WPM tracking
+- accuracy tracking
+- grades from `A+` to `F`
+- star ratings and Gold Star feedback
+- report card generation
+- player-facing lesson labels
+- player-facing lesson progress such as `Lesson X of 57`
+- neutral typing tutor labels instead of visible act names
+
+Player-facing UI should **not** show:
+
+- `ACT 1`
+- `ACT 2`
+- `STUDENT RECORD`
+- `SYSTEM LOG`
+- `UNSANCTIONED STATEMENT`
+- `PROTECTIVE ROUTINE`
+- `CORRECTION EXAM`
+
+Internal act IDs and internal titles may still exist in code and data.
+
+Current player-facing framing should prefer:
+
+- `HOME ROW`
+- lesson labels from `playerLabel`
+- section names from `playerSection`
+- neutral progress and report-card language
+- tutor mode stamps such as `PRACTICE`, `DRILL`, `DICTATION`, `REVIEW`, `TEST`, `FINAL TEST`
+
+## UI / Aesthetic Direction
+
+HOME ROW should not visually start as a horror terminal.
+
+Desired progression:
+
+### 1. Early Game
+
+- friendly 1990s typing tutor
+- Windows 95 / school lab / edutainment feel
+- light grey or cream backgrounds
+- blue educational accents
+- white or paper-like panels
+- dark readable text
+- friendly Mr Fingers labels
+- neutral response panel hidden or subtle when empty
+
+### 2. Middle Game
+
+- cooler data-entry / system-practice look
+- subtle grid or system feeling may begin
+- still readable and still plausibly educational
+
+### 3. Later Game
+
+- darker backgrounds
+- stronger green / amber / red emphasis
+- corruption, flicker, and more prominent response panel
+- Mr Fingers becomes more coercive
+- Emily breaks the lesson format
+
+### 4. Final Game
+
+- stripped-down final typing test
+- minimal UI noise
+- self-judgement tone
+
+Milestone status:
+
+- `UI-A` is effectively in place as the current direction: the boot screen and early tutor presentation are friendlier than the original haunted-terminal framing.
+- `UI-B` is **not fully implemented across Acts 1-8** and remains the next/current visual milestone: build a full gradient from friendly tutor to corrupted final test across the whole game.
+
+## Mr Fingers Direction
+
+Mr Fingers should not read as a horror watcher from frame one.
+
+Current direction:
+
+- Early: cheesy, friendly typing tutor mascot
+- Middle: corrective teacher voice
+- Later: coercive authority, possibly echoing Calder's logic
+- Final: ambiguous protector / repressor / witness pressure
+
+Keep the ambiguity:
+
+- Do not explicitly confirm Mr Fingers is Mr. Calder.
+- He may echo Calder's logic.
+- He may be software, repression, a ghost-container, a coercive routine, or some overlap.
+
+## Emily Direction
+
+Emily should feel like a ghost in the machine, not a static document.
+
+Current direction:
+
+- she should feel active and present
+- she should fight the lesson and correction format
+- Mr Fingers and system language should try to suppress or correct her
+- Act 5 should feel like software invasion, not merely witness statement playback
+
+## Gameplay / Agency Direction
+
+The design goal is not open-world freedom. The goal is agency through complicity.
+
+Player agency should come through:
+
+- typing
+- hesitation and pausing
+- deletion and backspacing
+- preserving or correcting loaded phrases
+- continuing despite discomfort
+- eventually typing the final self-judgement statement
+
+The player should feel that their hands are part of the horror.
+
+## Current Tuning Systems
+
+Implemented / confirmed:
+
+- generic mistake / deletion / pause stat noise is capped per lesson in `IntentEngine`
+- story-specific lesson intents remain uncapped unless authored otherwise
+- key lessons use pacing beats:
+  - `revealDelayMs`
+  - `holdMs`
+  - `lingerResponse`
+- act transitions have longer breathing room
+- debug / play mode toggle exists
+- stats, flags, event logs, and Memory Match are hidden from normal play and shown only in debug mode
+- Memory Match and diagnostics should remain hidden or clearly secondary in player-facing mode
+
+## Current File Structure Notes
+
+Key files:
+
+- `src/systems/ScoringSystem.js` — typing tutor grades, WPM, accuracy, stars, report cards
+- `src/systems/EndingLogic.js` — final statement route selection and body prose
+- `src/systems/IntentEngine.js` — intent matching and generic stat caps
+- `src/scenes/TypingScene.js` — main narrative UI, lesson flow, pacing beats, visual themes, report cards, debug toggle
+- `src/data/lessons.act1.json` through `src/data/lessons.act7.json` — lesson data with `playerLabel`, `drillType`, `playerSection`, and pacing fields
+- `src/data/lessons.final.json` — runtime-selected final statement placeholder
+- `src/data/intents.json` — story and Mr Fingers response triggers
+
+Additional note:
+
+- `src/scenes/TypingTutorScene.js` currently exists as a coded friendly tutor UI mockup / aesthetic prototype for the new early-game presentation. Treat it as a useful reference for the disguise layer and future corruption targets, not as a replacement for the main narrative scene architecture.
+
+## System Notes
 
 ### TypingEngine
 
-TypingEngine is framework-independent. It tracks:
+Tracks:
 
 - assigned text
 - typed characters
-- per-character correctness
-- mistake count
-- backspace/deletion count
-- `previousTyped` for deletion intent checks
+- correctness
+- mistakes
+- backspaces
+- `previousTyped`
 - pauses
 - total pause time
 - completed lines
-- accuracy
+- lesson-local WPM source timing
 
-It emits events consumed by TypingScene and IntentEngine:
+Events emitted:
 
 - `typed`
 - `mistake`
@@ -180,226 +387,84 @@ It emits events consumed by TypingScene and IntentEngine:
 
 ### IntentEngine
 
-IntentEngine loads `src/data/intents.json` and evaluates events against active lesson id.
+Handles:
 
-It supports:
-
-- typed pattern matching
-- deletion pattern matching using `previousTyped`
-- pause thresholds via `minPauseMs` / `pauseThreshold`
-- mistake reactions
-- lesson completion reactions
+- typed-pattern matching
+- deletion-pattern matching using `previousTyped`
+- pause thresholds
 - once-only intents
 - stat effects
 - flag effects
 - response text
 - Mr Fingers state triggers
-
-### MemoryState
-
-MemoryState tracks hidden stats:
-
-- `obedience`
-- `disclosure`
-- `suppression`
-- `refusal`
-- `witnessAcceptance`
-
-MemoryState also tracks story flags across Acts 2-7 and final statement selection. Important flags include:
-
-- `typingPatternMatched`
-- `heardHerSayNo`
-- `emilyStatementPreserved`
-- `keptTypingStatementAccepted`
-- `recordCompletionStarted`
-- `doNotTurnAroundRevealed`
-- `playerImplicationStarted`
-
-It also contains many act-specific flags for Emily's record, system log reveals, dictation memory, unsanctioned statement progress, Mr Fingers' protective routine, and correction exam state.
+- generic per-lesson caps for mistake/deletion/pause noise
 
 ### LessonManager
 
-LessonManager loads all acts in order and exposes:
+Supports:
 
-- current act
-- current lesson
-- act number
-- lesson number
-- total acts
-- total lessons in current act
-- act/lesson advancement
-
-Current act order:
-
-1. HOME ROW
-2. STUDENT RECORD
-3. SYSTEM LOG
-4. DICTATION MODE
-5. UNSANCTIONED STATEMENT
-6. PROTECTIVE ROUTINE
-7. CORRECTION EXAM
-8. FINAL STATEMENT
-
-### MrFingersController
-
-MrFingersController maps each state to:
-
-- `id`
-- `label`
-- `spriteKey`
-- reaction hints
-
-Current states:
-
-- `idle`
-- `encourage`
-- `mistake_notice`
-- `corrective_smile`
-- `glitch_warning`
-- `angry`
-- `emily_bleedthrough`
-- `protector`
-- `witness`
-
-Expected Mr Fingers sprite path:
-
-```text
-assets/sprites/mr_fingers/
-```
-
-Expected filenames:
-
-- `mr_idle.png`
-- `mr_encourage.png`
-- `mr_mistake_notice.png`
-- `mr_corrective_smile.png`
-- `mr_glitch_warning.png`
-- `mr_angry.png`
-- `mr_emily_bleedthrough.png`
-- `mr_protector.png`
-- `mr_witness.png`
-
-If these assets are missing, gameplay should not break. TypingScene falls back to text/glyph presentation while preserving the readable Mr Fingers state label.
+- current act and lesson tracking
+- global lesson count for player-facing progress
+- ordered act progression through the internal 1-8 structure
 
 ### EndingLogic
 
-EndingLogic selects a final statement route from MemoryState stats and flags.
+Preserve:
 
-Routes:
+- runtime-selected final statement route logic
+- route-specific prose
+- the connection between hidden stats/flags and final judgement tone
 
-| routeId | Title | Statement |
-|---|---|---|
-| `witness_statement` | WITNESS STATEMENT | `I WAS A CHILD AND I WAS THERE` |
-| `audio_memory` | AUDIO MEMORY | `I HEARD HER SAY NO` |
-| `completed_exercise` | COMPLETED EXERCISE | `I KEPT TYPING` |
-| `sightline_error` | SIGHTLINE ERROR | `I SHOULD HAVE TURNED AROUND` |
-| `gold_star` | GOLD STAR | `I DID NOT SEE ANYTHING` |
-| `incomplete_statement` | INCOMPLETE STATEMENT | `I KEPT TYPING` |
-
-Each route returns:
-
-- `routeId`
-- `title`
-- `statement`
-- `response`
-- `body`
-
-The final route is selected when Act 8 starts. The player must type the selected statement using the same TypingEngine loop. Completing the final statement shows an authored ending screen with route title, final statement, response, body prose, Memory Match, stats, and flags.
-
-## Visual Theme System
-
-TypingScene has act-specific visual themes. Each theme defines:
-
-- primary color
-- accent color
-- warning/glitch color
-- panel label
-- visible mode stamp
-- subtle background grid/overlay styling
-
-Panel labels: all acts now use `TYPE:` as the panel label to maintain the typing tutor disguise.
-
-Mode stamps:
-
-| Act | Mode Stamp |
-|---|---|
-| Act 1 | `PRACTICE` |
-| Act 2 | `PRACTICE` |
-| Act 3 | `DRILL` |
-| Act 4 | `DICTATION` |
-| Act 5 | `PRACTICE` |
-| Act 6 | `REVIEW` |
-| Act 7 | `TEST` |
-| Act 8 | `FINAL TEST` |
-
-The theme is applied to:
-
-- main title/header text
-- progress text
-- panel borders
-- assigned sentence panel label
-- response/narrative text accent
-- mode stamp
-- transition overlay color
-- subtle background grid/overlay
-
-The visual pass is intentionally restrained. Correct characters, mistakes, debug text, and event logs must remain readable.
-
-## Current Development Rules
-
-### Do Not Break
+## Do Not Break
 
 Do not:
 
-- rewrite TypingScene from scratch
-- remove existing act progression
+- restore overt act/chapter labels in player-facing UI
+- make the opening dark green/black terminal horror again
+- reveal Emily / Calder / absence contradictions too early
+- show stats / flags / event log in normal play
+- remove the scoring / report card layer
+- remove WPM / accuracy / grades / stars
+- remove generic intent caps
+- remove pacing beats
 - remove `previousTyped` deletion handling
 - remove final statement route logic
-- remove Mr Fingers fallback behaviour
-- remove debug/event log tools
-- add new story acts before tuning/playtest
-- implement desktop/save/audio unless explicitly requested
+- rewrite `TypingScene` from scratch
+- add fake desktop / save / audio before the typing tutor disguise is solid
 
 Preserve:
 
-- Acts 1-8 progression
-- intent firing
-- stats/flags
-- final statement selection
-- route-specific ending body text
-- visual themes
-- Mr Fingers state mapping
-- syntax-valid JS and clean JSON
-
-## Typing Tutor Disguise Layer (Milestone 14)
-
-Player-facing labels have been replaced. The player now sees:
-
-- Title: always `HOME ROW` (not `ACT X: TITLE`)
-- Lesson names: `Lesson 1: Home Row Keys` through `Final Typing Test` (from `playerLabel` fields in lesson JSON)
-- Progress: `Lesson 12 of 57` (continuous count, not `ACT 2 LINE 4 / 8`)
-- Mode stamps: `PRACTICE` / `DRILL` / `DICTATION` / `REVIEW` / `TEST` / `FINAL TEST`
-- Panel label: `TYPE:` for all acts
-- Section transitions: neutral text like `Next section: Data Entry Practice`
-- Completion screen: Progress Report with WPM, accuracy, grade, star rating, Mr Fingers comment
-
-New systems:
-
-- `src/systems/ScoringSystem.js` — calculates WPM, accuracy grade (A+ through F), star rating (1-3 or Gold Star), and Mr Fingers grade comment
-- `TypingEngine` now tracks WPM via `lessonStartTime`
-- `LessonManager` now has `getGlobalLessonNumber()` and `getGlobalTotalLessons()`
-
-Internal act IDs, lesson IDs, intents, flags, stats, and ending logic are unchanged.
-
-Each lesson JSON now includes `playerLabel`, `drillType`, and each act includes `playerSection`. Original `displayTitle` and `title` fields are preserved for internal use.
+- typing tutor disguise
+- slow-burn reveal
+- internal Acts 1-8 progression
+- final statement system
+- Mr Fingers state system
+- Emily ghost-in-machine direction
+- debug toggle
+- validation-clean JS and JSON
 
 ## Next Suggested Milestone
 
-### Milestone 14 Steps 5-8: Game Feel + Drill Expansion
+### UI-B: Visual Gradient
 
-Focus:
+Current next milestone:
 
-- add report card screen between sections (Step 5)
-- expand Act 1 with real typing drills — key combos, word clusters, short phrases (Step 6)
-- add streak/reward visuals and satisfying correct-typing feedback (Step 7)
-- add subtle wrongness to later section transitions (Step 8)
+- make Act 1 friendly
+- make Act 2 formal but clean
+- make Act 3 transitional
+- make Act 4 feel like atmospheric leakage
+- make Act 5 visibly corrupted / Emily-invaded
+- make Act 6 coercive
+- make Act 7 clinical final test
+- make Act 8 stripped down
+
+After UI-B, the next pass should be a full playtest + pacing / reachability pass:
+
+- play a complete run
+- verify the slow-burn actually lands
+- verify endings are still reachable after the restructure
+- verify scoring still feels fun rather than ornamental
+- check whether lessons are still too long
+- check whether the early UI really passes as a typing tutor
+- check whether Act 5 feels like Emily is present
+- check whether Act 8 feels self-judging
