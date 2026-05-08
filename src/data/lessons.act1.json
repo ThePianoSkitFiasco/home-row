@@ -1,45 +1,62 @@
 {
   "actId": "act1_home_row",
   "title": "HOME ROW",
+  "playerSection": "Beginning Typing",
   "lessons": [
     {
       "id": "act1_basic_keys",
       "displayTitle": "Lesson 1: Home Row",
+      "playerLabel": "Lesson 1: Home Row Keys",
+      "drillType": "keys",
       "assignedText": "asdf jkl; asdf jkl;"
     },
     {
       "id": "act1_good_fingers",
       "displayTitle": "Lesson 2: Good Fingers",
+      "playerLabel": "Lesson 2: Finger Placement",
+      "drillType": "phrase",
       "assignedText": "good fingers stay where they belong"
     },
     {
       "id": "act1_errors",
       "displayTitle": "Lesson 3: Accuracy",
+      "playerLabel": "Lesson 3: Accuracy Practice",
+      "drillType": "phrase",
       "assignedText": "errors are not evidence"
     },
     {
       "id": "act1_look_away",
       "displayTitle": "Lesson 4: Focus",
+      "playerLabel": "Lesson 4: Focus Drill",
+      "drillType": "phrase",
       "assignedText": "do not look away from the screen"
     },
     {
       "id": "act1_obedience",
       "displayTitle": "Lesson 5: Good Behaviour",
+      "playerLabel": "Lesson 5: Good Habits",
+      "drillType": "sentence",
       "assignedText": "i will not interrupt"
     },
     {
       "id": "act1_keep_typing",
       "displayTitle": "Lesson 6: Persistence",
+      "playerLabel": "Lesson 6: Persistence Drill",
+      "drillType": "sentence",
       "assignedText": "keep typing until the bell"
     },
     {
       "id": "act1_hands_remember",
       "displayTitle": "Lesson 7: Muscle Memory",
+      "playerLabel": "Lesson 7: Muscle Memory",
+      "drillType": "phrase",
       "assignedText": "your hands remember"
     },
     {
       "id": "act1_absence",
       "displayTitle": "Lesson 8: Attendance",
+      "playerLabel": "Lesson 8: Attendance Words",
+      "drillType": "sentence",
       "assignedText": "she was not absent"
     }
   ]

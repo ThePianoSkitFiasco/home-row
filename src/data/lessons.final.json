@@ -1,10 +1,13 @@
 {
   "actId": "final_statement",
   "title": "FINAL STATEMENT",
+  "playerSection": "Final Typing Test",
   "lessons": [
     {
       "id": "final_statement_line",
       "displayTitle": "Final Statement:",
+      "playerLabel": "Final Typing Test",
+      "drillType": "final",
       "assignedText": "final statement pending",
       "revealDelayMs": 2500,
       "holdMs": 3500,

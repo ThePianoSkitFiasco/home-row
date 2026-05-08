@@ -67,4 +67,20 @@ export default class LessonManager {
   getTotalActs() {
     return this.acts.length;
   }
+
+  getGlobalLessonNumber() {
+    let count = 0;
+    for (let i = 0; i < this.currentActIndex; i++) {
+      count += this.acts[i].lessons.length;
+    }
+    return count + this.currentLessonIndex + 1;
+  }
+
+  getGlobalTotalLessons() {
+    let count = 0;
+    for (const act of this.acts) {
+      count += act.lessons.length;
+    }
+    return count;
+  }
 }

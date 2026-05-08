@@ -11,6 +11,7 @@ export default class TypingEngine {
     this.pauseThreshold = 3000;
     this.isComplete = false;
     this.correctStreak = 0;
+    this.lessonStartTime = 0;
 
     this.onEvent = null;
   }
@@ -21,6 +22,7 @@ export default class TypingEngine {
     this.isComplete = false;
     this.lastKeyTime = Date.now();
     this.correctStreak = 0;
+    this.lessonStartTime = Date.now();
   }
 
   handleKey(event) {
@@ -94,13 +96,18 @@ export default class TypingEngine {
   }
 
   getStats() {
+    const elapsedMin = this.lessonStartTime ? (Date.now() - this.lessonStartTime) / 60000 : 0;
+    const words = this.correctCount / 5;
+    const wpm = elapsedMin > 0.01 ? Math.round(words / elapsedMin) : 0;
+
     return {
       correct: this.correctCount,
       mistakes: this.mistakeCount,
       backspaces: this.backspaceCount,
       pauseTime: this.totalPauseTime,
       completedLines: this.completedLines,
-      accuracy: this.getAccuracy()
+      accuracy: this.getAccuracy(),
+      wpm: wpm
     };
   }
 

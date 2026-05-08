@@ -5,6 +5,7 @@ import LessonManager from '../systems/LessonManager.js';
 import MrFingersController from '../systems/MrFingersController.js';
 import EventLog from '../systems/EventLog.js';
 import { getFinalStatement } from '../systems/EndingLogic.js';
+import ScoringSystem from '../systems/ScoringSystem.js';
 
 const COLORS = {
   bg: '#1a1a2e',
@@ -45,7 +46,7 @@ const ACT_THEMES = {
     accent: '#bbffcc',
     warning: '#ffcc00',
     panelLabel: 'TYPE:',
-    modeStamp: 'LESSON MODE',
+    modeStamp: 'PRACTICE',
     bg: '#17261d',
     gridAlpha: 0.08,
     overlayAlpha: 0.03
@@ -54,8 +55,8 @@ const ACT_THEMES = {
     primary: '#66e8ff',
     accent: '#d8eeee',
     warning: '#ff3355',
-    panelLabel: 'RECORD FIELD:',
-    modeStamp: 'RECORD MODE',
+    panelLabel: 'TYPE:',
+    modeStamp: 'PRACTICE',
     bg: '#12232a',
     gridAlpha: 0.1,
     overlayAlpha: 0.04
@@ -64,8 +65,8 @@ const ACT_THEMES = {
     primary: '#7dff9a',
     accent: '#aeb8b8',
     warning: '#ffff55',
-    panelLabel: 'LOG ENTRY:',
-    modeStamp: 'LOG MODE',
+    panelLabel: 'TYPE:',
+    modeStamp: 'DRILL',
     bg: '#111f18',
     gridAlpha: 0.12,
     overlayAlpha: 0.03
@@ -74,8 +75,8 @@ const ACT_THEMES = {
     primary: '#7bbf79',
     accent: '#ffbf66',
     warning: '#ff44aa',
-    panelLabel: 'DICTATION:',
-    modeStamp: 'DICTATION MODE',
+    panelLabel: 'TYPE:',
+    modeStamp: 'DICTATION',
     bg: '#191a24',
     gridAlpha: 0.06,
     overlayAlpha: 0.05
@@ -84,8 +85,8 @@ const ACT_THEMES = {
     primary: '#e6ffee',
     accent: '#ff66cc',
     warning: '#ff3344',
-    panelLabel: 'STATEMENT:',
-    modeStamp: 'UNSANCTIONED INPUT',
+    panelLabel: 'TYPE:',
+    modeStamp: 'PRACTICE',
     bg: '#211625',
     gridAlpha: 0.08,
     overlayAlpha: 0.06
@@ -94,8 +95,8 @@ const ACT_THEMES = {
     primary: '#c8e36b',
     accent: '#ddd06a',
     warning: '#ff6633',
-    panelLabel: 'ROUTINE:',
-    modeStamp: 'PROTECTIVE ROUTINE',
+    panelLabel: 'TYPE:',
+    modeStamp: 'REVIEW',
     bg: '#222212',
     gridAlpha: 0.09,
     overlayAlpha: 0.05
@@ -104,8 +105,8 @@ const ACT_THEMES = {
     primary: '#e8fff0',
     accent: '#ff5555',
     warning: '#ff2222',
-    panelLabel: 'EXAM ITEM:',
-    modeStamp: 'CORRECTION EXAM',
+    panelLabel: 'TYPE:',
+    modeStamp: 'TEST',
     bg: '#201818',
     gridAlpha: 0.07,
     overlayAlpha: 0.04
@@ -114,8 +115,8 @@ const ACT_THEMES = {
     primary: '#eef8ee',
     accent: '#f0c878',
     warning: '#aa3333',
-    panelLabel: 'FINAL STATEMENT:',
-    modeStamp: 'FINAL STATEMENT',
+    panelLabel: 'TYPE:',
+    modeStamp: 'FINAL TEST',
     bg: '#111513',
     gridAlpha: 0.035,
     overlayAlpha: 0.02
@@ -449,8 +450,8 @@ export default class TypingScene extends Phaser.Scene {
     }
 
     this._applyActTheme(theme);
-    this.titleText.setText(`ACT ${this.lessonManager.getActNumber()}: ${this.lessonManager.getActTitle()}`);
-    this.lessonTitle.setText(lesson.displayTitle);
+    this.titleText.setText('HOME ROW');
+    this.lessonTitle.setText(lesson.playerLabel || lesson.displayTitle);
     this.typingEngine.loadLine(assignedText);
     this.typedTextDisplay.setText('');
     this._renderTypedText();
@@ -527,12 +528,8 @@ export default class TypingScene extends Phaser.Scene {
     if (isFinalStatement) {
       lines = this._buildFinalEndingLines(stats, snap);
     } else {
-      lines = [
-        `ACT ${actNum} COMPLETE`,
-        '',
-        `Accuracy: ${stats.accuracy}%`,
-        `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`
-      ];
+      const report = ScoringSystem.formatReportCard(stats);
+      lines = [...report.lines];
     }
 
     if (!isFinalStatement && hasNextAct) {
@@ -596,12 +593,11 @@ export default class TypingScene extends Phaser.Scene {
       '',
       ending.response,
       '',
-      ending.body,
-      '',
-      `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`
+      ending.body
     ];
 
     if (this.debugVisible) {
+      lines.push('', `Memory Match: ${Math.min(99, 31 + snap.stats.disclosure * 4)}%`);
       const statLines = Object.entries(snap.stats)
         .map(([k, v]) => `${k}: ${v}`);
       const flagLines = Object.entries(snap.flags)
@@ -624,57 +620,18 @@ export default class TypingScene extends Phaser.Scene {
 
   _getActTransitionLines(nextActNumber) {
     const nextAct = this.lessonManager.acts[nextActNumber - 1];
+    const section = nextAct && nextAct.playerSection;
 
-    if (nextAct && nextAct.actId === 'act3_system_log') {
+    if (section) {
       return [
-        'ACCESSING SYSTEM LOG...',
-        'DO NOT REMOVE YOUR HANDS FROM THE KEYS.'
-      ];
-    }
-
-    if (nextAct && nextAct.actId === 'act4_dictation_mode') {
-      return [
-        'ENTERING DICTATION MODE...',
-        'TYPE ONLY WHAT YOU ARE GIVEN.',
-        'UNAPPROVED AUDIO WILL BE CORRECTED.'
-      ];
-    }
-
-    if (nextAct && nextAct.actId === 'act5_unsanctioned_statement') {
-      return [
-        'UNSANCTIONED INPUT DETECTED...',
-        'CORRECTION MODE ENABLED.',
-        'PLEASE REMOVE ALL UNAPPROVED STATEMENTS.'
-      ];
-    }
-
-    if (nextAct && nextAct.actId === 'act6_protective_routine') {
-      return [
-        'STATEMENT PRESERVED.',
-        'PROTECTIVE ROUTINE INTERRUPTED.',
-        'MR FINGERS REQUIRES YOUR ATTENTION.'
-      ];
-    }
-
-    if (nextAct && nextAct.actId === 'act7_correction_exam') {
-      return [
-        'PROTECTIVE ROUTINE COMPLETE.',
-        'BEGIN CORRECTION EXAM.',
-        'REMOVE ALL ERRORS FROM THE RECORD.'
-      ];
-    }
-
-    if (nextAct && nextAct.actId === 'final_statement') {
-      return [
-        'CORRECTION EXAM COMPLETE.',
-        'FINAL STATEMENT REQUIRED.',
-        'TYPE CAREFULLY.'
+        `Next section: ${section}`,
+        'Loading exercises...'
       ];
     }
 
     return [
-      'LOADING STUDENT RECORD...',
-      'PLEASE KEEP YOUR HANDS ON HOME ROW.'
+      'Loading next lesson...',
+      'Keep your hands on home row.'
     ];
   }
 
@@ -901,10 +858,10 @@ export default class TypingScene extends Phaser.Scene {
   _updateStats() {
     const stats = this.typingEngine.getStats();
     this.statsText.setText(
-      `CORRECT: ${stats.correct}  MISTAKES: ${stats.mistakes}  BACKSPACES: ${stats.backspaces}  ACCURACY: ${stats.accuracy}%`
+      `WPM: ${stats.wpm}  ACCURACY: ${stats.accuracy}%  CORRECT: ${stats.correct}  MISTAKES: ${stats.mistakes}`
     );
     this.progressText.setText(
-      `ACT ${this.lessonManager.getActNumber()}  LINE ${this.lessonManager.getLessonNumber()} / ${this.lessonManager.getTotalLessons()}`
+      `Lesson ${this.lessonManager.getGlobalLessonNumber()} of ${this.lessonManager.getGlobalTotalLessons()}`
     );
   }
 

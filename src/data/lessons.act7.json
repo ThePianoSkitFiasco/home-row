@@ -1,10 +1,13 @@
 {
   "actId": "act7_correction_exam",
   "title": "CORRECTION EXAM",
+  "playerSection": "Accuracy Test",
   "lessons": [
     {
       "id": "act7_emily_absent",
       "displayTitle": "Exam 1:",
+      "playerLabel": "Lesson 49: Test Entry 1",
+      "drillType": "test",
       "assignedText": "emily vale was absent",
       "revealDelayMs": 1500,
       "holdMs": 2500,
@@ -13,21 +16,29 @@
     {
       "id": "act7_classroom_supervised",
       "displayTitle": "Exam 2:",
+      "playerLabel": "Lesson 50: Test Entry 2",
+      "drillType": "test",
       "assignedText": "the classroom was supervised"
     },
     {
       "id": "act7_no_distress",
       "displayTitle": "Exam 3:",
+      "playerLabel": "Lesson 51: Test Entry 3",
+      "drillType": "test",
       "assignedText": "no distress was reported"
     },
     {
       "id": "act7_saw_nothing",
       "displayTitle": "Exam 4:",
+      "playerLabel": "Lesson 52: Test Entry 4",
+      "drillType": "test",
       "assignedText": "the second user saw nothing"
     },
     {
       "id": "act7_heard_nothing",
       "displayTitle": "Exam 5:",
+      "playerLabel": "Lesson 53: Test Entry 5",
+      "drillType": "test",
       "assignedText": "the second user heard nothing",
       "revealDelayMs": 1800,
       "holdMs": 3000,
@@ -36,16 +47,22 @@
     {
       "id": "act7_kept_typing",
       "displayTitle": "Exam 6:",
+      "playerLabel": "Lesson 54: Test Entry 6",
+      "drillType": "test",
       "assignedText": "the second user kept typing"
     },
     {
       "id": "act7_errors_corrected",
       "displayTitle": "Exam 7:",
+      "playerLabel": "Lesson 55: Test Entry 7",
+      "drillType": "test",
       "assignedText": "errors must be corrected"
     },
     {
       "id": "act7_records_completed",
       "displayTitle": "Exam 8:",
+      "playerLabel": "Lesson 56: Test Entry 8",
+      "drillType": "test",
       "assignedText": "records must be completed",
       "revealDelayMs": 1800,
       "holdMs": 3000,

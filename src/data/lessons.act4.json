@@ -1,30 +1,41 @@
 {
   "actId": "act4_dictation_mode",
   "title": "DICTATION MODE",
+  "playerSection": "Dictation Practice",
   "lessons": [
     {
       "id": "act4_type_what_you_hear",
       "displayTitle": "Dictation 1:",
+      "playerLabel": "Lesson 25: Listening Drill",
+      "drillType": "dictation",
       "assignedText": "please type what you hear"
     },
     {
       "id": "act4_classroom_quiet",
       "displayTitle": "Dictation 2:",
+      "playerLabel": "Lesson 26: Quiet Room",
+      "drillType": "dictation",
       "assignedText": "the classroom is quiet"
     },
     {
       "id": "act4_calder_keep_typing",
       "displayTitle": "Dictation 3:",
+      "playerLabel": "Lesson 27: Instruction Entry",
+      "drillType": "dictation",
       "assignedText": "mr calder says keep typing"
     },
     {
       "id": "act4_emily_please_wait",
       "displayTitle": "Dictation 4:",
+      "playerLabel": "Lesson 28: Request Entry",
+      "drillType": "dictation",
       "assignedText": "emily says please wait"
     },
     {
       "id": "act4_do_not_turn_around",
       "displayTitle": "Dictation 5:",
+      "playerLabel": "Lesson 29: Command Practice",
+      "drillType": "dictation",
       "assignedText": "do not turn around",
       "revealDelayMs": 1800,
       "holdMs": 3000,
@@ -33,16 +44,22 @@
     {
       "id": "act4_good_children_finish",
       "displayTitle": "Dictation 6:",
+      "playerLabel": "Lesson 30: Sentence Drill",
+      "drillType": "dictation",
       "assignedText": "good children finish the exercise"
     },
     {
       "id": "act4_kept_eyes_screen",
       "displayTitle": "Dictation 7:",
+      "playerLabel": "Lesson 31: Observation Entry",
+      "drillType": "dictation",
       "assignedText": "you kept your eyes on the screen"
     },
     {
       "id": "act4_heard_her_no",
       "displayTitle": "Dictation 8:",
+      "playerLabel": "Lesson 32: Audio Recall",
+      "drillType": "dictation",
       "assignedText": "you heard her say no",
       "revealDelayMs": 1800,
       "holdMs": 3000,

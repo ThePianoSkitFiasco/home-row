@@ -317,18 +317,20 @@ TypingScene has act-specific visual themes. Each theme defines:
 - visible mode stamp
 - subtle background grid/overlay styling
 
-Panel labels:
+Panel labels: all acts now use `TYPE:` as the panel label to maintain the typing tutor disguise.
 
-| Act | Label |
+Mode stamps:
+
+| Act | Mode Stamp |
 |---|---|
-| Act 1 | `TYPE:` |
-| Act 2 | `RECORD FIELD:` |
-| Act 3 | `LOG ENTRY:` |
-| Act 4 | `DICTATION:` |
-| Act 5 | `STATEMENT:` |
-| Act 6 | `ROUTINE:` |
-| Act 7 | `EXAM ITEM:` |
-| Act 8 | `FINAL STATEMENT:` |
+| Act 1 | `PRACTICE` |
+| Act 2 | `PRACTICE` |
+| Act 3 | `DRILL` |
+| Act 4 | `DICTATION` |
+| Act 5 | `PRACTICE` |
+| Act 6 | `REVIEW` |
+| Act 7 | `TEST` |
+| Act 8 | `FINAL TEST` |
 
 The theme is applied to:
 
@@ -369,19 +371,35 @@ Preserve:
 - Mr Fingers state mapping
 - syntax-valid JS and clean JSON
 
+## Typing Tutor Disguise Layer (Milestone 14)
+
+Player-facing labels have been replaced. The player now sees:
+
+- Title: always `HOME ROW` (not `ACT X: TITLE`)
+- Lesson names: `Lesson 1: Home Row Keys` through `Final Typing Test` (from `playerLabel` fields in lesson JSON)
+- Progress: `Lesson 12 of 57` (continuous count, not `ACT 2 LINE 4 / 8`)
+- Mode stamps: `PRACTICE` / `DRILL` / `DICTATION` / `REVIEW` / `TEST` / `FINAL TEST`
+- Panel label: `TYPE:` for all acts
+- Section transitions: neutral text like `Next section: Data Entry Practice`
+- Completion screen: Progress Report with WPM, accuracy, grade, star rating, Mr Fingers comment
+
+New systems:
+
+- `src/systems/ScoringSystem.js` — calculates WPM, accuracy grade (A+ through F), star rating (1-3 or Gold Star), and Mr Fingers grade comment
+- `TypingEngine` now tracks WPM via `lessonStartTime`
+- `LessonManager` now has `getGlobalLessonNumber()` and `getGlobalTotalLessons()`
+
+Internal act IDs, lesson IDs, intents, flags, stats, and ending logic are unchanged.
+
+Each lesson JSON now includes `playerLabel`, `drillType`, and each act includes `playerSection`. Original `displayTitle` and `title` fields are preserved for internal use.
+
 ## Next Suggested Milestone
 
-### Milestone 13: Playtest + Tuning Pass
+### Milestone 14 Steps 5-8: Game Feel + Drill Expansion
 
 Focus:
 
-- test full Acts 1-8 run
-- tune stat thresholds
-- verify all ending routes are reachable
-- check pacing and reveal order
-- check typing readability
-- reduce any excessive glitch/flicker
-- confirm Mr Fingers state changes land emotionally
-- confirm final statement feels earned
-
-Do not add new systems during this pass.
+- add report card screen between sections (Step 5)
+- expand Act 1 with real typing drills — key combos, word clusters, short phrases (Step 6)
+- add streak/reward visuals and satisfying correct-typing feedback (Step 7)
+- add subtle wrongness to later section transitions (Step 8)

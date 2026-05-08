@@ -1,45 +1,62 @@
 {
   "actId": "act2_student_record",
   "title": "STUDENT RECORD",
+  "playerSection": "Data Entry Practice",
   "lessons": [
     {
       "id": "act2_emily_name",
       "displayTitle": "Record 1: Student Name",
+      "playerLabel": "Lesson 9: Name Entry",
+      "drillType": "entry",
       "assignedText": "emily vale"
     },
     {
       "id": "act2_student_record",
       "displayTitle": "Record 2: Document Type",
+      "playerLabel": "Lesson 10: Document Types",
+      "drillType": "entry",
       "assignedText": "student record"
     },
     {
       "id": "act2_status_absent",
       "displayTitle": "Record 3: Status",
+      "playerLabel": "Lesson 11: Status Fields",
+      "drillType": "entry",
       "assignedText": "status absent"
     },
     {
       "id": "act2_absence_authorised",
       "displayTitle": "Record 4: Authorisation",
+      "playerLabel": "Lesson 12: Authorisation Entry",
+      "drillType": "entry",
       "assignedText": "absence authorised"
     },
     {
       "id": "act2_date_unknown",
       "displayTitle": "Record 5: Last Attendance",
+      "playerLabel": "Lesson 13: Date Fields",
+      "drillType": "entry",
       "assignedText": "date of last attendance unknown"
     },
     {
       "id": "act2_no_irregularity",
       "displayTitle": "Record 6: Incident Report",
+      "playerLabel": "Lesson 14: Report Entry",
+      "drillType": "entry",
       "assignedText": "no irregularity was recorded"
     },
     {
       "id": "act2_classroom_supervised",
       "displayTitle": "Record 7: Supervision",
+      "playerLabel": "Lesson 15: Supervision Notes",
+      "drillType": "entry",
       "assignedText": "the classroom remained supervised"
     },
     {
       "id": "act2_she_not_absent",
       "displayTitle": "Record 8: Correction",
+      "playerLabel": "Lesson 16: Correction Entry",
+      "drillType": "entry",
       "assignedText": "she was not absent",
       "revealDelayMs": 1200,
       "holdMs": 2500,
