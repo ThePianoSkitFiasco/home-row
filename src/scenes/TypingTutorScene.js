@@ -1,3 +1,4 @@
+// Visual prototype/reference only. The real authored runtime lives in TypingScene.
 const PALETTE = {
   background: 0xf4e6bd,
   panel: 0xfff7df,

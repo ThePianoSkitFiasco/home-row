@@ -53,6 +53,97 @@ const MR_STATE_COLORS = {
 
 const GLITCH_COLORS = ['#ff0044', '#ff3300', '#cc00ff', '#ffffff', '#ffff00'];
 const MR_FINGERS_SPRITE_PATH = 'assets/sprites/mr_fingers/';
+const SHOW_DEV_TOUCH_CONTROLS = true;
+const TUTOR_PALETTE = {
+  background: 0xf4e6bd,
+  panel: 0xfff7df,
+  panelShadow: 0xd2c29d,
+  titleBlue: 0x245fa8,
+  titleBlueDark: 0x123f72,
+  border: 0x7f765f,
+  text: '#202838',
+  textMuted: '#4c5872',
+  softBlueLine: 0xb4c9ea,
+  keyFace: 0xf7efd9,
+  keyShadow: 0xc1b38f,
+  keyActive: 0xf5d85a,
+  keyHome: 0xf2cf3a,
+  footerBlue: '#1c4c92',
+  footerMuted: '#4a4d56'
+};
+const KEY_LAYOUT = [
+  [
+    { label: '`', w: 28, value: '`' },
+    { label: '1', w: 30, value: '1' },
+    { label: '2', w: 30, value: '2' },
+    { label: '3', w: 30, value: '3' },
+    { label: '4', w: 30, value: '4' },
+    { label: '5', w: 30, value: '5' },
+    { label: '6', w: 30, value: '6' },
+    { label: '7', w: 30, value: '7' },
+    { label: '8', w: 30, value: '8' },
+    { label: '9', w: 30, value: '9' },
+    { label: '0', w: 30, value: '0' },
+    { label: '-', w: 28, value: '-' },
+    { label: '=', w: 28, value: '=' },
+    { label: 'Bksp', w: 64, value: 'backspace', sm: true }
+  ],
+  [
+    { label: 'Tab', w: 44, value: 'tab', sm: true },
+    { label: 'Q', w: 29, value: 'q' },
+    { label: 'W', w: 29, value: 'w' },
+    { label: 'E', w: 29, value: 'e' },
+    { label: 'R', w: 29, value: 'r' },
+    { label: 'T', w: 29, value: 't' },
+    { label: 'Y', w: 29, value: 'y' },
+    { label: 'U', w: 29, value: 'u' },
+    { label: 'I', w: 29, value: 'i' },
+    { label: 'O', w: 29, value: 'o' },
+    { label: 'P', w: 29, value: 'p' },
+    { label: '[', w: 28, value: '[' },
+    { label: ']', w: 28, value: ']' },
+    { label: '\\', w: 44, value: '\\' }
+  ],
+  [
+    { label: 'Caps', w: 54, value: 'caps', sm: true },
+    { label: 'A', w: 29, value: 'a' },
+    { label: 'S', w: 29, value: 's' },
+    { label: 'D', w: 29, value: 'd' },
+    { label: 'F', w: 29, value: 'f' },
+    { label: 'G', w: 29, value: 'g' },
+    { label: 'H', w: 29, value: 'h' },
+    { label: 'J', w: 29, value: 'j' },
+    { label: 'K', w: 29, value: 'k' },
+    { label: 'L', w: 29, value: 'l' },
+    { label: ';', w: 29, value: ';' },
+    { label: "'", w: 28, value: "'" },
+    { label: 'Enter', w: 60, value: 'enter', sm: true }
+  ],
+  [
+    { label: 'Shift', w: 70, value: 'shift', sm: true },
+    { label: 'Z', w: 29, value: 'z' },
+    { label: 'X', w: 29, value: 'x' },
+    { label: 'C', w: 29, value: 'c' },
+    { label: 'V', w: 29, value: 'v' },
+    { label: 'B', w: 29, value: 'b' },
+    { label: 'N', w: 29, value: 'n' },
+    { label: 'M', w: 29, value: 'm' },
+    { label: ',', w: 29, value: ',' },
+    { label: '.', w: 29, value: '.' },
+    { label: '/', w: 29, value: '/' },
+    { label: 'Shift', w: 83, value: 'shift', sm: true }
+  ],
+  [
+    { label: 'Ctrl', w: 44, value: 'ctrl', sm: true },
+    { label: 'Win', w: 36, value: 'win', sm: true },
+    { label: 'Alt', w: 40, value: 'alt', sm: true },
+    { label: '', w: 202, value: ' ' },
+    { label: 'Alt', w: 40, value: 'alt', sm: true },
+    { label: 'Win', w: 36, value: 'win', sm: true },
+    { label: 'Ctrl', w: 44, value: 'ctrl', sm: true }
+  ]
+];
+const HOME_ROW_KEYS = new Set(['a', 's', 'd', 'f', 'j', 'k', 'l', ';']);
 
 const ACT_THEMES = {
   act1_home_row: {
@@ -226,6 +317,31 @@ function hexToNumber(hex) {
   return Phaser.Display.Color.HexStringToColor(hex).color;
 }
 
+function normalizeKey(key) {
+  if (!key) return null;
+  if (key === ' ') return ' ';
+  if (key.length === 1) return key.toLowerCase();
+  const map = {
+    backspace: 'backspace',
+    tab: 'tab',
+    capslock: 'caps',
+    enter: 'enter',
+    shift: 'shift',
+    control: 'ctrl',
+    alt: 'alt',
+    meta: 'win'
+  };
+  return map[key.toLowerCase()] || null;
+}
+
+function formatDuration(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+  const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
 export default class TypingScene extends Phaser.Scene {
   constructor() {
     super({ key: 'TypingScene' });
@@ -286,6 +402,12 @@ export default class TypingScene extends Phaser.Scene {
     this.finalEnding = null;
     this.debugVisible = false;
     this.inputLocked = false;
+    this.activeKeyValue = null;
+    this.keyboardKeys = new Map();
+    this.typedRichText = [];
+    this.sessionStartTime = Date.now();
+    this.pendingContinueHandler = null;
+    this.continueEnabled = false;
 
     this._buildUI();
     this._wireEvents();
@@ -302,166 +424,361 @@ export default class TypingScene extends Phaser.Scene {
         this._renderTypedText();
       }
     });
+    this.time.addEvent({
+      delay: 1000,
+      loop: true,
+      callback: () => this._updateFooterClock()
+    });
   }
 
   // --- UI CONSTRUCTION ---
 
+  _createPanel(x, y, w, h, opts = {}) {
+    const fill = opts.fill ?? TUTOR_PALETTE.panel;
+    const stroke = opts.stroke ?? TUTOR_PALETTE.border;
+    const shadow = opts.shadow !== false;
+
+    if (shadow) {
+      this.add.rectangle(x + w / 2 + 3, y + h / 2 + 3, w, h, TUTOR_PALETTE.panelShadow).setOrigin(0.5);
+    }
+
+    return this.add.rectangle(x + w / 2, y + h / 2, w, h, fill)
+      .setStrokeStyle(opts.lineWidth ?? 2, stroke)
+      .setOrigin(0.5);
+  }
+
+  _createKeyboardKey(x, y, w, h, def) {
+    this.add.rectangle(x + w / 2 + 2, y + h / 2 + 2, w, h, TUTOR_PALETTE.keyShadow).setOrigin(0.5);
+    const face = this.add.rectangle(x + w / 2, y + h / 2, w, h, TUTOR_PALETTE.keyFace)
+      .setStrokeStyle(1, TUTOR_PALETTE.border)
+      .setOrigin(0.5);
+    const label = this.add.text(x + w / 2, y + h / 2, def.label, {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: def.sm ? '10px' : '14px',
+      color: TUTOR_PALETTE.text
+    }).setOrigin(0.5);
+    this.keyboardKeys.set(def.value, { face, label });
+  }
+
   _buildUI() {
     const W = 1024;
+    const sideX = 8;
+    const sideW = 186;
+    const mainX = 202;
+    const mainW = 524;
+    const mascotX = 734;
+    const mascotW = 282;
+    const topY = 42;
+    const columnH = 386;
+
+    this.add.rectangle(512, 384, 1024, 768, TUTOR_PALETTE.background).setDepth(-5);
 
     this.themeGridLines = [];
-    for (let y = 24; y < 744; y += 32) {
-      const line = this.add.rectangle(512, y, W - 60, 1, 0x00ff88)
+    for (let y = 56; y < 680; y += 30) {
+      const line = this.add.rectangle(512, y, W - 70, 1, TUTOR_PALETTE.softBlueLine)
         .setOrigin(0.5, 0)
-        .setAlpha(0.05);
+        .setAlpha(0.06)
+        .setDepth(-3);
       this.themeGridLines.push(line);
     }
 
-    this.themeOverlay = this.add.rectangle(512, 384, W, 768, 0x00ff88)
-      .setAlpha(0.03)
+    this.themeOverlay = this.add.rectangle(512, 384, W, 768, TUTOR_PALETTE.titleBlue)
+      .setAlpha(0.02)
+      .setDepth(-4);
+
+    this.titleBarShadow = this.add.rectangle(512, 18, W - 6, 32, TUTOR_PALETTE.titleBlueDark)
+      .setAlpha(0.35)
+      .setOrigin(0.5, 0)
+      .setDepth(-2);
+    this.titleBar = this.add.rectangle(512, 0, W, 32, TUTOR_PALETTE.titleBlue)
+      .setOrigin(0.5, 0)
       .setDepth(-1);
+    this.titleBarHighlight = this.add.rectangle(512, 4, W - 8, 2, 0x5f8fd1).setOrigin(0.5, 0);
 
-    this.headerTopLine = this.add.rectangle(512, 20, W - 40, 2, 0x334455).setOrigin(0.5, 0);
+    this.titleText = this.add.text(40, 8, 'HOME ROW — Friendly Typing Tutor', {
+      fontFamily: 'Trebuchet MS, Verdana, sans-serif',
+      fontSize: '18px',
+      fontStyle: 'bold',
+      color: '#fff7c4'
+    });
 
-    this.titleText = this.add.text(512, 35, 'HOME ROW', {
-      fontFamily: 'Courier New, monospace',
+    this.lessonTitle = this.add.text(512, 42, '', {
+      fontFamily: 'Comic Sans MS, Trebuchet MS, sans-serif',
+      fontSize: '24px',
+      fontStyle: 'bold',
+      color: '#234d96'
+    }).setOrigin(0.5, 0);
+
+    this.modeStampText = this.add.text(984, 42, 'PRACTICE', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: '#325fa2'
+    }).setOrigin(1, 0);
+
+    ['_', '□', '×'].forEach((label, index) => {
+      const bx = 952 + index * 24;
+      this._createPanel(bx, 6, 20, 20, { fill: 0xf8eecb, shadow: false, lineWidth: 1 });
+      this.add.text(bx + 10, 7, label, {
+        fontFamily: 'Verdana, sans-serif',
+        fontSize: '12px',
+        fontStyle: 'bold',
+        color: '#1e2430'
+      }).setOrigin(0.5, 0);
+    });
+
+    this.statsPanel = this._createPanel(sideX, topY, sideW, columnH);
+    this.add.text(sideX + sideW / 2, topY + 10, 'Progress Report', {
+      fontFamily: 'Trebuchet MS, Verdana, sans-serif',
+      fontSize: '18px',
+      fontStyle: 'bold',
+      color: '#234d96'
+    }).setOrigin(0.5, 0);
+
+    this._createPanel(sideX + 8, topY + 42, sideW - 16, 168, { fill: 0xfcf5de, shadow: false, lineWidth: 1 });
+    this.add.text(sideX + 20, topY + 52, 'WPM', this._labelStyle());
+    this.wpmValueText = this.add.text(sideX + 20, topY + 72, '0', this._valueStyle('#2f8d47'));
+    this.add.text(sideX + 20, topY + 108, 'Accuracy', this._labelStyle());
+    this.accuracyValueText = this.add.text(sideX + 20, topY + 128, '100%', this._valueStyle('#264fbc'));
+    this.add.text(sideX + 20, topY + 164, 'Grade', this._labelStyle());
+    this.gradeValueText = this.add.text(sideX + 20, topY + 184, 'A+', this._valueStyle('#8b65b8'));
+
+    this._createPanel(sideX + 8, topY + 218, sideW - 16, 72, { fill: 0xfcf5de, shadow: false, lineWidth: 1 });
+    this.add.text(sideX + sideW / 2, topY + 226, 'Stars', this._labelStyle()).setOrigin(0.5, 0);
+    this.starsValueText = this.add.text(sideX + sideW / 2, topY + 248, '★★★', {
+      fontFamily: 'Trebuchet MS, sans-serif',
       fontSize: '28px',
-      color: COLORS.textGreen
+      color: '#f1bf25'
     }).setOrigin(0.5, 0);
 
-    this.lessonTitle = this.add.text(512, 72, '', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '16px',
-      color: COLORS.textDim
-    }).setOrigin(0.5, 0);
-
-    this.modeStampText = this.add.text(W - 60, 40, 'LESSON MODE', {
-      fontFamily: 'Courier New, monospace',
+    this._createPanel(sideX + 8, topY + 298, sideW - 16, 82, { fill: 0xfcf5de, shadow: false, lineWidth: 1 });
+    this.add.text(sideX + sideW / 2, topY + 306, 'Lesson Progress', this._labelStyle()).setOrigin(0.5, 0);
+    this.progressBarBack = this.add.rectangle(sideX + sideW / 2, topY + 336, sideW - 40, 14, 0xf1e9d0)
+      .setStrokeStyle(1, 0xb2a684);
+    this.progressBarFill = this.add.rectangle(sideX + 20, topY + 336, 0, 14, 0x74bf4c).setOrigin(0, 0.5);
+    this.progressBarMaxW = sideW - 40;
+    this.progressText = this.add.text(sideX + sideW / 2, topY + 350, '', {
+      fontFamily: 'Verdana, sans-serif',
       fontSize: '12px',
-      color: COLORS.textDim
-    }).setOrigin(1, 0);
-
-    this.headerBottomLine = this.add.rectangle(512, 100, W - 40, 2, 0x334455).setOrigin(0.5, 0);
-
-    // Assigned text panel
-    this.assignedPanel = this.add.rectangle(512, 120, W - 80, 55, 0x0a0a1a)
-      .setOrigin(0.5, 0)
-      .setStrokeStyle(1, 0x334455);
-
-    this.assignedLabel = this.add.text(60, 126, 'TYPE:', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '14px',
-      color: COLORS.textDim
+      color: TUTOR_PALETTE.text
+    }).setOrigin(0.5, 0);
+    this.reportCommentText = this.add.text(sideX + 18, topY + 366, 'Keep your hands on home row.', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '11px',
+      color: TUTOR_PALETTE.textMuted,
+      wordWrap: { width: sideW - 36 }
     });
 
-    this.assignedText = this.add.text(512, 145, '', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '24px',
-      color: COLORS.textWhite
+    this.lessonPanel = this._createPanel(mainX, topY, mainW, columnH);
+    this.lessonHeader = this._createPanel(mainX + 10, topY + 10, mainW - 20, 44, {
+      fill: TUTOR_PALETTE.titleBlue,
+      stroke: TUTOR_PALETTE.titleBlueDark,
+      shadow: false,
+      lineWidth: 1
+    });
+    this.add.text(mainX + 24, topY + 16, '★', { fontSize: '24px', color: '#f2cb2f' });
+    this.add.text(mainX + mainW - 24, topY + 16, '★', { fontSize: '24px', color: '#f2cb2f' }).setOrigin(1, 0);
+    this.sectionText = this.add.text(mainX + mainW / 2, topY + 19, '', {
+      fontFamily: 'Comic Sans MS, Trebuchet MS, sans-serif',
+      fontSize: '22px',
+      fontStyle: 'bold',
+      color: '#fff7c4'
     }).setOrigin(0.5, 0);
 
-    // Typed text area
-    this.typedPanel = this.add.rectangle(512, 185, W - 80, 55, 0x0a0a1a)
-      .setOrigin(0.5, 0)
-      .setStrokeStyle(1, 0x334455);
-
-    this.inputLabel = this.add.text(60, 191, 'INPUT:', {
-      fontFamily: 'Courier New, monospace',
+    this.instructionPanel = this._createPanel(mainX + 10, topY + 64, mainW - 20, 36, {
+      fill: 0xfcf5de,
+      shadow: false,
+      lineWidth: 1
+    });
+    this.instructionText = this.add.text(mainX + 20, topY + 74, '', {
+      fontFamily: 'Verdana, sans-serif',
       fontSize: '14px',
-      color: COLORS.textDim
+      color: TUTOR_PALETTE.text
     });
 
-    this.typedTextDisplay = this.add.text(120, 210, '', {
+    this.add.text(mainX + 16, topY + 112, 'Type the sentence:', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: TUTOR_PALETTE.textMuted
+    });
+    this.assignedPanel = this._createPanel(mainX + 10, topY + 130, mainW - 20, 84, {
+      fill: 0xfcf8ee,
+      shadow: false,
+      lineWidth: 1
+    });
+    this.assignedLabel = this.add.text(mainX + 22, topY + 140, 'Target Text', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: '#325fa2'
+    });
+    this.assignedText = this.add.text(mainX + 22, topY + 166, '', {
       fontFamily: 'Courier New, monospace',
       fontSize: '24px',
-      color: COLORS.textCorrect
+      color: '#1f2a3f',
+      wordWrap: { width: mainW - 52 }
     });
 
-    // Mr. Fingers area
-    this.mrFingersPanel = this.add.rectangle(512, 248, W - 80, 50, 0x0a0a1a)
-      .setOrigin(0.5, 0)
-      .setStrokeStyle(1, 0x223344);
+    this.add.text(mainX + 16, topY + 226, 'Your typing:', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: TUTOR_PALETTE.textMuted
+    });
+    this.typedPanel = this._createPanel(mainX + 10, topY + 244, mainW - 20, 66, {
+      fill: 0xfffbf0,
+      shadow: false,
+      lineWidth: 1
+    });
+    this.inputLabel = this.add.text(mainX + 22, topY + 254, 'Student Input', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: '#325fa2'
+    });
+    this.typedBaseX = mainX + 22;
+    this.typedBaseY = topY + 278;
+    this.typedTextDisplay = this.add.text(this.typedBaseX, this.typedBaseY, '', {
+      fontFamily: 'Courier New, monospace',
+      fontSize: '24px',
+      color: '#1f2a3f'
+    });
 
-    this.mrFingersPortraitFrame = this.add.rectangle(88, 273, 44, 42, 0x050510)
-      .setStrokeStyle(1, 0x335544);
+    this.responsePanel = this._createPanel(mainX + 10, topY + 320, mainW - 20, 56, {
+      fill: 0xfff3d9,
+      shadow: false,
+      lineWidth: 1
+    }).setAlpha(0);
+    this.responseText = this.add.text(mainX + mainW / 2, topY + 337, '', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '18px',
+      color: '#b94a3b',
+      wordWrap: { width: mainW - 50 },
+      align: 'center'
+    }).setOrigin(0.5, 0);
 
+    this.mrFingersPanel = this._createPanel(mascotX, topY, mascotW, columnH, { fill: 0xfff7df });
+    this._createPanel(mascotX + 12, topY + 10, mascotW - 24, 32, {
+      fill: TUTOR_PALETTE.titleBlue,
+      stroke: TUTOR_PALETTE.titleBlueDark,
+      shadow: false,
+      lineWidth: 1
+    });
+    this.add.text(mascotX + mascotW / 2, topY + 16, 'Mr. Fingers', {
+      fontFamily: 'Georgia, serif',
+      fontSize: '18px',
+      fontStyle: 'bold',
+      color: '#ffffff'
+    }).setOrigin(0.5, 0);
+
+    this._createPanel(mascotX + 16, topY + 50, mascotW - 32, 192, {
+      fill: 0xfff4d8,
+      shadow: false,
+      lineWidth: 1
+    });
+    this.mrPortraitCenterX = mascotX + mascotW / 2;
+    this.mrPortraitCenterY = topY + 146;
+    this.mrFingersPortraitFrame = this.add.rectangle(this.mrPortraitCenterX, this.mrPortraitCenterY, 120, 116, 0xf6dfb4)
+      .setStrokeStyle(2, 0x7f765f);
     this.mrFingersSprite = null;
-
-    this.mrFingersFallbackText = this.add.text(88, 263, 'MR', {
+    this.mrFingersFallbackText = this.add.text(this.mrPortraitCenterX, this.mrPortraitCenterY - 18, 'MR', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '14px',
-      color: COLORS.mrFingers,
+      fontSize: '24px',
+      color: '#325fa2',
+      align: 'center'
+    }).setOrigin(0.5, 0);
+    this.mrFingersText = this.add.text(mascotX + mascotW / 2, topY + 255, this.mrFingers.getLabel(), {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '15px',
+      color: '#3f4e6b',
+      wordWrap: { width: mascotW - 56 },
+      align: 'center'
+    }).setOrigin(0.5, 0);
+    this.mascotTipText = this.add.text(mascotX + mascotW / 2, topY + 302, 'TIP: Rest your fingers on A S D F and J K L ;', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      color: '#7a7262',
+      wordWrap: { width: mascotW - 48 },
+      align: 'center'
+    }).setOrigin(0.5, 0);
+    this.statusText = this.add.text(mascotX + mascotW / 2, topY + 342, 'Follow the prompt and type carefully.', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      color: '#4c5872',
+      wordWrap: { width: mascotW - 48 },
       align: 'center'
     }).setOrigin(0.5, 0);
 
-    this.mrFingersText = this.add.text(512, 268, this.mrFingers.getLabel(), {
-      fontFamily: 'Courier New, monospace',
+    this.keyboardPanel = this._createPanel(8, 442, 1008, 168, { fill: 0xe5dcc6 });
+    this.add.text(22, 450, 'Finger Guide', {
+      fontFamily: 'Trebuchet MS, Verdana, sans-serif',
       fontSize: '16px',
-      color: COLORS.mrFingers
-    }).setOrigin(0.5, 0);
-
-    // Response / narrative area
-    this.responsePanel = this.add.rectangle(512, 305, W - 80, 65, 0x0a0a1a)
-      .setOrigin(0.5, 0)
-      .setStrokeStyle(1, 0x442222)
-      .setAlpha(0);
-
-    this.responseText = this.add.text(512, 330, '', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '20px',
-      color: COLORS.response,
-      wordWrap: { width: W - 120 },
-      align: 'center'
-    }).setOrigin(0.5, 0);
-
-    // Stats bar
-    this.statsDivider = this.add.rectangle(512, 385, W - 80, 2, 0x334455).setOrigin(0.5, 0);
-
-    this.statsText = this.add.text(60, 396, '', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '14px',
-      color: COLORS.statLabel
+      fontStyle: 'bold',
+      color: '#234d96'
+    });
+    let rowY = 476;
+    KEY_LAYOUT.forEach((row) => {
+      let rowWidth = 0;
+      row.forEach((key) => { rowWidth += key.w + 4; });
+      rowWidth -= 4;
+      let x = 512 - rowWidth / 2;
+      row.forEach((def) => {
+        this._createKeyboardKey(x, rowY, def.w, 22, def);
+        x += def.w + 4;
+      });
+      rowY += 26;
     });
 
-    this.progressText = this.add.text(W - 60, 396, '', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '14px',
-      color: COLORS.statLabel
-    }).setOrigin(1, 0);
-
-    // --- DEBUG PANEL ---
-
-    this.debugDivider = this.add.rectangle(512, 420, W - 80, 2, 0x222233).setOrigin(0.5, 0);
-
-    this.debugLabel = this.add.text(60, 430, '[ HIDDEN MEMORY STATE ]', {
+    this.debugPanel = this._createPanel(8, 614, 1008, 72, { fill: 0xf3eddc, shadow: false });
+    this.debugDivider = this.add.rectangle(30, 624, 964, 1, 0xb9b29f).setOrigin(0, 0.5);
+    this.debugLabel = this.add.text(20, 630, '[ HIDDEN MEMORY STATE ]', {
       fontFamily: 'Courier New, monospace',
       fontSize: '11px',
       color: '#333355'
     });
-
-    this.debugStats = this.add.text(60, 446, '', {
+    this.debugStats = this.add.text(20, 646, '', {
       fontFamily: 'Courier New, monospace',
       fontSize: '12px',
-      color: COLORS.statValue
+      color: COLORS.statValue,
+      wordWrap: { width: 500 }
     });
-
-    // Event log
-    this.eventDivider = this.add.rectangle(512, 468, W - 80, 2, 0x222233).setOrigin(0.5, 0);
-
-    this.eventLogLabel = this.add.text(60, 476, '[ EVENT LOG ]', {
+    this.eventDivider = this.add.rectangle(516, 624, 1, 50, 0xb9b29f).setOrigin(0.5, 0);
+    this.eventLogLabel = this.add.text(536, 630, '[ EVENT LOG ]', {
       fontFamily: 'Courier New, monospace',
       fontSize: '11px',
       color: '#333355'
     });
-
     this.eventLogTexts = [];
-    for (let i = 0; i < 10; i++) {
-      const t = this.add.text(70, 494 + i * 15, '', {
+    for (let i = 0; i < 3; i++) {
+      const t = this.add.text(536, 646 + i * 12, '', {
         fontFamily: 'Courier New, monospace',
         fontSize: '11px',
         color: '#556677'
       });
       this.eventLogTexts.push(t);
+    }
+
+    this.footerBar = this.add.rectangle(512, 690, 1024, 22, 0xe0d8c4).setOrigin(0.5, 0);
+    this.footerTopLine = this.add.rectangle(512, 690, 1024, 1, 0xb8ad93).setOrigin(0.5, 0);
+    this.statsText = this.add.text(12, 694, 'WELCOME BACK!', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      color: TUTOR_PALETTE.footerBlue
+    });
+    this.footerHintText = this.add.text(512, 694, 'Good typing grows with practice.', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      color: TUTOR_PALETTE.footerMuted
+    }).setOrigin(0.5, 0);
+    this.footerClockText = this.add.text(1012, 694, 'Time: 00:00:00', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      color: TUTOR_PALETTE.footerBlue
+    }).setOrigin(1, 0);
+
+    if (SHOW_DEV_TOUCH_CONTROLS) {
+      this._buildDevTouchControls();
     }
 
     // Completion overlay (hidden initially)
@@ -519,14 +836,11 @@ export default class TypingScene extends Phaser.Scene {
       this._showNextResponse();
     };
 
-    this.input.keyboard.on('keydown', (event) => {
-      if (event.key === '`') {
-        this.debugVisible = !this.debugVisible;
-        this._setDebugVisible(this.debugVisible);
-        return;
-      }
-      if (this.actComplete || this.inputLocked) return;
-      this.typingEngine.handleKey(event);
+    this.input.keyboard.on('keydown', (event) => this._handleInputEvent(event));
+
+    this.input.keyboard.on('keyup', () => {
+      this.activeKeyValue = null;
+      this._updateKeyboardHighlights();
     });
   }
 
@@ -535,6 +849,7 @@ export default class TypingScene extends Phaser.Scene {
   _startLesson() {
     const lesson = this.lessonManager.getCurrentLesson();
     if (!lesson) return;
+    this._clearContinueHandler();
 
     this.intentEngine.resetLessonCaps();
 
@@ -548,8 +863,12 @@ export default class TypingScene extends Phaser.Scene {
     }
 
     this._applyActTheme(theme);
-    this.titleText.setText('HOME ROW');
+    this.titleText.setText('HOME ROW — Friendly Typing Tutor');
     this.lessonTitle.setText(lesson.playerLabel || lesson.displayTitle);
+    this.sectionText.setText(act.playerSection || 'Typing Practice');
+    this.instructionText.setText(this._getInstructionText(lesson));
+    this.mascotTipText.setText(this._getTipText(lesson));
+    this.statusText.setText('Follow the prompt and type carefully.');
     this.typingEngine.loadLine(assignedText);
     this.typedTextDisplay.setText('');
     this._renderTypedText();
@@ -669,11 +988,12 @@ export default class TypingScene extends Phaser.Scene {
 
     if (hasNextAct) {
       this.time.delayedCall(3000, () => {
-        this.input.keyboard.once('keydown', () => {
+        this._armContinueHandler(() => {
           this.completionBg.setAlpha(0);
           this.completionText.setAlpha(0);
           this.lessonManager.advanceAct();
           this.actComplete = false;
+          this._clearContinueHandler();
           this._startLesson();
           this.mrFingers.setState('idle');
         });
@@ -758,40 +1078,55 @@ export default class TypingScene extends Phaser.Scene {
         .setAlpha(useAccent ? theme.gridAlpha * 0.75 : theme.gridAlpha);
     });
 
-    this.headerTopLine.setFillStyle(panelBorder);
-    this.headerBottomLine.setFillStyle(panelBorder);
-    this.statsDivider.setFillStyle(panelBorder);
     this.debugDivider.setFillStyle(accent).setAlpha(0.35);
     this.eventDivider.setFillStyle(accent).setAlpha(0.35);
 
     [
+      this.statsPanel,
+      this.lessonPanel,
+      this.mrFingersPanel,
+      this.keyboardPanel,
+      this.debugPanel,
       this.assignedPanel,
       this.typedPanel,
-      this.mrFingersPanel
+      this.responsePanel
     ].forEach(panel => {
       panel.setFillStyle(panelBg);
       panel.setStrokeStyle(1, panelBorder);
     });
-    this.responsePanel.setFillStyle(panelBg);
     this.responsePanel.setStrokeStyle(1, responseBorder);
+    this.lessonHeader.setFillStyle(primary);
+    this.lessonHeader.setStrokeStyle(1, accent);
+    this.instructionPanel.setFillStyle(theme.light ? 0xfcf5de : panelBg).setStrokeStyle(1, panelBorder);
+    this.titleBar.setFillStyle(primary);
+    this.titleBarShadow.setFillStyle(accent);
+    this.footerBar.setFillStyle(theme.light ? 0xe0d8c4 : panelBg);
+    this.footerTopLine.setFillStyle(panelBorder);
 
-    this.titleText.setColor(theme.primary);
-    this.lessonTitle.setColor(theme.accent);
-    this.modeStampText.setText(theme.modeStamp).setColor(theme.accent);
-    this.assignedLabel.setText(theme.panelLabel).setColor(theme.accent);
-    this.inputLabel.setColor(theme.accent);
+    this.titleText.setColor(theme.light ? '#fff7c4' : '#ffffff');
+    this.lessonTitle.setColor(theme.light ? '#234d96' : theme.primary);
+    this.modeStampText.setText(theme.modeStamp).setColor(theme.light ? '#325fa2' : theme.accent);
+    this.sectionText.setColor(theme.light ? '#fff7c4' : '#ffffff');
+    this.assignedLabel.setText('Target Text').setColor(theme.light ? '#325fa2' : theme.accent);
+    this.inputLabel.setColor(theme.light ? '#325fa2' : theme.accent);
     this.assignedText.setColor(theme.assignedColor || theme.accent);
+    this.instructionText.setColor(theme.light ? TUTOR_PALETTE.text : theme.assignedColor || theme.primary);
     this.responseText.setColor(theme.responseColor || theme.warning);
     this.statsText.setColor(theme.statsColor || theme.accent);
-    this.progressText.setColor(theme.primary);
+    this.progressText.setColor(theme.light ? TUTOR_PALETTE.text : theme.assignedColor || theme.primary);
     this.debugStats.setColor(theme.primary);
+    this.reportCommentText.setColor(theme.light ? TUTOR_PALETTE.textMuted : theme.assignedColor || theme.primary);
+    this.footerHintText.setColor(theme.light ? TUTOR_PALETTE.footerMuted : theme.assignedColor || theme.primary);
+    this.statusText.setColor(theme.light ? '#4c5872' : theme.assignedColor || theme.primary);
+    this.mascotTipText.setColor(theme.light ? '#7a7262' : theme.assignedColor || theme.primary);
 
     this.mrFingersText.setColor(theme.mrColor || COLORS.mrFingers);
     this.mrFingersFallbackText.setColor(theme.mrColor || COLORS.mrFingers);
-    this.mrFingersPortraitFrame.setFillStyle(theme.light ? panelBg : 0x050510);
-    this.mrFingersPortraitFrame.setStrokeStyle(1, panelBorder);
+    this.mrFingersPortraitFrame.setFillStyle(theme.light ? 0xf6dfb4 : panelBg);
+    this.mrFingersPortraitFrame.setStrokeStyle(2, panelBorder);
 
     this._updateResponsePanelVisibility();
+    this._updateKeyboardHighlights();
   }
 
   _updateResponsePanelVisibility() {
@@ -825,8 +1160,8 @@ export default class TypingScene extends Phaser.Scene {
     }
     this.typedRichText = [];
 
-    let x = 120;
-    const y = 210;
+    let x = this.typedBaseX;
+    const y = this.typedBaseY;
     const charWidth = 14.4;
 
     const theme = this.currentTheme || DEFAULT_ACT_THEME;
@@ -900,6 +1235,7 @@ export default class TypingScene extends Phaser.Scene {
     const color = theme.light ? themeBase : defaultColor;
 
     this.mrFingersText.setText(label);
+    this.statusText.setText(label);
     this.mrFingersText.setColor(color);
     this.mrFingersFallbackText.setColor(color);
     this.mrFingersPortraitFrame.setStrokeStyle(1, Phaser.Display.Color.HexStringToColor(color).color);
@@ -911,11 +1247,12 @@ export default class TypingScene extends Phaser.Scene {
 
     if (hasSprite) {
       if (!this.mrFingersSprite) {
-        this.mrFingersSprite = this.add.image(88, 273, spriteKey);
+        this.mrFingersSprite = this.add.image(this.mrPortraitCenterX, this.mrPortraitCenterY, spriteKey);
       }
       this.mrFingersSprite
         .setTexture(spriteKey)
-        .setDisplaySize(38, 38)
+        .setPosition(this.mrPortraitCenterX, this.mrPortraitCenterY)
+        .setDisplaySize(92, 92)
         .setAlpha(1)
         .setVisible(true);
       this.mrFingersFallbackText.setVisible(false);
@@ -959,7 +1296,7 @@ export default class TypingScene extends Phaser.Scene {
     if (state === 'witness' || (config && config.calm)) {
       targets.forEach(target => {
         if (target.setAlpha) target.setAlpha(1);
-        if (target.setX && target.input === undefined) target.setX(88);
+        if (target.setX && target.input === undefined) target.setX(this.mrPortraitCenterX);
       });
       return;
     }
@@ -993,16 +1330,178 @@ export default class TypingScene extends Phaser.Scene {
     }
   }
 
+  _buildDevTouchControls() {
+    const x = 748;
+    const y = 438;
+    const w = 268;
+    const h = 172;
+
+    this.devTouchPanel = this._createPanel(x, y, w, h, { fill: 0xf4efe0, shadow: false, lineWidth: 1 });
+    this.devTouchPanel.setDepth(20);
+    this.devTouchLabel = this.add.text(x + 12, y + 10, 'DEV TEST INPUT', {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: '#7b2f2f'
+    }).setDepth(21);
+
+    const buttons = [
+      { label: 'TYPE NEXT', x: x + 12, y: y + 34, w: 116, h: 30, handler: () => this._simulateTypeNext() },
+      { label: 'TYPE WORD', x: x + 140, y: y + 34, w: 116, h: 30, handler: () => this._simulateTypeWord() },
+      { label: 'COMPLETE LINE', x: x + 12, y: y + 72, w: 244, h: 30, handler: () => this._simulateCompleteCurrentLine() },
+      { label: 'BACKSPACE', x: x + 12, y: y + 110, w: 116, h: 30, handler: () => this._simulateBackspace() },
+      { label: 'CONTINUE', x: x + 140, y: y + 110, w: 116, h: 30, handler: () => this._simulateContinuePress() },
+      { label: 'DEBUG', x: x + 12, y: y + 144, w: 244, h: 20, handler: () => this._toggleDebug() }
+    ];
+
+    this.devTouchButtons = buttons.map((cfg) => this._createDevTouchButton(cfg));
+  }
+
+  _createDevTouchButton(cfg) {
+    const body = this.add.rectangle(cfg.x + cfg.w / 2, cfg.y + cfg.h / 2, cfg.w, cfg.h, 0xe8dcc0)
+      .setStrokeStyle(1, 0x7f765f)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(21);
+    const label = this.add.text(cfg.x + cfg.w / 2, cfg.y + cfg.h / 2, cfg.label, {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: cfg.h <= 22 ? '11px' : '12px',
+      fontStyle: 'bold',
+      color: '#20304a'
+    }).setOrigin(0.5).setDepth(22);
+
+    body.on('pointerdown', () => {
+      body.y += 1;
+      label.y += 1;
+    });
+    body.on('pointerup', () => {
+      body.y -= 1;
+      label.y -= 1;
+      cfg.handler();
+    });
+    body.on('pointerout', () => {
+      body.y = cfg.y + cfg.h / 2;
+      label.y = cfg.y + cfg.h / 2;
+    });
+
+    return { body, label };
+  }
+
+  _handleInputEvent(event) {
+    this.activeKeyValue = normalizeKey(event.key);
+    this._updateKeyboardHighlights();
+
+    if (event.key === '`') {
+      this._toggleDebug();
+      return;
+    }
+
+    if (this._triggerContinueIfAvailable()) {
+      return;
+    }
+
+    if (this.actComplete || this.inputLocked) return;
+    this.typingEngine.handleKey(event);
+  }
+
+  _toggleDebug() {
+    this.debugVisible = !this.debugVisible;
+    this._setDebugVisible(this.debugVisible);
+  }
+
+  _armContinueHandler(handler) {
+    this.pendingContinueHandler = handler;
+    this.continueEnabled = true;
+  }
+
+  _clearContinueHandler() {
+    this.pendingContinueHandler = null;
+    this.continueEnabled = false;
+  }
+
+  _triggerContinueIfAvailable() {
+    if (!this.continueEnabled || !this.pendingContinueHandler) return false;
+    const handler = this.pendingContinueHandler;
+    this._clearContinueHandler();
+    handler();
+    return true;
+  }
+
+  _simulateCharacterInput(char) {
+    if (!char || this.actComplete || this.inputLocked) return;
+    this._handleInputEvent({ key: char });
+    this._releaseSimulatedKey();
+  }
+
+  _simulateBackspace() {
+    if (this.actComplete || this.inputLocked) return;
+    this._handleInputEvent({ key: 'Backspace' });
+    this._releaseSimulatedKey();
+  }
+
+  _simulateTypeNext() {
+    const nextChar = this._getNextExpectedCharacter();
+    if (!nextChar) return;
+    this._simulateCharacterInput(nextChar);
+  }
+
+  _simulateTypeWord() {
+    if (this.actComplete || this.inputLocked) return;
+    let nextChar = this._getNextExpectedCharacter();
+    while (nextChar) {
+      this._simulateCharacterInput(nextChar);
+      if (nextChar === ' ' || this.typingEngine.isComplete || this.actComplete || this.inputLocked) {
+        break;
+      }
+      nextChar = this._getNextExpectedCharacter();
+    }
+  }
+
+  _simulateCompleteCurrentLine() {
+    if (this.actComplete || this.inputLocked) return;
+    let nextChar = this._getNextExpectedCharacter();
+    while (nextChar) {
+      this._simulateCharacterInput(nextChar);
+      if (this.typingEngine.isComplete || this.actComplete || this.inputLocked) {
+        break;
+      }
+      nextChar = this._getNextExpectedCharacter();
+    }
+  }
+
+  _simulateContinuePress() {
+    this._triggerContinueIfAvailable();
+    this._releaseSimulatedKey();
+  }
+
+  _getNextExpectedCharacter() {
+    if (!this.typingEngine || this.typingEngine.isComplete) return null;
+    const typedLength = this.typingEngine.typedChars.length;
+    return this.typingEngine.assignedText[typedLength] ?? null;
+  }
+
+  _releaseSimulatedKey() {
+    this.activeKeyValue = null;
+    this._updateKeyboardHighlights();
+  }
+
   // --- STATS AND DEBUG ---
 
   _updateStats() {
     const stats = this.typingEngine.getStats();
-    this.statsText.setText(
-      `WPM: ${stats.wpm}  ACCURACY: ${stats.accuracy}%  CORRECT: ${stats.correct}  MISTAKES: ${stats.mistakes}`
-    );
-    this.progressText.setText(
-      `Lesson ${this.lessonManager.getGlobalLessonNumber()} of ${this.lessonManager.getGlobalTotalLessons()}`
-    );
+    const score = ScoringSystem.evaluate(stats);
+    const current = this.lessonManager.getGlobalLessonNumber();
+    const total = this.lessonManager.getGlobalTotalLessons();
+    const progressRatio = total > 0 ? current / total : 0;
+
+    this.wpmValueText.setText(String(stats.wpm));
+    this.accuracyValueText.setText(`${stats.accuracy}%`);
+    this.gradeValueText.setText(score.grade);
+    this.starsValueText.setText(`${'★'.repeat(score.stars)}${'☆'.repeat(3 - score.stars)}`);
+    this.progressBarFill.width = Math.max(0, this.progressBarMaxW * progressRatio);
+    this.progressText.setText(`Lesson ${current} of ${total}`);
+    this.reportCommentText.setText(score.comment);
+    this.statsText.setText(`WPM ${stats.wpm}  Accuracy ${stats.accuracy}%  Grade ${score.grade}  Mistakes ${stats.mistakes}`);
+    this.footerHintText.setText(score.goldStar ? 'Gold Star work today!' : score.comment);
   }
 
   _updateDebug() {
@@ -1033,6 +1532,7 @@ export default class TypingScene extends Phaser.Scene {
 
   _setDebugVisible(visible) {
     const elements = [
+      this.debugPanel,
       this.debugDivider,
       this.debugLabel,
       this.debugStats,
@@ -1051,7 +1551,7 @@ export default class TypingScene extends Phaser.Scene {
     const glitchColor = Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
     this.assignedText.setColor(glitchColor);
     this.time.delayedCall(120, () => {
-      this.assignedText.setColor(theme.accent);
+      this.assignedText.setColor(theme.assignedColor || theme.accent);
     });
   }
 
@@ -1083,7 +1583,8 @@ export default class TypingScene extends Phaser.Scene {
 
     const duration = 60 + Math.random() * 140;
     this.time.delayedCall(duration, () => {
-      this.assignedText.setColor((this.currentTheme && this.currentTheme.accent) || COLORS.textWhite);
+      const theme = this.currentTheme;
+      this.assignedText.setColor((theme && (theme.assignedColor || theme.accent)) || COLORS.textWhite);
     });
 
     const suppression = this.memory.getStat('suppression');
@@ -1092,6 +1593,67 @@ export default class TypingScene extends Phaser.Scene {
       this.time.delayedCall(duration + 50, () => {
         this.mrFingersText.setAlpha(1);
       });
+    }
+  }
+
+  _labelStyle() {
+    return {
+      fontFamily: 'Verdana, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      color: TUTOR_PALETTE.textMuted
+    };
+  }
+
+  _valueStyle(color) {
+    return {
+      fontFamily: 'Trebuchet MS, Verdana, sans-serif',
+      fontSize: '26px',
+      fontStyle: 'bold',
+      color
+    };
+  }
+
+  _getInstructionText(lesson) {
+    const map = {
+      keys: 'Find each key slowly and keep your fingers in position.',
+      words: 'Type each word carefully and keep a gentle rhythm.',
+      phrase: 'Read the full phrase first, then type it smoothly.',
+      sentence: 'Use neat spacing and steady hand movement.',
+      speed: 'Stay accurate first. Speed comes naturally.',
+      review: 'This is a review exercise. Watch the full line.',
+      correction: 'Correct every detail as if it were a school worksheet.',
+      accuracy: 'Accuracy matters here. Take your time.',
+      test: 'Treat this like a quiet classroom test.',
+      final: 'Finish the line exactly as shown.'
+    };
+    return map[lesson.drillType] || 'Follow the prompt and type carefully.';
+  }
+
+  _getTipText(lesson) {
+    if (lesson.drillType === 'speed') {
+      return 'TIP: Relax your shoulders. Smooth typing beats rushed typing.';
+    }
+    if (lesson.drillType === 'final' || lesson.drillType === 'test') {
+      return 'TIP: Read the whole line before you begin typing.';
+    }
+    return 'TIP: Rest your fingers on A S D F and J K L ;';
+  }
+
+  _updateFooterClock() {
+    this.footerClockText.setText(`Time: ${formatDuration(Date.now() - this.sessionStartTime)}`);
+  }
+
+  _updateKeyboardHighlights() {
+    for (const [value, entry] of this.keyboardKeys.entries()) {
+      let fill = TUTOR_PALETTE.keyFace;
+      if (HOME_ROW_KEYS.has(value)) {
+        fill = TUTOR_PALETTE.keyHome;
+      }
+      if (this.activeKeyValue && value === this.activeKeyValue) {
+        fill = TUTOR_PALETTE.keyActive;
+      }
+      entry.face.setFillStyle(fill);
     }
   }
 

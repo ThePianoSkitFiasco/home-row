@@ -4,6 +4,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   create() {
+    this.hasStarted = false;
     this.cameras.main.setBackgroundColor('#000080');
 
     const cx = this.cameras.main.centerX;
@@ -27,7 +28,7 @@ export default class BootScene extends Phaser.Scene {
       color: '#7777aa'
     }).setOrigin(0.5);
 
-    const prompt = this.add.text(cx, cy + 100, 'Press any key to begin...', {
+    const prompt = this.add.text(cx, cy + 100, 'Press any key or tap to begin...', {
       fontFamily: 'Courier New, monospace',
       fontSize: '18px',
       color: '#ffff88'
@@ -41,8 +42,13 @@ export default class BootScene extends Phaser.Scene {
       repeat: -1
     });
 
-    this.input.keyboard.once('keydown', () => {
-      this.scene.start('TypingTutorScene');
-    });
+    const startGame = () => {
+      if (this.hasStarted) return;
+      this.hasStarted = true;
+      this.scene.start('TypingScene');
+    };
+
+    this.input.keyboard.once('keydown', startGame);
+    this.input.once('pointerdown', startGame);
   }
 }
