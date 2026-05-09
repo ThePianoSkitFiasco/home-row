@@ -39,6 +39,16 @@ const COLORS_LIGHT = {
   statValue: '#003399'
 };
 
+const CRT = {
+  bg: '#050805',
+  panel: '#081008',
+  panelSoft: '#0b1609',
+  phosphor: '#9dff63',
+  phosphorDim: '#6fbf45',
+  phosphorDeep: '#2b4d1b',
+  warning: '#ff7a45'
+};
+
 const MR_STATE_COLORS = {
   idle: COLORS.mrFingers,
   encourage: COLORS.mrFingers,
@@ -230,84 +240,104 @@ const ACT_THEMES = {
     responseBorder: '#665544'
   },
   act5_unsanctioned_statement: {
-    primary: '#aaddbb',
-    accent: '#dd88bb',
-    warning: '#ee3355',
+    primary: CRT.phosphor,
+    accent: CRT.phosphorDim,
+    warning: CRT.warning,
     panelLabel: 'TYPE:',
-    modeStamp: 'PRACTICE',
-    bg: '#2a2030',
-    gridAlpha: 0.07,
-    overlayAlpha: 0.04,
-    panelBg: '#1a1520',
-    panelBorder: '#554466',
-    textCorrect: '#88ddaa',
-    textWrong: '#ff4466',
-    textCursor: '#aaddbb',
-    assignedColor: '#ddccdd',
-    statsColor: '#887799',
-    mrColor: '#88bbaa',
-    responseColor: '#ff6688',
-    responseBorder: '#664455'
+    modeStamp: 'UNDERLAYER',
+    bg: CRT.bg,
+    gridAlpha: 0.11,
+    overlayAlpha: 0.08,
+    terminal: true,
+    panelBg: CRT.panel,
+    panelBorder: '#6fbf45',
+    textCorrect: CRT.phosphor,
+    textWrong: CRT.warning,
+    textCursor: CRT.phosphor,
+    assignedColor: '#b8ff8a',
+    statsColor: CRT.phosphorDim,
+    mrColor: CRT.phosphor,
+    responseColor: CRT.warning,
+    responseBorder: '#a2d85d',
+    scanlineAlpha: 0.085,
+    vignetteAlpha: 0.18,
+    footerMode: 'SYS: OK  KBD: OK  MONO: GREEN',
+    footerHint: 'WORKSTATION 02 ACTIVE // SECOND USER DETECTED'
   },
   act6_protective_routine: {
-    primary: '#aacc55',
-    accent: '#ccbb44',
-    warning: '#ee5533',
+    primary: '#91f45b',
+    accent: CRT.phosphorDim,
+    warning: CRT.warning,
     panelLabel: 'TYPE:',
-    modeStamp: 'REVIEW',
-    bg: '#1e1e14',
-    gridAlpha: 0.08,
-    overlayAlpha: 0.04,
-    panelBg: '#141410',
-    panelBorder: '#4a4a30',
-    textCorrect: '#99cc44',
-    textWrong: '#ff4433',
-    textCursor: '#aacc55',
-    assignedColor: '#cccc99',
-    statsColor: '#888866',
-    mrColor: '#aacc55',
-    responseColor: '#ee7733',
-    responseBorder: '#554422'
+    modeStamp: 'CONTROL',
+    bg: '#040704',
+    gridAlpha: 0.13,
+    overlayAlpha: 0.1,
+    terminal: true,
+    panelBg: '#071106',
+    panelBorder: '#5fa93e',
+    textCorrect: '#91f45b',
+    textWrong: CRT.warning,
+    textCursor: '#9dff63',
+    assignedColor: '#b0ff7c',
+    statsColor: CRT.phosphorDim,
+    mrColor: '#9dff63',
+    responseColor: '#ff8d54',
+    responseBorder: '#7fc94e',
+    scanlineAlpha: 0.1,
+    vignetteAlpha: 0.22,
+    footerMode: 'SYS: PROTECT  KBD: LOCKED',
+    footerHint: 'ROUTINE MONITOR ACTIVE // RECORD OPEN'
   },
   act7_correction_exam: {
-    primary: '#dddddd',
-    accent: '#ee5555',
-    warning: '#ff2222',
+    primary: '#b8ff86',
+    accent: '#74c54d',
+    warning: '#ff6b43',
     panelLabel: 'TYPE:',
-    modeStamp: 'TEST',
-    bg: '#1a1414',
-    gridAlpha: 0.04,
-    overlayAlpha: 0.02,
-    panelBg: '#0e0a0a',
-    panelBorder: '#553333',
-    textCorrect: '#cccccc',
-    textWrong: '#ff3333',
-    textCursor: '#dddddd',
-    assignedColor: '#eeeeee',
-    statsColor: '#888888',
-    mrColor: '#aaaaaa',
-    responseColor: '#ff4444',
-    responseBorder: '#663333'
+    modeStamp: 'EXAM',
+    bg: '#030603',
+    gridAlpha: 0.08,
+    overlayAlpha: 0.08,
+    terminal: true,
+    panelBg: '#060c05',
+    panelBorder: '#568f39',
+    textCorrect: '#b8ff86',
+    textWrong: '#ff6b43',
+    textCursor: '#b8ff86',
+    assignedColor: '#c6ff9d',
+    statsColor: '#74c54d',
+    mrColor: '#9dff63',
+    responseColor: '#ff6b43',
+    responseBorder: '#74c54d',
+    scanlineAlpha: 0.08,
+    vignetteAlpha: 0.26,
+    footerMode: 'SYS: EXAM  KBD: REC',
+    footerHint: 'OFFICIAL INPUT CHANNEL // CORRECTION RECORD'
   },
   final_statement: {
-    primary: '#cccccc',
-    accent: '#999999',
-    warning: '#884444',
+    primary: '#d5ffb8',
+    accent: '#6fbf45',
+    warning: '#ff7a45',
     panelLabel: 'TYPE:',
-    modeStamp: 'FINAL TEST',
-    bg: '#0e0e0e',
-    gridAlpha: 0,
-    overlayAlpha: 0,
-    panelBg: '#080808',
-    panelBorder: '#333333',
-    textCorrect: '#aaaaaa',
-    textWrong: '#884444',
-    textCursor: '#cccccc',
-    assignedColor: '#cccccc',
-    statsColor: '#666666',
-    mrColor: '#888888',
-    responseColor: '#aa6666',
-    responseBorder: '#444444'
+    modeStamp: 'FINAL',
+    bg: '#020402',
+    gridAlpha: 0.025,
+    overlayAlpha: 0.04,
+    terminal: true,
+    panelBg: '#030703',
+    panelBorder: '#3d7228',
+    textCorrect: '#d5ffb8',
+    textWrong: '#ff7a45',
+    textCursor: '#d5ffb8',
+    assignedColor: '#d5ffb8',
+    statsColor: '#6fbf45',
+    mrColor: '#9dff63',
+    responseColor: '#ff7a45',
+    responseBorder: '#6fbf45',
+    scanlineAlpha: 0.055,
+    vignetteAlpha: 0.34,
+    footerMode: 'SYS: FINAL  KBD: OPEN  MONO: GREEN',
+    footerHint: 'STATEMENT CHANNEL ISOLATED'
   }
 };
 
@@ -439,16 +469,20 @@ export default class TypingScene extends Phaser.Scene {
     const shadow = opts.shadow !== false;
 
     if (shadow) {
-      this.add.rectangle(x + w / 2 + 3, y + h / 2 + 3, w, h, TUTOR_PALETTE.panelShadow).setOrigin(0.5);
+      const shadowRect = this.add.rectangle(x + w / 2 + 3, y + h / 2 + 3, w, h, TUTOR_PALETTE.panelShadow).setOrigin(0.5);
+      if (this.themePanelShadows) this.themePanelShadows.push(shadowRect);
     }
 
-    return this.add.rectangle(x + w / 2, y + h / 2, w, h, fill)
+    const panel = this.add.rectangle(x + w / 2, y + h / 2, w, h, fill)
       .setStrokeStyle(opts.lineWidth ?? 2, stroke)
       .setOrigin(0.5);
+    if (this.themePanels) this.themePanels.push(panel);
+    return panel;
   }
 
   _createKeyboardKey(x, y, w, h, def) {
-    this.add.rectangle(x + w / 2 + 2, y + h / 2 + 2, w, h, TUTOR_PALETTE.keyShadow).setOrigin(0.5);
+    const shadow = this.add.rectangle(x + w / 2 + 2, y + h / 2 + 2, w, h, TUTOR_PALETTE.keyShadow).setOrigin(0.5);
+    if (this.keyboardKeyShadows) this.keyboardKeyShadows.push(shadow);
     const face = this.add.rectangle(x + w / 2, y + h / 2, w, h, TUTOR_PALETTE.keyFace)
       .setStrokeStyle(1, TUTOR_PALETTE.border)
       .setOrigin(0.5);
@@ -471,7 +505,12 @@ export default class TypingScene extends Phaser.Scene {
     const topY = 42;
     const columnH = 386;
 
-    this.add.rectangle(512, 384, 1024, 768, TUTOR_PALETTE.background).setDepth(-5);
+    this.themePanels = [];
+    this.themePanelShadows = [];
+    this.keyboardKeyShadows = [];
+    this.crtScanlines = [];
+
+    this.backgroundRect = this.add.rectangle(512, 384, 1024, 768, TUTOR_PALETTE.background).setDepth(-5);
 
     this.themeGridLines = [];
     for (let y = 56; y < 680; y += 30) {
@@ -777,6 +816,8 @@ export default class TypingScene extends Phaser.Scene {
       color: TUTOR_PALETTE.footerBlue
     }).setOrigin(1, 0);
 
+    this._buildCrtOverlays(W);
+
     if (SHOW_DEV_TOUCH_CONTROLS) {
       this._buildDevTouchControls();
     }
@@ -785,14 +826,38 @@ export default class TypingScene extends Phaser.Scene {
     this.completionBg = this.add.rectangle(512, 360, 760, 500, 0x0a0a1a)
       .setStrokeStyle(2, 0x00ff88)
       .setAlpha(0)
-      .setDepth(10);
+      .setDepth(40);
     this.completionText = this.add.text(512, 145, '', {
       fontFamily: 'Courier New, monospace',
       fontSize: '14px',
       color: COLORS.textGreen,
       align: 'center',
       wordWrap: { width: 690 }
-    }).setOrigin(0.5, 0).setAlpha(0).setDepth(11);
+    }).setOrigin(0.5, 0).setAlpha(0).setDepth(41);
+  }
+
+  _buildCrtOverlays(width) {
+    for (let y = 0; y < 768; y += 4) {
+      const line = this.add.rectangle(512, y, width, 1, 0x000000)
+        .setOrigin(0.5, 0)
+        .setAlpha(0)
+        .setDepth(29);
+      this.crtScanlines.push(line);
+    }
+
+    this.crtVignette = [
+      this.add.rectangle(512, 0, width, 52, 0x000000).setOrigin(0.5, 0).setDepth(28).setAlpha(0),
+      this.add.rectangle(512, 768, width, 76, 0x000000).setOrigin(0.5, 1).setDepth(28).setAlpha(0),
+      this.add.rectangle(0, 384, 58, 768, 0x000000).setOrigin(0, 0.5).setDepth(28).setAlpha(0),
+      this.add.rectangle(width, 384, 58, 768, 0x000000).setOrigin(1, 0.5).setDepth(28).setAlpha(0)
+    ];
+
+    this.crtFrame = this.add.rectangle(512, 384, width - 18, 744, 0x000000, 0)
+      .setStrokeStyle(1, hexToNumber(CRT.phosphorDeep), 0)
+      .setDepth(27);
+    this.crtSoftGlow = this.add.rectangle(512, 384, width - 34, 714, 0x9dff63, 0)
+      .setStrokeStyle(1, hexToNumber(CRT.phosphor), 0)
+      .setDepth(27);
   }
 
   // --- EVENT WIRING ---
@@ -863,7 +928,7 @@ export default class TypingScene extends Phaser.Scene {
     }
 
     this._applyActTheme(theme);
-    this.titleText.setText('HOME ROW — Friendly Typing Tutor');
+    this.titleText.setText(theme.terminal ? 'HOME ROW // WORKSTATION 02' : 'HOME ROW — Friendly Typing Tutor');
     this.lessonTitle.setText(lesson.playerLabel || lesson.displayTitle);
     this.sectionText.setText(act.playerSection || 'Typing Practice');
     this.instructionText.setText(this._getInstructionText(lesson));
@@ -1067,8 +1132,10 @@ export default class TypingScene extends Phaser.Scene {
     const panelBg = theme.panelBg ? hexToNumber(theme.panelBg) : hexToNumber(COLORS.panel);
     const panelBorder = theme.panelBorder ? hexToNumber(theme.panelBorder) : primary;
     const responseBorder = theme.responseBorder ? hexToNumber(theme.responseBorder) : warning;
+    const isTerminal = !!theme.terminal;
 
     this.cameras.main.setBackgroundColor(theme.bg);
+    this.backgroundRect.setFillStyle(hexToNumber(theme.bg));
     this.themeOverlay.setFillStyle(primary).setAlpha(theme.overlayAlpha);
 
     this.themeGridLines.forEach((line, index) => {
@@ -1081,7 +1148,7 @@ export default class TypingScene extends Phaser.Scene {
     this.debugDivider.setFillStyle(accent).setAlpha(0.35);
     this.eventDivider.setFillStyle(accent).setAlpha(0.35);
 
-    [
+    const panels = isTerminal ? this.themePanels : [
       this.statsPanel,
       this.lessonPanel,
       this.mrFingersPanel,
@@ -1090,25 +1157,32 @@ export default class TypingScene extends Phaser.Scene {
       this.assignedPanel,
       this.typedPanel,
       this.responsePanel
-    ].forEach(panel => {
+    ];
+    panels.forEach(panel => {
       panel.setFillStyle(panelBg);
-      panel.setStrokeStyle(1, panelBorder);
+      panel.setStrokeStyle(isTerminal ? 1 : 1, panelBorder, isTerminal ? 0.72 : 1);
     });
+    this.themePanelShadows.forEach(shadow => shadow.setAlpha(isTerminal ? 0 : 1));
+    this.keyboardKeyShadows.forEach(shadow => shadow.setAlpha(isTerminal ? 0 : 1));
     this.responsePanel.setStrokeStyle(1, responseBorder);
-    this.lessonHeader.setFillStyle(primary);
-    this.lessonHeader.setStrokeStyle(1, accent);
+    this.lessonHeader.setFillStyle(isTerminal ? panelBg : primary);
+    this.lessonHeader.setStrokeStyle(1, isTerminal ? panelBorder : accent, isTerminal ? 0.9 : 1);
     this.instructionPanel.setFillStyle(theme.light ? 0xfcf5de : panelBg).setStrokeStyle(1, panelBorder);
-    this.titleBar.setFillStyle(primary);
-    this.titleBarShadow.setFillStyle(accent);
+    this.titleBar.setFillStyle(isTerminal ? hexToNumber('#061006') : primary);
+    this.titleBarShadow.setFillStyle(isTerminal ? hexToNumber('#020402') : accent).setAlpha(isTerminal ? 0.8 : 0.35);
+    this.titleBarHighlight.setFillStyle(isTerminal ? primary : 0x5f8fd1).setAlpha(isTerminal ? 0.45 : 1);
     this.footerBar.setFillStyle(theme.light ? 0xe0d8c4 : panelBg);
     this.footerTopLine.setFillStyle(panelBorder);
+    this.progressBarBack.setFillStyle(isTerminal ? hexToNumber('#020602') : 0xf1e9d0)
+      .setStrokeStyle(1, isTerminal ? panelBorder : 0xb2a684, isTerminal ? 0.8 : 1);
+    this.progressBarFill.setFillStyle(isTerminal ? primary : 0x74bf4c);
 
-    this.titleText.setColor(theme.light ? '#fff7c4' : '#ffffff');
+    this.titleText.setColor(theme.light ? '#fff7c4' : theme.primary);
     this.lessonTitle.setColor(theme.light ? '#234d96' : theme.primary);
     this.modeStampText.setText(theme.modeStamp).setColor(theme.light ? '#325fa2' : theme.accent);
-    this.sectionText.setColor(theme.light ? '#fff7c4' : '#ffffff');
-    this.assignedLabel.setText('Target Text').setColor(theme.light ? '#325fa2' : theme.accent);
-    this.inputLabel.setColor(theme.light ? '#325fa2' : theme.accent);
+    this.sectionText.setColor(theme.light ? '#fff7c4' : theme.primary);
+    this.assignedLabel.setText(isTerminal ? 'TARGET BUFFER' : 'Target Text').setColor(theme.light ? '#325fa2' : theme.accent);
+    this.inputLabel.setText(isTerminal ? 'INPUT BUFFER' : 'Student Input').setColor(theme.light ? '#325fa2' : theme.accent);
     this.assignedText.setColor(theme.assignedColor || theme.accent);
     this.instructionText.setColor(theme.light ? TUTOR_PALETTE.text : theme.assignedColor || theme.primary);
     this.responseText.setColor(theme.responseColor || theme.warning);
@@ -1125,8 +1199,64 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingersPortraitFrame.setFillStyle(theme.light ? 0xf6dfb4 : panelBg);
     this.mrFingersPortraitFrame.setStrokeStyle(2, panelBorder);
 
+    if (isTerminal) {
+      this._applyTerminalTextSkin(theme);
+    }
+    this._applyCrtOverlay(theme);
     this._updateResponsePanelVisibility();
     this._updateKeyboardHighlights();
+  }
+
+  _applyTerminalTextSkin(theme) {
+    const dim = theme.statsColor || theme.accent;
+    const bright = theme.assignedColor || theme.primary;
+
+    this.children.list.forEach((child) => {
+      if (child.type !== 'Text' || child === this.completionText) return;
+      child.setFontFamily('Courier New, monospace');
+      child.setColor(dim);
+    });
+
+    [
+      this.titleText,
+      this.lessonTitle,
+      this.sectionText,
+      this.assignedText,
+      this.typedTextDisplay,
+      this.wpmValueText,
+      this.accuracyValueText,
+      this.gradeValueText,
+      this.starsValueText,
+      this.mrFingersText,
+      this.mrFingersFallbackText
+    ].forEach(text => text.setColor(bright));
+
+    [
+      this.modeStampText,
+      this.assignedLabel,
+      this.inputLabel,
+      this.debugLabel,
+      this.eventLogLabel,
+      this.statsText,
+      this.footerClockText
+    ].forEach(text => text.setColor(theme.primary));
+
+    this.responseText.setColor(theme.responseColor || theme.warning);
+  }
+
+  _applyCrtOverlay(theme) {
+    const isTerminal = !!theme.terminal;
+    const scanlineAlpha = isTerminal ? theme.scanlineAlpha || 0.08 : 0;
+    const vignetteAlpha = isTerminal ? theme.vignetteAlpha || 0.2 : 0;
+
+    this.crtScanlines.forEach((line, index) => {
+      line
+        .setFillStyle(index % 3 === 0 ? hexToNumber(CRT.phosphorDeep) : 0x000000)
+        .setAlpha(index % 3 === 0 ? scanlineAlpha * 0.55 : scanlineAlpha);
+    });
+    this.crtVignette.forEach(edge => edge.setAlpha(vignetteAlpha));
+    this.crtFrame.setStrokeStyle(1, hexToNumber(theme.panelBorder || CRT.phosphorDeep), isTerminal ? 0.48 : 0);
+    this.crtSoftGlow.setStrokeStyle(1, hexToNumber(theme.primary || CRT.phosphor), isTerminal ? 0.16 : 0);
   }
 
   _updateResponsePanelVisibility() {
@@ -1140,6 +1270,11 @@ export default class TypingScene extends Phaser.Scene {
       this.completionBg.setFillStyle(hexToNumber('#ffffff'));
       this.completionBg.setStrokeStyle(2, hexToNumber(theme.primary));
       this.completionText.setColor('#000000');
+    } else if (theme.terminal) {
+      const bg = theme.panelBg ? hexToNumber(theme.panelBg) : hexToNumber(CRT.panel);
+      this.completionBg.setFillStyle(bg);
+      this.completionBg.setStrokeStyle(1, hexToNumber(theme.panelBorder || theme.primary), 0.9);
+      this.completionText.setColor(theme.assignedColor || theme.primary);
     } else {
       const bg = theme.panelBg ? hexToNumber(theme.panelBg) : hexToNumber(COLORS.panel);
       this.completionBg.setFillStyle(bg);
@@ -1229,7 +1364,9 @@ export default class TypingScene extends Phaser.Scene {
   _updateMrFingersVisual(state, label, config) {
     const theme = this.currentTheme || DEFAULT_ACT_THEME;
     const themeBase = theme.mrColor || COLORS.mrFingers;
-    const defaultColor = (state === 'idle' || state === 'encourage' || state === 'mistake_notice')
+    const defaultColor = theme.terminal
+      ? (state === 'angry' || state === 'glitch_warning' ? (theme.warning || CRT.warning) : themeBase)
+      : (state === 'idle' || state === 'encourage' || state === 'mistake_notice')
       ? themeBase
       : (MR_STATE_COLORS[state] || COLORS.mrFingers);
     const color = theme.light ? themeBase : defaultColor;
@@ -1500,8 +1637,13 @@ export default class TypingScene extends Phaser.Scene {
     this.progressBarFill.width = Math.max(0, this.progressBarMaxW * progressRatio);
     this.progressText.setText(`Lesson ${current} of ${total}`);
     this.reportCommentText.setText(score.comment);
-    this.statsText.setText(`WPM ${stats.wpm}  Accuracy ${stats.accuracy}%  Grade ${score.grade}  Mistakes ${stats.mistakes}`);
-    this.footerHintText.setText(score.goldStar ? 'Gold Star work today!' : score.comment);
+    if (this.currentTheme && this.currentTheme.terminal) {
+      this.statsText.setText(`WPM:${stats.wpm}  ACC:${stats.accuracy}%  GRADE:${score.grade}  ERR:${stats.mistakes}`);
+      this.footerHintText.setText(this.currentTheme.footerHint || 'WORKSTATION 02 ACTIVE');
+    } else {
+      this.statsText.setText(`WPM ${stats.wpm}  Accuracy ${stats.accuracy}%  Grade ${score.grade}  Mistakes ${stats.mistakes}`);
+      this.footerHintText.setText(score.goldStar ? 'Gold Star work today!' : score.comment);
+    }
   }
 
   _updateDebug() {
@@ -1548,7 +1690,9 @@ export default class TypingScene extends Phaser.Scene {
   _flickerOnReveal() {
     const theme = this.currentTheme;
     if (!theme) return;
-    const glitchColor = Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
+    const glitchColor = theme.terminal
+      ? Phaser.Utils.Array.GetRandom([theme.primary, theme.accent, theme.warning])
+      : Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
     this.assignedText.setColor(glitchColor);
     this.time.delayedCall(120, () => {
       this.assignedText.setColor(theme.assignedColor || theme.accent);
@@ -1578,12 +1722,14 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _flickerAssignedText() {
-    const color = Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
+    const theme = this.currentTheme;
+    const color = theme && theme.terminal
+      ? Phaser.Utils.Array.GetRandom([theme.primary, theme.accent, theme.warning])
+      : Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
     this.assignedText.setColor(color);
 
     const duration = 60 + Math.random() * 140;
     this.time.delayedCall(duration, () => {
-      const theme = this.currentTheme;
       this.assignedText.setColor((theme && (theme.assignedColor || theme.accent)) || COLORS.textWhite);
     });
 
@@ -1641,10 +1787,32 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _updateFooterClock() {
-    this.footerClockText.setText(`Time: ${formatDuration(Date.now() - this.sessionStartTime)}`);
+    const time = formatDuration(Date.now() - this.sessionStartTime);
+    if (this.currentTheme && this.currentTheme.terminal) {
+      this.footerClockText.setText(`${this.currentTheme.footerMode || 'SYS: OK  KBD: OK'}  T:${time}`);
+      return;
+    }
+    this.footerClockText.setText(`Time: ${time}`);
   }
 
   _updateKeyboardHighlights() {
+    const theme = this.currentTheme || DEFAULT_ACT_THEME;
+    if (theme.terminal) {
+      const keyFace = hexToNumber('#071106');
+      const homeFace = hexToNumber('#0d1f0b');
+      const activeFace = hexToNumber('#1b3f12');
+      const border = hexToNumber(theme.panelBorder || CRT.phosphorDeep);
+      for (const [value, entry] of this.keyboardKeys.entries()) {
+        let fill = HOME_ROW_KEYS.has(value) ? homeFace : keyFace;
+        if (this.activeKeyValue && value === this.activeKeyValue) {
+          fill = activeFace;
+        }
+        entry.face.setFillStyle(fill).setStrokeStyle(1, border, this.activeKeyValue && value === this.activeKeyValue ? 1 : 0.65);
+        entry.label.setColor(this.activeKeyValue && value === this.activeKeyValue ? theme.primary : theme.statsColor || theme.accent);
+      }
+      return;
+    }
+
     for (const [value, entry] of this.keyboardKeys.entries()) {
       let fill = TUTOR_PALETTE.keyFace;
       if (HOME_ROW_KEYS.has(value)) {
@@ -1654,6 +1822,7 @@ export default class TypingScene extends Phaser.Scene {
         fill = TUTOR_PALETTE.keyActive;
       }
       entry.face.setFillStyle(fill);
+      entry.label.setColor(TUTOR_PALETTE.text);
     }
   }
 
