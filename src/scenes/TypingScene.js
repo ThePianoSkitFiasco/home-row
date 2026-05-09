@@ -63,7 +63,7 @@ const MR_STATE_COLORS = {
 
 const GLITCH_COLORS = ['#ff0044', '#ff3300', '#cc00ff', '#ffffff', '#ffff00'];
 const MR_FINGERS_SPRITE_PATH = 'assets/sprites/mr_fingers/';
-const SHOW_DEV_TOUCH_CONTROLS = true;
+const SHOW_DEV_TOUCH_CONTROLS = false;
 const TUTOR_PALETTE = {
   background: 0xf4e6bd,
   panel: 0xfff7df,
@@ -78,6 +78,11 @@ const TUTOR_PALETTE = {
   keyShadow: 0xc1b38f,
   keyActive: 0xf5d85a,
   keyHome: 0xf2cf3a,
+  green: 0x55a85f,
+  redOrange: 0xb94a3b,
+  purple: 0x8b65b8,
+  gold: 0xe1bb34,
+  sky: 0x71b4e6,
   footerBlue: '#1c4c92',
   footerMuted: '#4a4d56'
 };
@@ -798,6 +803,8 @@ export default class TypingScene extends Phaser.Scene {
       this.eventLogTexts.push(t);
     }
 
+    this._createTutorButtons();
+
     this.footerBar = this.add.rectangle(512, 690, 1024, 22, 0xe0d8c4).setOrigin(0.5, 0);
     this.footerTopLine = this.add.rectangle(512, 690, 1024, 1, 0xb8ad93).setOrigin(0.5, 0);
     this.statsText = this.add.text(12, 694, 'WELCOME BACK!', {
@@ -834,6 +841,62 @@ export default class TypingScene extends Phaser.Scene {
       align: 'center',
       wordWrap: { width: 690 }
     }).setOrigin(0.5, 0).setAlpha(0).setDepth(41);
+  }
+
+  _createTutorButtons() {
+    const buttonW = 108;
+    const buttonH = 46;
+    const gap = 12;
+    const y = 626;
+    const buttons = [
+      { label: 'Practice', color: TUTOR_PALETTE.green, handler: () => this._setFooterMessage('Keep practicing the current line.') },
+      { label: 'Repeat', color: TUTOR_PALETTE.sky, handler: () => this._repeatCurrentLesson() },
+      { label: 'Next', color: TUTOR_PALETTE.gold, handler: () => this._setFooterMessage('Finish the line to continue.') },
+      { label: 'Help', color: TUTOR_PALETTE.purple, handler: () => this._setFooterMessage('Rest your fingers on A S D F and J K L ;.') },
+      { label: 'Quit', color: TUTOR_PALETTE.redOrange, handler: () => this._setFooterMessage('Please finish the lesson before quitting.') }
+    ];
+    const totalW = buttons.length * buttonW + (buttons.length - 1) * gap;
+    let x = (1024 - totalW) / 2;
+
+    this.tutorButtons = buttons.map((cfg) => {
+      const shadow = this.add.rectangle(x + buttonW / 2 + 3, y + buttonH / 2 + 3, buttonW, buttonH, 0x6d634d)
+        .setAlpha(0.3)
+        .setDepth(6);
+      const body = this.add.rectangle(x + buttonW / 2, y + buttonH / 2, buttonW, buttonH, cfg.color)
+        .setStrokeStyle(2, TUTOR_PALETTE.border)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(7);
+      const shine = this.add.rectangle(x + buttonW / 2, y + 5, buttonW - 8, 2, 0xffffff)
+        .setAlpha(0.4)
+        .setDepth(8);
+      const label = this.add.text(x + buttonW / 2, y + buttonH / 2, cfg.label, {
+        fontFamily: 'Trebuchet MS, Verdana, sans-serif',
+        fontSize: '15px',
+        fontStyle: 'bold',
+        color: '#ffffff'
+      }).setOrigin(0.5).setDepth(9);
+
+      body.on('pointerdown', () => {
+        body.y += 2;
+        label.y += 2;
+        shine.y += 2;
+      });
+      body.on('pointerup', () => {
+        body.y -= 2;
+        label.y -= 2;
+        shine.y -= 2;
+        cfg.handler();
+      });
+      body.on('pointerout', () => {
+        body.y = y + buttonH / 2;
+        label.y = y + buttonH / 2;
+        shine.y = y + 5;
+      });
+
+      const result = { shadow, body, shine, label };
+      x += buttonW + gap;
+      return result;
+    });
   }
 
   _buildCrtOverlays(width) {
@@ -1475,7 +1538,7 @@ export default class TypingScene extends Phaser.Scene {
 
     this.devTouchPanel = this._createPanel(x, y, w, h, { fill: 0xf4efe0, shadow: false, lineWidth: 1 });
     this.devTouchPanel.setDepth(20);
-    this.devTouchLabel = this.add.text(x + 12, y + 10, 'DEV TEST INPUT', {
+    this.devTouchLabel = this.add.text(x + 12, y + 10, 'TOUCH INPUT', {
       fontFamily: 'Verdana, sans-serif',
       fontSize: '12px',
       fontStyle: 'bold',
@@ -1643,6 +1706,28 @@ export default class TypingScene extends Phaser.Scene {
     } else {
       this.statsText.setText(`WPM ${stats.wpm}  Accuracy ${stats.accuracy}%  Grade ${score.grade}  Mistakes ${stats.mistakes}`);
       this.footerHintText.setText(score.goldStar ? 'Gold Star work today!' : score.comment);
+    }
+  }
+
+  _repeatCurrentLesson() {
+    if (!this.typingEngine) return;
+    this.responseQueue = [];
+    if (this.responseTimer) {
+      this.responseTimer.remove(false);
+      this.responseTimer = null;
+    }
+    this.responseText.setText('').setAlpha(0);
+    this._updateResponsePanelVisibility();
+    this.typingEngine.loadLine(this.typingEngine.assignedText);
+    this.inputLocked = false;
+    this._renderTypedText();
+    this._updateStats();
+    this._setFooterMessage('Repeating the current sentence.');
+  }
+
+  _setFooterMessage(message) {
+    if (this.footerHintText) {
+      this.footerHintText.setText(message);
     }
   }
 
