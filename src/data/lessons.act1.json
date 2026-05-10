@@ -2,6 +2,12 @@
   "actId": "act1_home_row",
   "title": "HOME ROW",
   "playerSection": "Beginning Typing",
+  "miniGameAfterAct": {
+    "type": "catch_falling_keys",
+    "variant": "early",
+    "letterPool": "asdfjkl",
+    "duration": 30
+  },
   "lessons": [
     {
       "id": "act1_basic_keys",

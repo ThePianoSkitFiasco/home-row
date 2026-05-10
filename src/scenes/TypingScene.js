@@ -1296,11 +1296,12 @@ export default class TypingScene extends Phaser.Scene {
         this._armContinueHandler(() => {
           this.completionBg.setAlpha(0);
           this.completionText.setAlpha(0);
-          this.lessonManager.advanceAct();
-          this.actComplete = false;
-          this._clearContinueHandler();
-          this._startLesson();
-          this.mrFingers.setState('idle');
+          const miniGameConfig = act && act.miniGameAfterAct;
+          if (miniGameConfig) {
+            this._launchMiniGame(miniGameConfig);
+          } else {
+            this._advanceToNextAct();
+          }
         });
       });
     }
@@ -2374,5 +2375,21 @@ export default class TypingScene extends Phaser.Scene {
         this.cameras.main.shake(150 + t * 15, intensity);
       }
     }
+  }
+
+  _advanceToNextAct() {
+    this.lessonManager.advanceAct();
+    this.actComplete = false;
+    this._startLesson();
+    this.mrFingers.setState('idle');
+  }
+
+  _launchMiniGame(config) {
+    this.events.once('minigame-complete', () => {
+      this._advanceToNextAct();
+    });
+    // Launch mini-game scene additively (before sleeping so launch() sees RUNNING status)
+    this.scene.launch('MiniGameScene', { config, actTheme: this.currentTheme });
+    this.scene.sleep();
   }
 }
