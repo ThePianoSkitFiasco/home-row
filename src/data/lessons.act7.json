@@ -2,6 +2,28 @@
   "actId": "act7_correction_exam",
   "title": "CORRECTION EXAM",
   "playerSection": "Final Review",
+  "miniGameAfterAct": {
+    "type": "erase_chalkboard",
+    "variant": "corrupted",
+    "duration": 40,
+    "layers": [
+      {
+        "visibleText": "SHE WAS ABSENT",
+        "hiddenText": "SHE WAS NOT ABSENT",
+        "eraseWord": "ERASE"
+      },
+      {
+        "visibleText": "THE CLASSROOM WAS QUIET",
+        "hiddenText": "I HEARD HER",
+        "eraseWord": "WIPE"
+      },
+      {
+        "visibleText": "THE CHILD STAYED FOCUSED",
+        "hiddenText": "DO NOT TURN AROUND",
+        "eraseWord": "CORRECT"
+      }
+    ]
+  },
   "lessons": [
     {
       "id": "act7_final_review",

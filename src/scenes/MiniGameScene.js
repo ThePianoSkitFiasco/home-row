@@ -1,8 +1,8 @@
 // MiniGameScene — interstitial mini-games that appear between main lessons.
 // Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on', 'correct_the_record',
 //                                   'door_close', 'stay_in_your_seat',
-//                                   'listen_and_type'.
-// Future types: 'erase_the_chalkboard', 'typing_race', 'final_correct_the_record'
+//                                   'listen_and_type', 'erase_chalkboard'.
+// Future types: 'typing_race', 'final_correct_the_record'
 
 const FONT = 'Courier New, monospace';
 
@@ -41,7 +41,7 @@ export default class MiniGameScene extends Phaser.Scene {
     this.gameType = this.config.type || 'catch_falling_keys';
 
     // Shared game state
-    this.timeLeft      = this.config.duration || (this.gameType === 'listen_and_type' ? 40 : 30);
+    this.timeLeft      = this.config.duration || (['listen_and_type', 'erase_chalkboard'].includes(this.gameType) ? 40 : 30);
     this.gameOver      = false;
     this._introObjects = [];
     this._keyHandler   = null;
@@ -168,6 +168,27 @@ export default class MiniGameScene extends Phaser.Scene {
     this._listenInputText     = null;
     this._listenHeardStamp    = null;
     this._listenProgressText  = null;
+
+    // ── Chalkboard state ─────────────────────────────────────────────────────
+    const defaultChalkLayers = [
+      { visibleText: 'SHE WAS ABSENT',              hiddenText: 'SHE WAS NOT ABSENT', eraseWord: 'ERASE' },
+      { visibleText: 'THE CLASSROOM WAS QUIET',     hiddenText: 'I HEARD HER',        eraseWord: 'WIPE' },
+      { visibleText: 'THE CHILD STAYED FOCUSED',    hiddenText: 'DO NOT TURN AROUND', eraseWord: 'CORRECT' }
+    ];
+    this._chalkLayers      = this.config.layers || defaultChalkLayers;
+    this._chalkIndex       = 0;
+    this._chalkTyped       = '';
+    this._chalkCompleted   = 0;
+    this._chalkLocked      = false;
+    this._chalkRevealTimer = null;
+    // UI refs — assigned in _buildChalkHUD
+    this._chalkBoard       = null;
+    this._chalkVisibleText = null;
+    this._chalkHiddenText  = null;
+    this._chalkCommandText = null;
+    this._chalkInputText   = null;
+    this._chalkStatusText  = null;
+    this._chalkProgressText = null;
   }
 
   create() {
@@ -185,6 +206,8 @@ export default class MiniGameScene extends Phaser.Scene {
         this._buildSeatHUD(1024, 768);
       } else if (this.gameType === 'listen_and_type') {
         this._buildListenHUD(1024, 768);
+      } else if (this.gameType === 'erase_chalkboard') {
+        this._buildChalkHUD(1024, 768);
       }
       this._showIntro();
     } catch (e) {
@@ -354,6 +377,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._startStayInYourSeat();
     } else if (this.gameType === 'listen_and_type') {
       this._startListenAndType();
+    } else if (this.gameType === 'erase_chalkboard') {
+      this._startEraseChalkboard();
     } else {
       console.warn(`[MiniGameScene] Unknown game type: ${this.gameType}`);
       this._endGame();
@@ -373,6 +398,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._keyHandler = this._seatOnKey.bind(this);
     } else if (this.gameType === 'listen_and_type') {
       this._keyHandler = this._listenOnKey.bind(this);
+    } else if (this.gameType === 'erase_chalkboard') {
+      this._keyHandler = this._chalkOnKey.bind(this);
     } else {
       this._keyHandler = this._cfkOnKey.bind(this);
     }
@@ -571,6 +598,11 @@ export default class MiniGameScene extends Phaser.Scene {
       this._listenAdvanceTimer = null;
     }
 
+    if (this._chalkRevealTimer) {
+      this._chalkRevealTimer.remove(false);
+      this._chalkRevealTimer = null;
+    }
+
     if (this.activeLetter) {
       this.activeLetter.destroy();
       this.activeLetter = null;
@@ -668,6 +700,12 @@ export default class MiniGameScene extends Phaser.Scene {
         subtitle: 'Type what you hear, not what you see.'
       };
     }
+    if (this.gameType === 'erase_chalkboard') {
+      return {
+        title:    'BONUS DRILL: ERASE THE CHALKBOARD',
+        subtitle: 'Type each command to clean the board.'
+      };
+    }
     return {
       title:    'BONUS DRILL: FALLING KEYS',
       subtitle: 'Improve your home row reflexes!'
@@ -685,6 +723,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._showSeatResults();
     } else if (this.gameType === 'listen_and_type') {
       this._showListenResults();
+    } else if (this.gameType === 'erase_chalkboard') {
+      this._showChalkResults();
     } else {
       this._showCFKResults();
     }
@@ -1837,6 +1877,243 @@ export default class MiniGameScene extends Phaser.Scene {
     this.time.delayedCall(2800, this._complete, [], this);
   }
 
+  // ─── Chalkboard HUD ────────────────────────────────────────────────────────
+
+  _buildChalkHUD(W, H) {
+    this.add.rectangle(W / 2, 378, 760, 420, 0x6b5136)
+      .setStrokeStyle(3, 0x3c2b1d);
+    this._chalkBoard = this.add.rectangle(W / 2, 378, 710, 365, 0x13261d)
+      .setStrokeStyle(2, 0xd8c790);
+
+    this.add.text(W / 2, 148, 'CHALKBOARD:', {
+      fontFamily: FONT, fontSize: '12px', color: '#d8d8c8'
+    }).setOrigin(0.5);
+
+    this._chalkHiddenText = this.add.text(W / 2, 342, '', {
+      fontFamily: FONT, fontSize: '32px', color: '#ffb0a0', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 640 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._chalkVisibleText = this.add.text(W / 2, 300, '', {
+      fontFamily: FONT, fontSize: '32px', color: '#e7ead8', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 640 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._chalkStatusText = this.add.text(W / 2, 438, '', {
+      fontFamily: FONT, fontSize: '18px', color: '#d8d8c8', fontStyle: 'bold',
+      align: 'center'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._chalkCommandText = this.add.text(W / 2, 555, 'CLEANING COMMAND:', {
+      fontFamily: FONT, fontSize: '17px', color: '#445566'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._chalkInputText = this.add.text(W / 2, 608, '> _', {
+      fontFamily: FONT, fontSize: '24px', color: '#006600',
+      align: 'center', wordWrap: { width: 650 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._chalkProgressText = this.add.text(W / 2, 690, `Layers Erased: 0 / ${this._chalkLayers.length}`, {
+      fontFamily: FONT, fontSize: '16px', color: PAL.score
+    }).setOrigin(0.5).setAlpha(0);
+  }
+
+  _startEraseChalkboard() {
+    this._chalkVisibleText.setAlpha(1);
+    this._chalkCommandText.setAlpha(1);
+    this._chalkInputText.setAlpha(1);
+    this._chalkProgressText.setAlpha(1);
+    this._spawnChalkLayer();
+  }
+
+  // ─── Chalkboard — layer lifecycle ──────────────────────────────────────────
+
+  _spawnChalkLayer() {
+    const layer = this._chalkLayers[this._chalkIndex];
+    if (!layer) { this._endGame(); return; }
+
+    this._chalkTyped = '';
+    this._chalkLocked = false;
+    this._chalkVisibleText
+      .setText(layer.visibleText)
+      .setColor('#e7ead8')
+      .setAlpha(1)
+      .setX(512)
+      .setY(300);
+    this._chalkHiddenText
+      .setText(layer.hiddenText)
+      .setColor('#ffb0a0')
+      .setAlpha(0)
+      .setX(512)
+      .setY(342);
+    this._chalkCommandText.setText(`CLEANING COMMAND: ${layer.eraseWord}`);
+    this._chalkInputText.setText('> _').setColor('#006600').setAlpha(1).setX(512);
+    this._chalkStatusText.setText('').setAlpha(0);
+  }
+
+  _chalkOnKey(event) {
+    if (this.gameOver || this._chalkLocked) return;
+    const key = event.key;
+
+    if (key === 'Backspace') {
+      event.preventDefault();
+      if (this._chalkTyped.length > 0) {
+        this._chalkTyped = this._chalkTyped.slice(0, -1);
+        this._chalkUpdateInput();
+      }
+      return;
+    }
+
+    if (key.length !== 1) return;
+
+    const layer  = this._chalkLayers[this._chalkIndex];
+    const target = layer ? layer.eraseWord : '';
+    const pos    = this._chalkTyped.length;
+    if (!target || pos >= target.length) return;
+
+    const expected = target[pos];
+    if (key.toUpperCase() === expected.toUpperCase()) {
+      this._chalkTyped += expected;
+      this._chalkUpdateInput();
+      if (this._chalkTyped === target) {
+        this._chalkCompleteLayer();
+      }
+    } else {
+      this._chalkInputText.setColor('#cc0000');
+      this.cameras.main.shake(100, 0.0035);
+      this.tweens.add({
+        targets: this._chalkInputText,
+        x:       512 + Phaser.Math.Between(-9, 9),
+        yoyo:    true,
+        repeat:  2,
+        duration: 34,
+        onComplete: () => {
+          if (!this.gameOver) this._chalkInputText.setX(512).setColor('#006600');
+        }
+      });
+    }
+  }
+
+  _chalkUpdateInput() {
+    const layer  = this._chalkLayers[this._chalkIndex];
+    const target = layer ? layer.eraseWord : '';
+    const cursor = this._chalkTyped.length < target.length ? '_' : '';
+    this._chalkInputText.setText(`> ${this._chalkTyped}${cursor}`);
+  }
+
+  _chalkCompleteLayer() {
+    this._chalkLocked = true;
+    this._chalkCompleted++;
+    this._chalkProgressText.setText(`Layers Erased: ${this._chalkCompleted} / ${this._chalkLayers.length}`);
+    this._chalkInputText.setAlpha(0);
+
+    this._scatterChalkDust();
+    this.tweens.add({
+      targets:  this._chalkVisibleText,
+      alpha:    0,
+      y:        286,
+      duration: 360,
+      ease:     'Sine.In',
+      onComplete: () => {
+        if (!this.gameOver) this._chalkRevealHidden();
+      }
+    });
+  }
+
+  _chalkRevealHidden() {
+    this._chalkHiddenText.setAlpha(1).setColor('#ffb0a0');
+    this._chalkStatusText.setText('TEXT UNDER BOARD SURFACED').setColor('#ffb0a0').setAlpha(1);
+
+    this._chalkRevealTimer = this.time.delayedCall(1050, () => {
+      this._chalkRevealTimer = null;
+      if (this.gameOver) return;
+
+      this._chalkStatusText.setText('DISPLAY ERROR CORRECTED').setColor('#d8d8c8').setAlpha(1);
+      this.tweens.add({
+        targets:  this._chalkHiddenText,
+        alpha:    0.18,
+        duration: 260,
+        ease:     'Sine.Out'
+      });
+
+      this._chalkRevealTimer = this.time.delayedCall(520, () => {
+        this._chalkRevealTimer = null;
+        if (this.gameOver) return;
+        this._chalkIndex++;
+        if (this._chalkIndex >= this._chalkLayers.length) {
+          this._endGame();
+        } else {
+          this._spawnChalkLayer();
+        }
+      });
+    });
+  }
+
+  _scatterChalkDust() {
+    for (let i = 0; i < 14; i++) {
+      const dust = this.add.circle(
+        Phaser.Math.Between(250, 774),
+        Phaser.Math.Between(266, 340),
+        Phaser.Math.Between(2, 5),
+        0xe7ead8
+      ).setAlpha(0.42);
+
+      this.tweens.add({
+        targets:    dust,
+        x:          dust.x + Phaser.Math.Between(-25, 25),
+        y:          dust.y + Phaser.Math.Between(28, 70),
+        alpha:      0,
+        duration:   Phaser.Math.Between(420, 760),
+        onComplete: () => dust.destroy()
+      });
+    }
+  }
+
+  // ─── Chalkboard — grade / results ──────────────────────────────────────────
+
+  _getChalkGrade() {
+    const total = this._chalkLayers.length;
+    if (this._chalkCompleted >= total) return { label: 'BOARD CLEANED',      color: PAL.caught };
+    if (this._chalkCompleted >= 1)     return { label: 'PARTIAL CLEANING',   color: PAL.gold   };
+    return                              { label: 'BOARD UNCLEAN',      color: PAL.missed };
+  }
+
+  _showChalkResults() {
+    const W = 1024;
+    const H = 768;
+    const grade = this._getChalkGrade();
+
+    this.add.rectangle(W / 2, H / 2, W, H, PAL.overlay).setAlpha(0.45);
+    this.add.rectangle(W / 2, H / 2, 500, 310, PAL.panelBg)
+      .setStrokeStyle(3, PAL.panelBorder);
+
+    this.add.text(W / 2, H / 2 - 118, 'DRILL COMPLETE', {
+      fontFamily: FONT, fontSize: '23px', color: '#003399', fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 62, grade.label, {
+      fontFamily: FONT, fontSize: '27px', color: grade.color, fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 6,
+      `${this._chalkCompleted} / ${this._chalkLayers.length} Layer${this._chalkLayers.length !== 1 ? 's' : ''} Erased`, {
+        fontFamily: FONT, fontSize: '20px', color: PAL.score
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 + 108, 'Returning to lessons...', {
+      fontFamily: FONT, fontSize: '14px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // TODO: MemoryState writes based on erased layers and hidden text exposure
+    // TODO: corrupted/finale variant where player can refuse to erase
+    // TODO: chalk dust/audio pass
+    // TODO: act-based hidden text selection
+    // TODO: line replacement animation
+    // TODO: connection to final witness statement
+
+    this.time.delayedCall(2800, this._complete, [], this);
+  }
+
   // ─── Return to TypingScene ───────────────────────────────────────────────────
 
   _complete() {
@@ -1851,6 +2128,8 @@ export default class MiniGameScene extends Phaser.Scene {
       result = { phrases: this._seatCompleted, lookbacks: this._seatLookbacks };
     } else if (this.gameType === 'listen_and_type') {
       result = { completed: this._listenCompleted, total: this._listenPrompts.length };
+    } else if (this.gameType === 'erase_chalkboard') {
+      result = { erased: this._chalkCompleted, total: this._chalkLayers.length };
     } else {
       result = { caught: this.caught, missed: this.missed };
     }
