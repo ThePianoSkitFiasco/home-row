@@ -2,6 +2,16 @@
   "actId": "act4_dictation_mode",
   "title": "DICTATION MODE",
   "playerSection": "Dictation Practice",
+  "miniGameAfterAct": {
+    "type": "door_close",
+    "variant": "middle",
+    "duration": 35,
+    "phrases": [
+      "KEEP THE DOOR OPEN",
+      "DO NOT LET IT CLOSE",
+      "STAY AT YOUR DESK"
+    ]
+  },
   "lessons": [
     {
       "id": "act4_listen_type",

@@ -1,6 +1,6 @@
 // MiniGameScene — interstitial mini-games that appear between main lessons.
-// Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on', 'correct_the_record'.
-// Future types: 'do_not_let_the_door_close',
+// Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on', 'correct_the_record', 'door_close'.
+// Future types:
 //               'stay_in_your_seat', 'listen_and_type', 'erase_the_chalkboard',
 //               'typing_race', 'final_correct_the_record'
 
@@ -101,6 +101,29 @@ export default class MiniGameScene extends Phaser.Scene {
     this._ctrInputText    = null;
     this._ctrStampText    = null;
     this._ctrProgressText = null;
+
+    // ── Door state ────────────────────────────────────────────────────────────
+    this._doorOpen        = 100;  // 0–100: percentage of door open
+    const defaultPhrases  = [
+      'KEEP THE DOOR OPEN',
+      'DO NOT LET IT CLOSE',
+      'STAY AT YOUR DESK',
+      'FACE THE SCREEN',
+      'FINISH THE EXERCISE'
+    ];
+    this._doorPhrases     = this.config.phrases || defaultPhrases;
+    this._doorPhraseIndex = 0;
+    this._doorTyped       = '';
+    this._doorCompleted   = 0;
+    this._doorClosures    = 0;
+    this._doorDrainTimer  = null;
+    // UI refs — assigned in _buildDoorHUD
+    this._doorGraphics    = null;
+    this._doorPhraseText  = null;
+    this._doorInputText   = null;
+    this._doorScoreText   = null;
+    this._doorClosureText = null;
+    this._doorStatusText  = null;
   }
 
   create() {
@@ -112,6 +135,8 @@ export default class MiniGameScene extends Phaser.Scene {
         this._buildKTLOHUD(1024, 768);
       } else if (this.gameType === 'correct_the_record') {
         this._buildCTRHUD(1024, 768);
+      } else if (this.gameType === 'door_close') {
+        this._buildDoorHUD(1024, 768);
       }
       this._showIntro();
     } catch (e) {
@@ -271,6 +296,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._startKeepLightsOn();
     } else if (this.gameType === 'correct_the_record') {
       this._startCorrectTheRecord();
+    } else if (this.gameType === 'door_close') {
+      this._startDoorClose();
     } else {
       console.warn(`[MiniGameScene] Unknown game type: ${this.gameType}`);
       this._endGame();
@@ -284,6 +311,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._keyHandler = this._ktloOnKey.bind(this);
     } else if (this.gameType === 'correct_the_record') {
       this._keyHandler = this._ctrOnKey.bind(this);
+    } else if (this.gameType === 'door_close') {
+      this._keyHandler = this._doorOnKey.bind(this);
     } else {
       this._keyHandler = this._cfkOnKey.bind(this);
     }
@@ -467,6 +496,11 @@ export default class MiniGameScene extends Phaser.Scene {
       this._lightTimer = null;
     }
 
+    if (this._doorDrainTimer) {
+      this._doorDrainTimer.remove(false);
+      this._doorDrainTimer = null;
+    }
+
     if (this.activeLetter) {
       this.activeLetter.destroy();
       this.activeLetter = null;
@@ -546,6 +580,12 @@ export default class MiniGameScene extends Phaser.Scene {
         subtitle: 'Type the corrected sentence exactly.'
       };
     }
+    if (this.gameType === 'door_close') {
+      return {
+        title:    'BONUS DRILL: DO NOT LET THE DOOR CLOSE',
+        subtitle: 'Type each phrase to keep the classroom door open.'
+      };
+    }
     return {
       title:    'BONUS DRILL: FALLING KEYS',
       subtitle: 'Improve your home row reflexes!'
@@ -557,6 +597,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._showKTLOResults();
     } else if (this.gameType === 'correct_the_record') {
       this._showCTRResults();
+    } else if (this.gameType === 'door_close') {
+      this._showDoorResults();
     } else {
       this._showCFKResults();
     }
@@ -1006,6 +1048,234 @@ export default class MiniGameScene extends Phaser.Scene {
     this.time.delayedCall(2800, this._complete, [], this);
   }
 
+  // ─── Door HUD ─────────────────────────────────────────────────────────────────
+
+  _buildDoorHUD(W, H) {
+    // Door graphic — drawn by _updateDoorVisual(), initialised here
+    this._doorGraphics = this.add.graphics();
+    this._updateDoorVisual();
+
+    // "DOOR" label above the graphic
+    this.add.text(145, 126, 'DOOR', {
+      fontFamily: FONT, fontSize: '13px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // Open percentage below the graphic
+    this._doorStatusText = this.add.text(145, 636, 'OPEN: 100%', {
+      fontFamily: FONT, fontSize: '12px', color: '#006600'
+    }).setOrigin(0.5);
+
+    // Phrase area — right of door graphic
+    this.add.text(625, 260, 'TYPE THIS PHRASE:', {
+      fontFamily: FONT, fontSize: '13px', color: '#445566'
+    }).setOrigin(0.5);
+
+    this._doorPhraseText = this.add.text(625, 330, '', {
+      fontFamily: FONT, fontSize: '22px', color: '#003399', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 680 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._doorInputText = this.add.text(625, 420, '> _', {
+      fontFamily: FONT, fontSize: '22px', color: '#006600'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._doorScoreText = this.add.text(480, 530, 'Phrases: 0', {
+      fontFamily: FONT, fontSize: '16px', color: PAL.score
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._doorClosureText = this.add.text(740, 530, 'Closures: 0', {
+      fontFamily: FONT, fontSize: '16px', color: '#cc3300'
+    }).setOrigin(0.5).setAlpha(0);
+  }
+
+  _startDoorClose() {
+    this._doorPhraseText.setAlpha(1);
+    this._doorInputText.setAlpha(1);
+    this._doorScoreText.setAlpha(1);
+    this._doorClosureText.setAlpha(1);
+    this._spawnDoorPhrase();
+
+    const drainMs = this.config.drainIntervalMs || 2500;
+    this._doorDrainTimer = this.time.addEvent({
+      delay:         drainMs,
+      callback:      this._doorDrain,
+      callbackScope: this,
+      loop:          true
+    });
+  }
+
+  // ─── Door — phrase lifecycle ──────────────────────────────────────────────────
+
+  _spawnDoorPhrase() {
+    const phrase = this._doorPhrases[this._doorPhraseIndex % this._doorPhrases.length];
+    this._doorTyped = '';
+    this._doorPhraseText.setText(phrase).setColor('#003399');
+    this._doorInputText.setText('> _').setColor('#006600').setAlpha(1);
+    // TODO: act-based phrase selection tied to MemoryState / story progress
+  }
+
+  _doorOnKey(event) {
+    if (this.gameOver) return;
+    const key = event.key;
+
+    if (key === 'Backspace') {
+      event.preventDefault();
+      if (this._doorTyped.length > 0) {
+        this._doorTyped = this._doorTyped.slice(0, -1);
+        this._doorUpdateInput();
+      }
+      return;
+    }
+
+    if (key.length !== 1) return;
+
+    const target = this._doorPhrases[this._doorPhraseIndex % this._doorPhrases.length];
+    const pos    = this._doorTyped.length;
+    if (pos >= target.length) return;
+
+    const expected = target[pos];
+    if (key.toUpperCase() === expected.toUpperCase()) {
+      this._doorTyped += expected;
+      this._doorUpdateInput();
+      if (this._doorTyped === target) {
+        this._doorCompletePhrase();
+      }
+    } else {
+      // Wrong key — brief red flash, no structural penalty in middle variant
+      this._doorInputText.setColor('#cc0000');
+      this.time.delayedCall(140, () => {
+        if (!this.gameOver) this._doorInputText.setColor('#006600');
+      });
+      // TODO corrupted: wrong key accelerates door drain
+      // TODO MemoryState: accumulate wrong-key count → disclosure axis
+    }
+  }
+
+  _doorUpdateInput() {
+    const target = this._doorPhrases[this._doorPhraseIndex % this._doorPhrases.length];
+    const cursor = this._doorTyped.length < target.length ? '_' : '';
+    this._doorInputText.setText(`> ${this._doorTyped}${cursor}`);
+  }
+
+  _doorCompletePhrase() {
+    this._doorCompleted++;
+    this._doorPhraseIndex++;
+    this._doorScoreText.setText(`Phrases: ${this._doorCompleted}`);
+
+    this._doorOpen = Math.min(100, this._doorOpen + 30);
+    this._updateDoorVisual();
+
+    // Brief green confirmation, then next phrase
+    this._doorPhraseText.setColor('#006600');
+    this.time.delayedCall(300, () => {
+      if (!this.gameOver) this._spawnDoorPhrase();
+    });
+  }
+
+  // ─── Door — drain / closure ───────────────────────────────────────────────────
+
+  _doorDrain() {
+    if (this.gameOver) return;
+    const amount = this.config.drainAmount || 8;
+    this._doorOpen = Math.max(0, this._doorOpen - amount);
+    this._updateDoorVisual();
+    if (this._doorOpen <= 0) this._doorClosed();
+  }
+
+  _doorClosed() {
+    this._doorClosures++;
+    this._doorClosureText.setText(`Closures: ${this._doorClosures}`);
+
+    // Brief DOOR CLOSED state — hide input so the moment lands
+    this._doorPhraseText.setText('DOOR CLOSED').setColor('#cc0000');
+    this._doorInputText.setAlpha(0);
+
+    this.time.delayedCall(800, () => {
+      if (!this.gameOver) {
+        this._doorOpen = 55;
+        this._updateDoorVisual();
+        this._spawnDoorPhrase();
+        this._doorInputText.setAlpha(1);
+      }
+    });
+  }
+
+  _updateDoorVisual() {
+    const doorX = 50, doorY = 140, doorW = 190, doorH = 480;
+    const openPx = Math.floor(doorW * Math.max(0, this._doorOpen) / 100);
+
+    this._doorGraphics.clear();
+
+    // Light visible through the gap (left side of frame = open side)
+    this._doorGraphics.fillStyle(0xddd0b8);
+    this._doorGraphics.fillRect(doorX, doorY, openPx, doorH);
+
+    // Door panel — swings closed from the right
+    this._doorGraphics.fillStyle(0x7a5c44);
+    this._doorGraphics.fillRect(doorX + openPx, doorY, doorW - openPx, doorH);
+
+    // Frame drawn over both fills
+    this._doorGraphics.lineStyle(3, 0x443322);
+    this._doorGraphics.strokeRect(doorX, doorY, doorW, doorH);
+
+    // Status text
+    if (this._doorStatusText) {
+      const pct = Math.max(0, Math.round(this._doorOpen));
+      const col = pct > 30 ? '#006600' : pct > 10 ? '#cc8800' : '#cc0000';
+      this._doorStatusText.setText(`OPEN: ${pct}%`).setColor(col);
+    }
+  }
+
+  // ─── Door — grade / results ───────────────────────────────────────────────────
+
+  _getDoorGrade() {
+    if (this._doorClosures === 0) return { label: 'DOOR HELD OPEN', color: PAL.caught };
+    if (this._doorClosures <= 1)  return { label: 'MOSTLY OPEN',    color: PAL.gold   };
+    return                         { label: 'DOOR CLOSED',      color: PAL.missed };
+  }
+
+  _showDoorResults() {
+    const W = 1024;
+    const H = 768;
+    const grade = this._getDoorGrade();
+
+    this.add.rectangle(W / 2, H / 2, W, H, PAL.overlay).setAlpha(0.45);
+    this.add.rectangle(W / 2, H / 2, 460, 310, PAL.panelBg)
+      .setStrokeStyle(3, PAL.panelBorder);
+
+    this.add.text(W / 2, H / 2 - 118, 'DRILL COMPLETE', {
+      fontFamily: FONT, fontSize: '23px', color: '#003399', fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 62, grade.label, {
+      fontFamily: FONT, fontSize: '28px', color: grade.color, fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 6,
+      `${this._doorCompleted} Phrase${this._doorCompleted !== 1 ? 's' : ''} Completed`, {
+        fontFamily: FONT, fontSize: '20px', color: PAL.score
+    }).setOrigin(0.5);
+
+    const closureColor = this._doorClosures > 0 ? PAL.missed : PAL.caught;
+    this.add.text(W / 2, H / 2 + 36,
+      `${this._doorClosures} Closure${this._doorClosures !== 1 ? 's' : ''}`, {
+        fontFamily: FONT, fontSize: '20px', color: closureColor
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 + 108, 'Returning to lessons...', {
+      fontFamily: FONT, fontSize: '14px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // TODO: write Door result to MemoryState (closures → disclosure+, phrases → obedience+)
+    // TODO: corrupted variant — prompts shift to KEEP THE DOOR CLOSED / DO NOT INTERRUPT / GOOD CHILDREN WAIT
+    // TODO: optional resistance mechanic — player can choose to ignore the system prompt
+    // TODO: act-based phrase selection tied to story progress
+    // TODO: visual shadow cast behind door for atmosphere
+    // TODO: audio cue for door handle / hinge during audio pass
+
+    this.time.delayedCall(2800, this._complete, [], this);
+  }
+
   // ─── Return to TypingScene ───────────────────────────────────────────────────
 
   _complete() {
@@ -1014,6 +1284,8 @@ export default class MiniGameScene extends Phaser.Scene {
       result = { wordsCompleted: this.wordsCompleted, blackouts: this.blackouts };
     } else if (this.gameType === 'correct_the_record') {
       result = { completed: this._ctrCompleted, total: this._ctrRecords.length };
+    } else if (this.gameType === 'door_close') {
+      result = { phrases: this._doorCompleted, closures: this._doorClosures };
     } else {
       result = { caught: this.caught, missed: this.missed };
     }
