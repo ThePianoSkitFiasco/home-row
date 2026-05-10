@@ -2,6 +2,12 @@
   "actId": "act2_student_record",
   "title": "STUDENT RECORD",
   "playerSection": "Data Entry Practice",
+  "miniGameAfterAct": {
+    "type": "keep_lights_on",
+    "variant": "early",
+    "duration": 30,
+    "wordPool": ["lamp", "desk", "chair", "board", "paper", "pencil", "screen", "class"]
+  },
   "lessons": [
     {
       "id": "act2_school_words",

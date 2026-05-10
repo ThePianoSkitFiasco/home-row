@@ -25,7 +25,9 @@ const PAL = {
   timerNorm:   '#ffff88',
   timerWarn:   '#ff4444',
   boundary:    0x999988,
-  overlay:     0x000000
+  overlay:     0x000000,
+  lightOn:     0xf0e060,
+  lightOff:    0x333328
 };
 
 export default class MiniGameScene extends Phaser.Scene {
@@ -36,16 +38,20 @@ export default class MiniGameScene extends Phaser.Scene {
   init(data) {
     this.config   = data.config   || {};
     this.actTheme = data.actTheme || null;
+    this.gameType = this.config.type || 'catch_falling_keys';
 
-    // Game state
-    this.caught       = 0;
-    this.missed       = 0;
-    this.timeLeft     = (this.config.duration || 30);
-    this.gameOver     = false;
-    this.activeLetter = null;
+    // Shared game state
+    this.timeLeft      = (this.config.duration || 30);
+    this.gameOver      = false;
     this._introObjects = [];
     this._keyHandler   = null;
     this._timerEvent   = null;
+    this._lightTimer   = null;
+
+    // ── CFK state ────────────────────────────────────────────────────────────
+    this.caught       = 0;
+    this.missed       = 0;
+    this.activeLetter = null;
 
     // Corrupted variant — missed letters accumulate at the bottom and may spell
     // hidden words before the system suppresses them.
@@ -59,13 +65,34 @@ export default class MiniGameScene extends Phaser.Scene {
     this.letterPool = raw.length > 0 ? raw : ['a','s','d','f','j','k','l'];
 
     // Fall speed in px/s — gentle for the early variant
-    // TODO Phase 2: variant 'corrupted' uses higher speed or irregular timing
+    // TODO corrupted: higher speed or irregular timing
     this.fallSpeed = this.config.fallSpeed || 90;
+
+    // ── KTLO state ───────────────────────────────────────────────────────────
+    this.wordsCompleted = 0;
+    this.blackouts      = 0;
+    this.lightLevel     = 5;
+    this.currentWord    = '';
+    this.typedInput     = '';
+    const defaultWordPool = ['lamp', 'desk', 'chair', 'board', 'paper', 'pencil', 'screen', 'class'];
+    this._wordPool      = this.config.wordPool || defaultWordPool;
+    // UI object refs — assigned in _buildKTLOHUD
+    this._lightRects    = [];
+    this._bgOverlay     = null;
+    this._wordText      = null;
+    this._inputText     = null;
+    this._ktloScoreText     = null;
+    this._ktloBlackoutText  = null;
   }
 
   create() {
     try {
-      this._buildUI(1024, 768);
+      this._buildChrome(1024, 768);
+      if (this.gameType === 'catch_falling_keys') {
+        this._buildCFKHUD(1024, 768);
+      } else if (this.gameType === 'keep_lights_on') {
+        this._buildKTLOHUD(1024, 768);
+      }
       this._showIntro();
     } catch (e) {
       console.error('[MiniGameScene] create() failed:', e);
@@ -74,7 +101,9 @@ export default class MiniGameScene extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (this.gameOver || !this.activeLetter) return;
+    if (this.gameOver) return;
+    // Only CFK requires per-frame letter-position updates; KTLO is timer-driven
+    if (this.gameType !== 'catch_falling_keys' || !this.activeLetter) return;
 
     this.activeLetter.y += this.fallSpeed * (delta / 1000);
 
@@ -85,49 +114,33 @@ export default class MiniGameScene extends Phaser.Scene {
 
   // ─── UI ─────────────────────────────────────────────────────────────────────
 
-  _buildUI(W, H) {
+  _buildChrome(W, H) {
     // Background
     this.add.rectangle(W / 2, H / 2, W, H, PAL.bg);
 
     // Title bar — 80px tall to fit title + subtitle
     this.add.rectangle(W / 2, 40, W, 80, PAL.titleBar);
 
-    this.add.text(W / 2, 20, 'BONUS DRILL: FALLING KEYS', {
+    const titles = this._getGameTitles();
+    this.add.text(W / 2, 20, titles.title, {
       fontFamily: FONT,
       fontSize:   '21px',
       color:      PAL.titleText,
       fontStyle:  'bold'
     }).setOrigin(0.5, 0.5);
 
-    this.add.text(W / 2, 52, 'Improve your home row reflexes!', {
+    this.add.text(W / 2, 52, titles.subtitle, {
       fontFamily: FONT,
       fontSize:   '13px',
       color:      PAL.titleSub
     }).setOrigin(0.5, 0.5);
 
-    // Timer (top right in title bar, visible once game starts)
+    // Timer — shared, hidden until game starts
     this.timerText = this.add.text(W - 18, 10, `TIME: ${this.timeLeft}s`, {
       fontFamily: FONT,
       fontSize:   '16px',
       color:      PAL.timerNorm
     }).setOrigin(1, 0).setAlpha(0);
-
-    // Bottom boundary line
-    this.add.rectangle(W / 2, 714, W, 2, PAL.boundary);
-
-    // Player hint (visible once game starts)
-    this.hintText = this.add.text(W / 2, 730, 'Type the falling letter to catch it!', {
-      fontFamily: FONT,
-      fontSize:   '14px',
-      color:      PAL.hint
-    }).setOrigin(0.5, 0).setAlpha(0);
-
-    // Score display (visible once game starts)
-    this.scoreText = this.add.text(W / 2, 758, 'Caught: 0     Missed: 0', {
-      fontFamily: FONT,
-      fontSize:   '19px',
-      color:      PAL.score
-    }).setOrigin(0.5, 1).setAlpha(0);
   }
 
   // ─── Intro ──────────────────────────────────────────────────────────────────
@@ -223,30 +236,35 @@ export default class MiniGameScene extends Phaser.Scene {
   // ─── Game start ─────────────────────────────────────────────────────────────
 
   _startGame() {
-    // Reveal HUD elements that were hidden during intro
     this.timerText.setAlpha(1);
-    this.hintText.setAlpha(1);
-    this.scoreText.setAlpha(1);
-
     this._bindInput();
-    this._spawnLetter();
-
     this._timerEvent = this.time.addEvent({
       delay:         1000,
       callback:      this._tick,
       callbackScope: this,
       loop:          true
     });
+
+    if (this.gameType === 'catch_falling_keys') {
+      this._startCatchFallingKeys();
+    } else if (this.gameType === 'keep_lights_on') {
+      this._startKeepLightsOn();
+    } else {
+      console.warn(`[MiniGameScene] Unknown game type: ${this.gameType}`);
+      this._endGame();
+    }
   }
 
   // ─── Input ──────────────────────────────────────────────────────────────────
 
   _bindInput() {
-    this._keyHandler = this._onKey.bind(this);
+    this._keyHandler = (this.gameType === 'keep_lights_on')
+      ? this._ktloOnKey.bind(this)
+      : this._cfkOnKey.bind(this);
     this.input.keyboard.on('keydown', this._keyHandler);
   }
 
-  _onKey(event) {
+  _cfkOnKey(event) {
     if (this.gameOver || !this.activeLetter) return;
 
     const pressed = event.key.toLowerCase();
@@ -398,7 +416,7 @@ export default class MiniGameScene extends Phaser.Scene {
 
   // ─── Grade ──────────────────────────────────────────────────────────────────
 
-  _getGrade() {
+  _getCFKGrade() {
     const total = this.caught + this.missed;
     if (total === 0) return { label: 'GOOD WORK',      color: PAL.caught };
     const rate = this.caught / total;
@@ -418,6 +436,11 @@ export default class MiniGameScene extends Phaser.Scene {
       this._timerEvent = null;
     }
 
+    if (this._lightTimer) {
+      this._lightTimer.remove(false);
+      this._lightTimer = null;
+    }
+
     if (this.activeLetter) {
       this.activeLetter.destroy();
       this.activeLetter = null;
@@ -430,10 +453,10 @@ export default class MiniGameScene extends Phaser.Scene {
     this._showResults();
   }
 
-  _showResults() {
+  _showCFKResults() {
     const W = 1024;
     const H = 768;
-    const grade = this._getGrade();
+    const grade = this._getCFKGrade();
 
     // Dim overlay
     this.add.rectangle(W / 2, H / 2, W, H, PAL.overlay).setAlpha(0.45);
@@ -482,10 +505,253 @@ export default class MiniGameScene extends Phaser.Scene {
     this.time.delayedCall(2800, this._complete, [], this);
   }
 
+  // ─── Routing ─────────────────────────────────────────────────────────────────
+
+  _getGameTitles() {
+    if (this.gameType === 'keep_lights_on') {
+      return {
+        title:    'BONUS DRILL: KEEP THE LIGHTS ON',
+        subtitle: 'Type each word to restore the classroom lights.'
+      };
+    }
+    return {
+      title:    'BONUS DRILL: FALLING KEYS',
+      subtitle: 'Improve your home row reflexes!'
+    };
+  }
+
+  _showResults() {
+    if (this.gameType === 'keep_lights_on') {
+      this._showKTLOResults();
+    } else {
+      this._showCFKResults();
+    }
+  }
+
+  // ─── CFK HUD ─────────────────────────────────────────────────────────────────
+
+  _buildCFKHUD(W, H) {
+    this.add.rectangle(W / 2, 714, W, 2, PAL.boundary);
+
+    this.hintText = this.add.text(W / 2, 730, 'Type the falling letter to catch it!', {
+      fontFamily: FONT,
+      fontSize:   '14px',
+      color:      PAL.hint
+    }).setOrigin(0.5, 0).setAlpha(0);
+
+    this.scoreText = this.add.text(W / 2, 758, 'Caught: 0     Missed: 0', {
+      fontFamily: FONT,
+      fontSize:   '19px',
+      color:      PAL.score
+    }).setOrigin(0.5, 1).setAlpha(0);
+  }
+
+  _startCatchFallingKeys() {
+    this.hintText.setAlpha(1);
+    this.scoreText.setAlpha(1);
+    this._spawnLetter();
+  }
+
+  // ─── KTLO HUD ────────────────────────────────────────────────────────────────
+
+  _buildKTLOHUD(W, H) {
+    // Dark overlay — alpha varies with lightLevel to dim the room
+    this._bgOverlay = this.add.rectangle(W / 2, 400, W, 640, 0x000000).setAlpha(0);
+
+    // 5 lights across the upper game area
+    const lightW = 130, lightH = 46, lightGap = 18;
+    const totalW = 5 * lightW + 4 * lightGap;
+    const lx0    = (W - totalW) / 2 + lightW / 2;
+    for (let i = 0; i < 5; i++) {
+      const rect = this.add.rectangle(lx0 + i * (lightW + lightGap), 125, lightW, lightH, PAL.lightOn)
+        .setStrokeStyle(2, 0x888800);
+      this._lightRects.push(rect);
+    }
+
+    this.add.text(W / 2, 272, 'TYPE THIS WORD:', {
+      fontFamily: FONT,
+      fontSize:   '15px',
+      color:      '#445566'
+    }).setOrigin(0.5);
+
+    this._wordText = this.add.text(W / 2, 334, '', {
+      fontFamily: FONT,
+      fontSize:   '52px',
+      color:      '#003399',
+      fontStyle:  'bold'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._inputText = this.add.text(W / 2, 422, '', {
+      fontFamily: FONT,
+      fontSize:   '30px',
+      color:      '#006600'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._ktloScoreText = this.add.text(W / 2 - 90, 528, 'Words: 0', {
+      fontFamily: FONT,
+      fontSize:   '18px',
+      color:      PAL.score
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._ktloBlackoutText = this.add.text(W / 2 + 110, 528, 'Blackouts: 0', {
+      fontFamily: FONT,
+      fontSize:   '18px',
+      color:      '#cc3300'
+    }).setOrigin(0.5).setAlpha(0);
+  }
+
+  _startKeepLightsOn() {
+    this._wordText.setAlpha(1);
+    this._inputText.setAlpha(1);
+    this._ktloScoreText.setAlpha(1);
+    this._ktloBlackoutText.setAlpha(1);
+    this._spawnKTLOWord();
+
+    // One light drains per interval; configurable for harder variants
+    // TODO corrupted: shorter drain, irregular timing, wrong words invade pool
+    const drainMs = this.config.lightDrainMs || 6000;
+    this._lightTimer = this.time.addEvent({
+      delay:         drainMs,
+      callback:      this._drainLight,
+      callbackScope: this,
+      loop:          true
+    });
+  }
+
+  // ─── KTLO — word lifecycle ────────────────────────────────────────────────────
+
+  _spawnKTLOWord() {
+    this.currentWord = this._wordPool[Phaser.Math.Between(0, this._wordPool.length - 1)];
+    this.typedInput  = '';
+    this._wordText.setText(this.currentWord).setColor('#003399');
+    this._inputText.setText('> _').setColor('#006600');
+    // TODO corrupted: pool shifts toward DOOR, BEHIND, QUIET, LISTEN
+  }
+
+  _ktloOnKey(event) {
+    if (this.gameOver) return;
+    const key = event.key;
+    if (key.length !== 1) return;   // ignore Backspace, Enter, arrows, etc.
+
+    const expected = this.currentWord[this.typedInput.length];
+    if (key.toLowerCase() === expected) {
+      this.typedInput += key.toLowerCase();
+      this._inputText.setText(`> ${this.typedInput}_`);
+      if (this.typedInput === this.currentWord) {
+        this._ktloCompleteWord();
+      }
+    } else {
+      // Wrong key — brief red flash, no harsh penalty in early variant
+      this._inputText.setColor('#cc0000');
+      this.time.delayedCall(140, () => {
+        if (!this.gameOver) this._inputText.setColor('#006600');
+      });
+      // TODO corrupted: accumulate errors; word pool shifts after enough wrong keys
+    }
+  }
+
+  _ktloCompleteWord() {
+    this.wordsCompleted++;
+    this._ktloScoreText.setText(`Words: ${this.wordsCompleted}`);
+
+    this.lightLevel = Math.min(5, this.lightLevel + 1);
+    this._updateKTLOLights();
+
+    // Brief green flash on word, then next word
+    this._wordText.setColor('#006600');
+    this.time.delayedCall(220, () => {
+      if (!this.gameOver) this._spawnKTLOWord();
+    });
+  }
+
+  // ─── KTLO — lights ───────────────────────────────────────────────────────────
+
+  _drainLight() {
+    if (this.gameOver) return;
+    this.lightLevel = Math.max(0, this.lightLevel - 1);
+    this._updateKTLOLights();
+    if (this.lightLevel === 0) this._ktloBlackout();
+  }
+
+  _ktloBlackout() {
+    this.blackouts++;
+    this._ktloBlackoutText.setText(`Blackouts: ${this.blackouts}`);
+
+    // Dramatic dark moment — hide the word so the player feels the blackout
+    this._bgOverlay.setAlpha(0.88);
+    this._wordText.setAlpha(0);
+    this._inputText.setAlpha(0);
+
+    this.time.delayedCall(700, () => {
+      if (!this.gameOver) {
+        this.lightLevel = 2;
+        this._updateKTLOLights();
+        this._wordText.setAlpha(1);
+        this._inputText.setAlpha(1);
+        // TODO corrupted: flash wrong classroom detail during blackout
+        // TODO corrupted: brief reveal of second workstation between blackout and restore
+      }
+    });
+  }
+
+  _updateKTLOLights() {
+    this._lightRects.forEach((rect, i) => {
+      rect.setFillStyle(i < this.lightLevel ? PAL.lightOn : PAL.lightOff);
+    });
+    this._bgOverlay.setAlpha((1 - this.lightLevel / 5) * 0.62);
+  }
+
+  // ─── KTLO — results ──────────────────────────────────────────────────────────
+
+  _getKTLOGrade() {
+    if (this.blackouts === 0) return { label: '★  GOLD STAR  ★', color: PAL.gold   };
+    if (this.blackouts <= 1)  return { label: 'GOOD WORK',      color: PAL.caught  };
+    return                     { label: 'NEEDS PRACTICE',   color: PAL.missed  };
+  }
+
+  _showKTLOResults() {
+    const W = 1024;
+    const H = 768;
+    const grade = this._getKTLOGrade();
+
+    this.add.rectangle(W / 2, H / 2, W, H, PAL.overlay).setAlpha(0.45);
+    this.add.rectangle(W / 2, H / 2, 460, 310, PAL.panelBg)
+      .setStrokeStyle(3, PAL.panelBorder);
+
+    this.add.text(W / 2, H / 2 - 118, 'DRILL COMPLETE', {
+      fontFamily: FONT, fontSize: '23px', color: '#003399', fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 62, grade.label, {
+      fontFamily: FONT, fontSize: '28px', color: grade.color, fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 6,
+      `${this.wordsCompleted} Word${this.wordsCompleted !== 1 ? 's' : ''} Completed`, {
+        fontFamily: FONT, fontSize: '20px', color: PAL.caught
+    }).setOrigin(0.5);
+
+    const blackoutColor = this.blackouts > 0 ? PAL.missed : PAL.caught;
+    this.add.text(W / 2, H / 2 + 36,
+      `${this.blackouts} Blackout${this.blackouts !== 1 ? 's' : ''}`, {
+        fontFamily: FONT, fontSize: '20px', color: blackoutColor
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 + 108, 'Returning to lessons...', {
+      fontFamily: FONT, fontSize: '14px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // TODO: write KTLO result to MemoryState (blackouts → disclosure+, word count → obedience+)
+
+    this.time.delayedCall(2800, this._complete, [], this);
+  }
+
   // ─── Return to TypingScene ───────────────────────────────────────────────────
 
   _complete() {
-    const result = { caught: this.caught, missed: this.missed };
+    const result = (this.gameType === 'keep_lights_on')
+      ? { wordsCompleted: this.wordsCompleted, blackouts: this.blackouts }
+      : { caught: this.caught, missed: this.missed };
 
     try {
       this.scene.wake('TypingScene');
