@@ -2,6 +2,25 @@
   "actId": "act6_protective_routine",
   "title": "PROTECTIVE ROUTINE",
   "playerSection": "Behaviour Practice",
+  "miniGameAfterAct": {
+    "type": "listen_and_type",
+    "variant": "middle",
+    "duration": 40,
+    "prompts": [
+      {
+        "displayedText": "THE CLASSROOM WAS QUIET",
+        "heardText": "SHE SAID NO"
+      },
+      {
+        "displayedText": "I DID NOT NOTICE ANYTHING",
+        "heardText": "I KEPT TYPING"
+      },
+      {
+        "displayedText": "THE LESSON CONTINUED",
+        "heardText": "DO NOT TURN AROUND"
+      }
+    ]
+  },
   "lessons": [
     {
       "id": "act6_quiet_hands",

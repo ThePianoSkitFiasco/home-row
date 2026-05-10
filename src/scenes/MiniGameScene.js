@@ -1,7 +1,8 @@
 // MiniGameScene — interstitial mini-games that appear between main lessons.
 // Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on', 'correct_the_record',
-//                                   'door_close', 'stay_in_your_seat'.
-// Future types: 'listen_and_type', 'erase_the_chalkboard', 'typing_race', 'final_correct_the_record'
+//                                   'door_close', 'stay_in_your_seat',
+//                                   'listen_and_type'.
+// Future types: 'erase_the_chalkboard', 'typing_race', 'final_correct_the_record'
 
 const FONT = 'Courier New, monospace';
 
@@ -40,7 +41,7 @@ export default class MiniGameScene extends Phaser.Scene {
     this.gameType = this.config.type || 'catch_falling_keys';
 
     // Shared game state
-    this.timeLeft      = (this.config.duration || 30);
+    this.timeLeft      = this.config.duration || (this.gameType === 'listen_and_type' ? 40 : 30);
     this.gameOver      = false;
     this._introObjects = [];
     this._keyHandler   = null;
@@ -147,6 +148,26 @@ export default class MiniGameScene extends Phaser.Scene {
     this._seatInputText   = null;
     this._seatScoreText   = null;
     this._seatLookText    = null;
+
+    // ── Listen state ─────────────────────────────────────────────────────────
+    const defaultListenPrompts = [
+      { displayedText: 'THE CLASSROOM WAS QUIET',    heardText: 'SHE SAID NO' },
+      { displayedText: 'I DID NOT NOTICE ANYTHING',  heardText: 'I KEPT TYPING' },
+      { displayedText: 'THE LESSON CONTINUED',       heardText: 'DO NOT TURN AROUND' }
+    ];
+    this._listenPrompts      = this.config.prompts || defaultListenPrompts;
+    this._listenIndex        = 0;
+    this._listenTyped        = '';
+    this._listenCompleted    = 0;
+    this._listenLocked       = false;
+    this._listenFlickerMs    = 0;
+    this._listenAdvanceTimer = null;
+    // UI refs — assigned in _buildListenHUD
+    this._listenDisplayedText = null;
+    this._listenHeardText     = null;
+    this._listenInputText     = null;
+    this._listenHeardStamp    = null;
+    this._listenProgressText  = null;
   }
 
   create() {
@@ -162,6 +183,8 @@ export default class MiniGameScene extends Phaser.Scene {
         this._buildDoorHUD(1024, 768);
       } else if (this.gameType === 'stay_in_your_seat') {
         this._buildSeatHUD(1024, 768);
+      } else if (this.gameType === 'listen_and_type') {
+        this._buildListenHUD(1024, 768);
       }
       this._showIntro();
     } catch (e) {
@@ -172,6 +195,10 @@ export default class MiniGameScene extends Phaser.Scene {
 
   update(time, delta) {
     if (this.gameOver) return;
+    if (this.gameType === 'listen_and_type') {
+      this._updateHeardFlicker(delta);
+      return;
+    }
     // Only CFK requires per-frame letter-position updates; KTLO is timer-driven
     if (this.gameType !== 'catch_falling_keys' || !this.activeLetter) return;
 
@@ -325,6 +352,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._startDoorClose();
     } else if (this.gameType === 'stay_in_your_seat') {
       this._startStayInYourSeat();
+    } else if (this.gameType === 'listen_and_type') {
+      this._startListenAndType();
     } else {
       console.warn(`[MiniGameScene] Unknown game type: ${this.gameType}`);
       this._endGame();
@@ -342,6 +371,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._keyHandler = this._doorOnKey.bind(this);
     } else if (this.gameType === 'stay_in_your_seat') {
       this._keyHandler = this._seatOnKey.bind(this);
+    } else if (this.gameType === 'listen_and_type') {
+      this._keyHandler = this._listenOnKey.bind(this);
     } else {
       this._keyHandler = this._cfkOnKey.bind(this);
     }
@@ -535,6 +566,11 @@ export default class MiniGameScene extends Phaser.Scene {
       this._seatDriftTimer = null;
     }
 
+    if (this._listenAdvanceTimer) {
+      this._listenAdvanceTimer.remove(false);
+      this._listenAdvanceTimer = null;
+    }
+
     if (this.activeLetter) {
       this.activeLetter.destroy();
       this.activeLetter = null;
@@ -626,6 +662,12 @@ export default class MiniGameScene extends Phaser.Scene {
         subtitle: 'Type each phrase to stay focused on the screen.'
       };
     }
+    if (this.gameType === 'listen_and_type') {
+      return {
+        title:    'BONUS DRILL: LISTEN AND TYPE',
+        subtitle: 'Type what you hear, not what you see.'
+      };
+    }
     return {
       title:    'BONUS DRILL: FALLING KEYS',
       subtitle: 'Improve your home row reflexes!'
@@ -641,6 +683,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._showDoorResults();
     } else if (this.gameType === 'stay_in_your_seat') {
       this._showSeatResults();
+    } else if (this.gameType === 'listen_and_type') {
+      this._showListenResults();
     } else {
       this._showCFKResults();
     }
@@ -1592,6 +1636,207 @@ export default class MiniGameScene extends Phaser.Scene {
     this.time.delayedCall(2800, this._complete, [], this);
   }
 
+  // ─── Listen HUD ─────────────────────────────────────────────────────────────
+
+  _buildListenHUD(W, H) {
+    this.add.rectangle(W / 2, 410, 720, 430, 0xf7f7f3)
+      .setStrokeStyle(2, 0x9a9a88);
+
+    this.add.text(W / 2, 168, 'OFFICIAL TEXT:', {
+      fontFamily: FONT, fontSize: '12px', color: '#777766'
+    }).setOrigin(0.5);
+
+    this._listenDisplayedText = this.add.text(W / 2, 220, '', {
+      fontFamily: FONT, fontSize: '24px', color: '#003399', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 650 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this.add.rectangle(W / 2, 292, 640, 1, 0xc8c8b8);
+
+    this.add.text(W / 2, 334, 'HEARD:', {
+      fontFamily: FONT, fontSize: '12px', color: '#777766'
+    }).setOrigin(0.5);
+
+    this._listenHeardText = this.add.text(W / 2, 390, '', {
+      fontFamily: FONT, fontSize: '28px', color: '#334455', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 650 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._listenInputText = this.add.text(W / 2, 490, '> _', {
+      fontFamily: FONT, fontSize: '24px', color: '#006600',
+      align: 'center', wordWrap: { width: 650 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._listenHeardStamp = this.add.text(W / 2, 490, 'HEARD', {
+      fontFamily: FONT, fontSize: '30px', color: '#006600', fontStyle: 'bold'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._listenProgressText = this.add.text(W / 2, 588, `Heard: 0 / ${this._listenPrompts.length}`, {
+      fontFamily: FONT, fontSize: '16px', color: PAL.score
+    }).setOrigin(0.5).setAlpha(0);
+  }
+
+  _startListenAndType() {
+    this._listenDisplayedText.setAlpha(1);
+    this._listenHeardText.setAlpha(1);
+    this._listenInputText.setAlpha(1);
+    this._listenProgressText.setAlpha(1);
+    this._spawnListenPrompt();
+  }
+
+  // ─── Listen — prompt lifecycle ──────────────────────────────────────────────
+
+  _spawnListenPrompt() {
+    const prompt = this._listenPrompts[this._listenIndex];
+    if (!prompt) { this._endGame(); return; }
+
+    this._listenTyped = '';
+    this._listenLocked = false;
+    this._listenDisplayedText
+      .setText(prompt.displayedText)
+      .setColor('#003399')
+      .setAlpha(1)
+      .setX(512);
+    this._listenHeardText
+      .setText(prompt.heardText)
+      .setColor('#334455')
+      .setAlpha(0.72)
+      .setScale(1)
+      .setX(512);
+    this._listenInputText.setText('> _').setColor('#006600').setAlpha(1).setX(512);
+    this._listenHeardStamp.setAlpha(0);
+  }
+
+  _listenOnKey(event) {
+    if (this.gameOver || this._listenLocked) return;
+    const key = event.key;
+
+    if (key === 'Backspace') {
+      event.preventDefault();
+      if (this._listenTyped.length > 0) {
+        this._listenTyped = this._listenTyped.slice(0, -1);
+        this._listenUpdateInput();
+      }
+      return;
+    }
+
+    if (key.length !== 1) return;
+
+    const prompt = this._listenPrompts[this._listenIndex];
+    const target = prompt ? prompt.heardText : '';
+    const pos    = this._listenTyped.length;
+    if (!target || pos >= target.length) return;
+
+    const expected = target[pos];
+    if (key.toUpperCase() === expected.toUpperCase()) {
+      this._listenTyped += expected;
+      this._listenUpdateInput();
+      if (this._listenTyped === target) {
+        this._listenCompletePrompt();
+      }
+    } else {
+      this._listenInputText.setColor('#cc0000');
+      this.cameras.main.shake(90, 0.003);
+      this.tweens.add({
+        targets: this._listenInputText,
+        x:       512 + Phaser.Math.Between(-8, 8),
+        yoyo:    true,
+        repeat:  2,
+        duration: 32,
+        onComplete: () => {
+          if (!this.gameOver) this._listenInputText.setX(512).setColor('#006600');
+        }
+      });
+      // TODO: option to type official text instead of heard text
+    }
+  }
+
+  _listenUpdateInput() {
+    const prompt = this._listenPrompts[this._listenIndex];
+    const target = prompt ? prompt.heardText : '';
+    const cursor = this._listenTyped.length < target.length ? '_' : '';
+    this._listenInputText.setText(`> ${this._listenTyped}${cursor}`);
+  }
+
+  _listenCompletePrompt() {
+    this._listenLocked = true;
+    this._listenCompleted++;
+    this._listenProgressText.setText(`Heard: ${this._listenCompleted} / ${this._listenPrompts.length}`);
+    this._listenInputText.setAlpha(0);
+    this._listenHeardStamp.setAlpha(1);
+    this._listenHeardText.setColor('#006600').setAlpha(1).setScale(1);
+
+    this._listenAdvanceTimer = this.time.delayedCall(650, () => {
+      this._listenAdvanceTimer = null;
+      if (this.gameOver) return;
+      this._listenIndex++;
+      if (this._listenIndex >= this._listenPrompts.length) {
+        this._endGame();
+      } else {
+        this._spawnListenPrompt();
+      }
+    });
+  }
+
+  _updateHeardFlicker(delta) {
+    if (!this._listenHeardText || this._listenLocked) return;
+    this._listenFlickerMs += delta;
+    if (this._listenFlickerMs < 90) return;
+    this._listenFlickerMs = 0;
+
+    const alpha = Phaser.Math.FloatBetween(0.48, 0.86);
+    const xJitter = Phaser.Math.Between(-2, 2);
+    const color = Phaser.Math.Between(0, 4) === 0 ? '#557070' : '#334455';
+    this._listenHeardText
+      .setAlpha(alpha)
+      .setColor(color)
+      .setX(512 + xJitter);
+  }
+
+  // ─── Listen — grade / results ───────────────────────────────────────────────
+
+  _getListenGrade() {
+    const total = this._listenPrompts.length;
+    if (this._listenCompleted >= total) return { label: 'ALL SIGNALS HEARD', color: PAL.caught };
+    if (this._listenCompleted >= 1)     return { label: 'PARTIAL SIGNAL',    color: PAL.gold   };
+    return                               { label: 'NOT HEARD',         color: PAL.missed };
+  }
+
+  _showListenResults() {
+    const W = 1024;
+    const H = 768;
+    const grade = this._getListenGrade();
+
+    this.add.rectangle(W / 2, H / 2, W, H, PAL.overlay).setAlpha(0.45);
+    this.add.rectangle(W / 2, H / 2, 500, 310, PAL.panelBg)
+      .setStrokeStyle(3, PAL.panelBorder);
+
+    this.add.text(W / 2, H / 2 - 118, 'DRILL COMPLETE', {
+      fontFamily: FONT, fontSize: '23px', color: '#003399', fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 62, grade.label, {
+      fontFamily: FONT, fontSize: '27px', color: grade.color, fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 6,
+      `${this._listenCompleted} / ${this._listenPrompts.length} Prompt${this._listenPrompts.length !== 1 ? 's' : ''} Heard`, {
+        fontFamily: FONT, fontSize: '20px', color: PAL.score
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 + 108, 'Returning to lessons...', {
+      fontFamily: FONT, fontSize: '14px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // TODO: real muffled audio pass
+    // TODO: corrupted variant where displayedText tries to overwrite heardText
+    // TODO: option to type official text instead of heard text
+    // TODO: MemoryState writes
+    // TODO: final witness statement connection
+
+    this.time.delayedCall(2800, this._complete, [], this);
+  }
+
   // ─── Return to TypingScene ───────────────────────────────────────────────────
 
   _complete() {
@@ -1604,6 +1849,8 @@ export default class MiniGameScene extends Phaser.Scene {
       result = { phrases: this._doorCompleted, closures: this._doorClosures };
     } else if (this.gameType === 'stay_in_your_seat') {
       result = { phrases: this._seatCompleted, lookbacks: this._seatLookbacks };
+    } else if (this.gameType === 'listen_and_type') {
+      result = { completed: this._listenCompleted, total: this._listenPrompts.length };
     } else {
       result = { caught: this.caught, missed: this.missed };
     }
