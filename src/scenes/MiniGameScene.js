@@ -47,6 +47,13 @@ export default class MiniGameScene extends Phaser.Scene {
     this._keyHandler   = null;
     this._timerEvent   = null;
 
+    // Corrupted variant — missed letters accumulate at the bottom and may spell
+    // hidden words before the system suppresses them.
+    this.isCorrupted  = this.config.variant === 'corrupted';
+    this._missedBuffer = [];   // chars that have collected at the bottom
+    this._missedTexts  = [];   // matching Phaser text objects
+    this._hiddenWords  = this.config.hiddenWords || ['she', 'no', 'door'];
+
     // Letter pool from config, default to home-row keys
     const raw = (this.config.letterPool || 'asdfjkl').split('').filter(Boolean);
     this.letterPool = raw.length > 0 ? raw : ['a','s','d','f','j','k','l'];
@@ -314,10 +321,59 @@ export default class MiniGameScene extends Phaser.Scene {
 
     this._updateScore();
 
-    // TODO Phase 2: accumulate missed.letterChar into hidden word buffer here
-    // TODO Phase 2: if buffer spells SHE/NO/DOOR, flash at bottom for 800ms
+    if (this.isCorrupted) {
+      this._accumulateMissed(missed.letterChar);
+    }
 
     this.time.delayedCall(220, this._spawnLetter, [], this);
+  }
+
+  // ─── Corrupted variant — hidden word accumulation ───────────────────────────
+
+  _accumulateMissed(char) {
+    // Letters collect left-to-right in a dim strip below the boundary line.
+    const x = 20 + this._missedBuffer.length * 26;
+    const t = this.add.text(x, 730, char, {
+      fontFamily: FONT,
+      fontSize:   '20px',
+      color:      '#999988',
+      fontStyle:  'bold'
+    }).setOrigin(0, 0.5);
+
+    this._missedBuffer.push(char.toLowerCase());
+    this._missedTexts.push(t);
+
+    // Check if the accumulated string ends with any hidden word
+    const bufStr = this._missedBuffer.join('');
+    for (const word of this._hiddenWords) {
+      if (bufStr.endsWith(word)) {
+        this._revealAndSuppressWord(word.length);
+        break;
+      }
+    }
+  }
+
+  _revealAndSuppressWord(wordLen) {
+    // Brief reveal: the last N letters turn red — the word surfaces.
+    const targets = this._missedTexts.slice(-wordLen);
+    targets.forEach(t => t.setColor('#cc0000').setFontSize('22px'));
+
+    // After 900ms the system "corrects" them — they fade and are erased.
+    this.time.delayedCall(900, () => {
+      targets.forEach(t => {
+        this.tweens.add({
+          targets:    t,
+          alpha:      0,
+          duration:   350,
+          onComplete: () => t.destroy()
+        });
+      });
+
+      // Remove from buffer and text list so accumulation can continue fresh
+      const start = this._missedBuffer.length - wordLen;
+      this._missedBuffer.splice(start, wordLen);
+      this._missedTexts.splice(start, wordLen);
+    });
   }
 
   _updateScore() {
