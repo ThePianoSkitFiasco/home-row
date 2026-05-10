@@ -1,8 +1,9 @@
 // MiniGameScene — interstitial mini-games that appear between main lessons.
 // Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on', 'correct_the_record',
 //                                   'door_close', 'stay_in_your_seat',
-//                                   'listen_and_type', 'erase_chalkboard'.
-// Future types: 'typing_race', 'final_correct_the_record'
+//                                   'listen_and_type', 'erase_chalkboard',
+//                                   'typing_race'.
+// Future types: 'final_correct_the_record'
 
 const FONT = 'Courier New, monospace';
 
@@ -41,7 +42,9 @@ export default class MiniGameScene extends Phaser.Scene {
     this.gameType = this.config.type || 'catch_falling_keys';
 
     // Shared game state
-    this.timeLeft      = this.config.duration || (['listen_and_type', 'erase_chalkboard'].includes(this.gameType) ? 40 : 30);
+    this.timeLeft      = this.config.duration || (this.gameType === 'typing_race'
+      ? 45
+      : (['listen_and_type', 'erase_chalkboard'].includes(this.gameType) ? 40 : 30));
     this.gameOver      = false;
     this._introObjects = [];
     this._keyHandler   = null;
@@ -189,6 +192,34 @@ export default class MiniGameScene extends Phaser.Scene {
     this._chalkInputText   = null;
     this._chalkStatusText  = null;
     this._chalkProgressText = null;
+
+    // ── Typing race state ────────────────────────────────────────────────────
+    const defaultRaceRounds = [
+      { playerText: 'I WAS A CHILD AND I WAS THERE', opponentText: 'I DID NOT SEE ANYTHING' },
+      { playerText: 'SHE WAS NOT ABSENT',            opponentText: 'ERRORS ARE NOT EVIDENCE' },
+      { playerText: 'I HEARD HER SAY NO',            opponentText: 'GOOD CHILDREN FINISH THE EXERCISE' }
+    ];
+    this._raceRounds        = this.config.rounds || defaultRaceRounds;
+    this._raceIndex         = 0;
+    this._raceTyped         = '';
+    this._raceOpponentTyped = '';
+    this._raceTruthWins     = 0;
+    this._raceSystemWins    = 0;
+    this._raceLocked        = false;
+    this._raceOpponentTimer = null;
+    this._raceAdvanceTimer  = null;
+    this._raceOpponentMs    = this.config.opponentCharMs || 210;
+    // TODO Phase 9 hook: place typing_race before the final_statement/final exam
+    // once the finale flow supports a safe pre-final interstitial.
+    // UI refs — assigned in _buildRaceHUD
+    this._racePlayerText    = null;
+    this._raceOpponentText  = null;
+    this._raceInputText     = null;
+    this._raceOpponentInput = null;
+    this._racePlayerBar     = null;
+    this._raceOpponentBar   = null;
+    this._raceStatusText    = null;
+    this._raceScoreText     = null;
   }
 
   create() {
@@ -208,6 +239,8 @@ export default class MiniGameScene extends Phaser.Scene {
         this._buildListenHUD(1024, 768);
       } else if (this.gameType === 'erase_chalkboard') {
         this._buildChalkHUD(1024, 768);
+      } else if (this.gameType === 'typing_race') {
+        this._buildRaceHUD(1024, 768);
       }
       this._showIntro();
     } catch (e) {
@@ -379,6 +412,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._startListenAndType();
     } else if (this.gameType === 'erase_chalkboard') {
       this._startEraseChalkboard();
+    } else if (this.gameType === 'typing_race') {
+      this._startTypingRace();
     } else {
       console.warn(`[MiniGameScene] Unknown game type: ${this.gameType}`);
       this._endGame();
@@ -400,6 +435,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._keyHandler = this._listenOnKey.bind(this);
     } else if (this.gameType === 'erase_chalkboard') {
       this._keyHandler = this._chalkOnKey.bind(this);
+    } else if (this.gameType === 'typing_race') {
+      this._keyHandler = this._raceOnKey.bind(this);
     } else {
       this._keyHandler = this._cfkOnKey.bind(this);
     }
@@ -603,6 +640,16 @@ export default class MiniGameScene extends Phaser.Scene {
       this._chalkRevealTimer = null;
     }
 
+    if (this._raceOpponentTimer) {
+      this._raceOpponentTimer.remove(false);
+      this._raceOpponentTimer = null;
+    }
+
+    if (this._raceAdvanceTimer) {
+      this._raceAdvanceTimer.remove(false);
+      this._raceAdvanceTimer = null;
+    }
+
     if (this.activeLetter) {
       this.activeLetter.destroy();
       this.activeLetter = null;
@@ -706,6 +753,12 @@ export default class MiniGameScene extends Phaser.Scene {
         subtitle: 'Type each command to clean the board.'
       };
     }
+    if (this.gameType === 'typing_race') {
+      return {
+        title:    'BONUS DRILL: TYPING RACE',
+        subtitle: 'Beat Mr Fingers to finish the sentence.'
+      };
+    }
     return {
       title:    'BONUS DRILL: FALLING KEYS',
       subtitle: 'Improve your home row reflexes!'
@@ -725,6 +778,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._showListenResults();
     } else if (this.gameType === 'erase_chalkboard') {
       this._showChalkResults();
+    } else if (this.gameType === 'typing_race') {
+      this._showRaceResults();
     } else {
       this._showCFKResults();
     }
@@ -2114,6 +2169,260 @@ export default class MiniGameScene extends Phaser.Scene {
     this.time.delayedCall(2800, this._complete, [], this);
   }
 
+  // ─── Race HUD ──────────────────────────────────────────────────────────────
+
+  _buildRaceHUD(W, H) {
+    this.add.rectangle(W / 2, 242, 820, 210, 0xf2f4f1)
+      .setStrokeStyle(2, 0x4f675c);
+    this.add.rectangle(W / 2, 505, 820, 210, 0x2c251f)
+      .setStrokeStyle(2, 0xaa6633);
+
+    this.add.text(145, 150, 'PLAYER / WITNESS', {
+      fontFamily: FONT, fontSize: '13px', color: '#2f6f52', fontStyle: 'bold'
+    }).setOrigin(0, 0.5);
+
+    this._racePlayerText = this.add.text(W / 2, 212, '', {
+      fontFamily: FONT, fontSize: '24px', color: '#164c35', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 720 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._raceInputText = this.add.text(W / 2, 284, '> _', {
+      fontFamily: FONT, fontSize: '21px', color: '#006600',
+      align: 'center', wordWrap: { width: 720 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this.add.rectangle(W / 2, 330, 720, 12, 0xcfd8d0);
+    this._racePlayerBar = this.add.rectangle(152, 330, 0, 12, 0x2f8f5a)
+      .setOrigin(0, 0.5);
+
+    this.add.text(145, 413, 'MR FINGERS / SYSTEM', {
+      fontFamily: FONT, fontSize: '13px', color: '#ffb070', fontStyle: 'bold'
+    }).setOrigin(0, 0.5);
+
+    this._raceOpponentText = this.add.text(W / 2, 475, '', {
+      fontFamily: FONT, fontSize: '24px', color: '#ffb070', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 720 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._raceOpponentInput = this.add.text(W / 2, 547, '', {
+      fontFamily: FONT, fontSize: '21px', color: '#ff8844',
+      align: 'center', wordWrap: { width: 720 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this.add.rectangle(W / 2, 593, 720, 12, 0x4a3a32);
+    this._raceOpponentBar = this.add.rectangle(152, 593, 0, 12, 0xcc5533)
+      .setOrigin(0, 0.5);
+
+    this._raceStatusText = this.add.text(W / 2, 650, '', {
+      fontFamily: FONT, fontSize: '28px', color: '#006600', fontStyle: 'bold'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._raceScoreText = this.add.text(W / 2, 706, 'Truth: 0     System: 0', {
+      fontFamily: FONT, fontSize: '16px', color: PAL.score
+    }).setOrigin(0.5).setAlpha(0);
+  }
+
+  _startTypingRace() {
+    this._racePlayerText.setAlpha(1);
+    this._raceInputText.setAlpha(1);
+    this._raceOpponentText.setAlpha(1);
+    this._raceOpponentInput.setAlpha(1);
+    this._raceScoreText.setAlpha(1);
+    this._spawnRaceRound();
+  }
+
+  // ─── Race — round lifecycle ────────────────────────────────────────────────
+
+  _spawnRaceRound() {
+    const round = this._raceRounds[this._raceIndex];
+    if (!round) { this._endGame(); return; }
+
+    this._raceTyped = '';
+    this._raceOpponentTyped = '';
+    this._raceLocked = false;
+    this._racePlayerText.setText(round.playerText).setColor('#164c35').setAlpha(1);
+    this._raceOpponentText.setText(round.opponentText).setColor('#ffb070').setAlpha(1).setX(512);
+    this._raceInputText.setText('> _').setColor('#006600').setAlpha(1).setX(512);
+    this._raceOpponentInput.setText('> _').setAlpha(1).setX(512);
+    this._raceStatusText.setAlpha(0);
+    this._raceUpdateBars();
+
+    if (this._raceOpponentTimer) {
+      this._raceOpponentTimer.remove(false);
+      this._raceOpponentTimer = null;
+    }
+
+    const speed = Math.max(120, this._raceOpponentMs - this._raceTruthWins * 18);
+    this._raceOpponentTimer = this.time.addEvent({
+      delay:         speed,
+      callback:      this._raceTickOpponent,
+      callbackScope: this,
+      loop:          true
+    });
+  }
+
+  _raceOnKey(event) {
+    if (this.gameOver || this._raceLocked) return;
+    const key = event.key;
+
+    if (key === 'Backspace') {
+      event.preventDefault();
+      if (this._raceTyped.length > 0) {
+        this._raceTyped = this._raceTyped.slice(0, -1);
+        this._raceUpdateInput();
+      }
+      return;
+    }
+
+    if (key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return;
+
+    const round  = this._raceRounds[this._raceIndex];
+    const target = round ? round.playerText : '';
+    const pos    = this._raceTyped.length;
+    if (!target || pos >= target.length) return;
+
+    const expected = target[pos];
+    if (key.toUpperCase() === expected.toUpperCase()) {
+      this._raceTyped += expected;
+      this._raceUpdateInput();
+      if (this._raceTyped === target) {
+        this._raceCompleteRound('truth');
+      }
+    } else {
+      this._raceInputText.setColor('#cc0000');
+      this.cameras.main.shake(90, 0.003);
+      this.tweens.add({
+        targets: this._raceInputText,
+        x:       512 + Phaser.Math.Between(-8, 8),
+        yoyo:    true,
+        repeat:  2,
+        duration: 35,
+        onComplete: () => {
+          if (!this.gameOver) {
+            this._raceInputText.setX(512).setColor('#006600');
+          }
+        }
+      });
+    }
+  }
+
+  _raceUpdateInput() {
+    const round  = this._raceRounds[this._raceIndex];
+    const target = round ? round.playerText : '';
+    const cursor = this._raceTyped.length < target.length ? '_' : '';
+    this._raceInputText.setText(`> ${this._raceTyped}${cursor}`);
+    this._raceUpdateBars();
+  }
+
+  _raceTickOpponent() {
+    if (this.gameOver || this._raceLocked) return;
+    const round  = this._raceRounds[this._raceIndex];
+    const target = round ? round.opponentText : '';
+    if (!target || this._raceOpponentTyped.length >= target.length) return;
+
+    this._raceOpponentTyped += target[this._raceOpponentTyped.length];
+    const cursor = this._raceOpponentTyped.length < target.length ? '_' : '';
+    this._raceOpponentInput.setText(`> ${this._raceOpponentTyped}${cursor}`);
+    this._raceOpponentText.setX(512 + Phaser.Math.Between(-2, 2));
+    this._raceUpdateBars();
+
+    if (this._raceOpponentTyped === target) {
+      this._raceCompleteRound('system');
+    }
+  }
+
+  _raceUpdateBars() {
+    const round = this._raceRounds[this._raceIndex];
+    if (!round) return;
+
+    const playerRatio = round.playerText.length > 0 ? this._raceTyped.length / round.playerText.length : 0;
+    const systemRatio = round.opponentText.length > 0 ? this._raceOpponentTyped.length / round.opponentText.length : 0;
+    this._racePlayerBar.setDisplaySize(Math.floor(720 * playerRatio), 12);
+    this._raceOpponentBar.setDisplaySize(Math.floor(720 * systemRatio), 12);
+  }
+
+  _raceCompleteRound(winner) {
+    if (this._raceLocked && winner !== 'system') return;
+    this._raceLocked = true;
+
+    if (this._raceOpponentTimer) {
+      this._raceOpponentTimer.remove(false);
+      this._raceOpponentTimer = null;
+    }
+
+    if (winner === 'truth') {
+      this._raceTruthWins++;
+      this._raceStatusText.setText('RECORDED').setColor('#006600').setAlpha(1);
+      this._racePlayerText.setColor('#006600');
+    } else {
+      this._raceSystemWins++;
+      this._raceStatusText.setText('SUPPRESSED').setColor('#cc3300').setAlpha(1);
+      this._raceOpponentText.setColor('#ff4444');
+      this.cameras.main.shake(160, 0.004);
+    }
+
+    this._raceScoreText.setText(`Truth: ${this._raceTruthWins}     System: ${this._raceSystemWins}`);
+    this._raceAdvanceTimer = this.time.delayedCall(900, () => {
+      this._raceAdvanceTimer = null;
+      if (this.gameOver) return;
+      this._raceIndex++;
+      if (this._raceIndex >= this._raceRounds.length) {
+        this._endGame();
+      } else {
+        this._spawnRaceRound();
+      }
+    });
+  }
+
+  // ─── Race — grade / results ────────────────────────────────────────────────
+
+  _getRaceGrade() {
+    if (this._raceTruthWins > this._raceSystemWins) return { label: 'TRUTH RECORDED', color: PAL.caught };
+    if (this._raceTruthWins === this._raceSystemWins) return { label: 'CONTESTED RECORD', color: PAL.gold };
+    return { label: 'SUPPRESSED', color: PAL.missed };
+  }
+
+  _showRaceResults() {
+    const W = 1024;
+    const H = 768;
+    const grade = this._getRaceGrade();
+
+    this.add.rectangle(W / 2, H / 2, W, H, PAL.overlay).setAlpha(0.45);
+    this.add.rectangle(W / 2, H / 2, 500, 330, PAL.panelBg)
+      .setStrokeStyle(3, PAL.panelBorder);
+
+    this.add.text(W / 2, H / 2 - 126, 'DRILL COMPLETE', {
+      fontFamily: FONT, fontSize: '23px', color: '#003399', fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 68, grade.label, {
+      fontFamily: FONT, fontSize: '27px', color: grade.color, fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 8,
+      `${this._raceTruthWins} Truth Win${this._raceTruthWins !== 1 ? 's' : ''}`, {
+        fontFamily: FONT, fontSize: '20px', color: PAL.caught
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 + 34,
+      `${this._raceSystemWins} System Win${this._raceSystemWins !== 1 ? 's' : ''}`, {
+        fontFamily: FONT, fontSize: '20px', color: this._raceSystemWins > 0 ? PAL.missed : PAL.caught
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 + 118, 'Returning to lessons...', {
+      fontFamily: FONT, fontSize: '14px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // TODO: MemoryState writes based on truth wins/system wins
+    // TODO: Mr Fingers sprite animation/state integration
+    // TODO: final exam/finale hook
+    // TODO: dynamic opponent phrases based on obedience/disclosure stats
+    // TODO: player choice to refuse race
+    // TODO: stronger visual corruption if Mr Fingers wins
+
+    this.time.delayedCall(2800, this._complete, [], this);
+  }
+
   // ─── Return to TypingScene ───────────────────────────────────────────────────
 
   _complete() {
@@ -2130,6 +2439,12 @@ export default class MiniGameScene extends Phaser.Scene {
       result = { completed: this._listenCompleted, total: this._listenPrompts.length };
     } else if (this.gameType === 'erase_chalkboard') {
       result = { erased: this._chalkCompleted, total: this._chalkLayers.length };
+    } else if (this.gameType === 'typing_race') {
+      result = {
+        truthWins:  this._raceTruthWins,
+        systemWins: this._raceSystemWins,
+        total:      this._raceRounds.length
+      };
     } else {
       result = { caught: this.caught, missed: this.missed };
     }
