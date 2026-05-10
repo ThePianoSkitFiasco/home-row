@@ -63,6 +63,24 @@ const MR_STATE_COLORS = {
 
 const GLITCH_COLORS = ['#ff0044', '#ff3300', '#cc00ff', '#ffffff', '#ffff00'];
 const MR_FINGERS_SPRITE_PATH = 'assets/sprites/mr_fingers/';
+const AUDIO_ASSETS = {
+  typing_click: 'assets/audio/Computer  Keyboard Clicking Sound.wav',
+  section_clear: 'assets/audio/Level Clear.wav',
+  mr_fingers_music: 'assets/audio/Mr fingers.mp3'
+};
+const MR_FINGERS_DISPLAY_SIZE = 180;
+const MR_FINGERS_FRAME_000_MS = 2500;
+const MR_FINGERS_FRAME_001_MS = 500;
+const MR_FINGERS_ANIMATION_KEYS = [
+  'mr_idle_000',
+  'mr_idle_001',
+  'mr_correct_000',
+  'mr_correct_001',
+  'mr_incorrect_000',
+  'mr_incorrect_001',
+  'mr_annoyed_000',
+  'mr_annoyed_001'
+];
 const SHOW_DEV_TOUCH_CONTROLS = false;
 const TUTOR_PALETTE = {
   background: 0xf4e6bd,
@@ -245,29 +263,32 @@ const ACT_THEMES = {
     responseBorder: '#665544'
   },
   act5_unsanctioned_statement: {
-    primary: CRT.phosphor,
-    accent: CRT.phosphorDim,
-    warning: CRT.warning,
+    primary: '#63c94b',
+    accent: '#2f742c',
+    warning: '#b83224',
     panelLabel: 'TYPE:',
     modeStamp: 'UNDERLAYER',
-    bg: CRT.bg,
-    gridAlpha: 0.11,
-    overlayAlpha: 0.08,
+    bg: '#020602',
+    gridAlpha: 0.09,
+    overlayAlpha: 0.06,
     terminal: true,
-    panelBg: CRT.panel,
-    panelBorder: '#6fbf45',
-    textCorrect: CRT.phosphor,
-    textWrong: CRT.warning,
-    textCursor: CRT.phosphor,
-    assignedColor: '#b8ff8a',
-    statsColor: CRT.phosphorDim,
-    mrColor: CRT.phosphor,
-    responseColor: CRT.warning,
-    responseBorder: '#a2d85d',
-    scanlineAlpha: 0.085,
-    vignetteAlpha: 0.18,
-    footerMode: 'SYS: OK  KBD: OK  MONO: GREEN',
-    footerHint: 'WORKSTATION 02 ACTIVE // SECOND USER DETECTED'
+    panelBg: '#041004',
+    panelBorder: '#2f7a25',
+    textCorrect: '#9cff7a',
+    textWrong: '#b83224',
+    textCursor: '#9cff7a',
+    assignedColor: '#9cff7a',
+    statsColor: '#2f742c',
+    mrColor: '#63c94b',
+    responseColor: '#b83224',
+    responseBorder: '#5f1512',
+    progressFillColor: '#b83224',
+    scanlineAlpha: 0.14,
+    vignetteAlpha: 0.38,
+    footerMode: 'SYS: OK  |  KBD: OK  |  MONO: GREEN  |  ID: 9827-A',
+    footerHint: 'WORKSTATION 02 ACTIVE',
+    footerHintColor: '#b83224',
+    footerWarning: 'SECOND USER DETECTED.'
   },
   act6_protective_routine: {
     primary: '#91f45b',
@@ -386,15 +407,26 @@ export default class TypingScene extends Phaser.Scene {
     this.missingMrFingersSprites = new Set();
     const mrFingersForPreload = new MrFingersController();
     const spriteKeys = new Set(mrFingersForPreload.getStates().map(state => state.spriteKey));
+    MR_FINGERS_ANIMATION_KEYS.forEach(key => spriteKeys.add(key));
+
+    this.missingAudioKeys = new Set();
+    const audioKeys = new Set(Object.keys(AUDIO_ASSETS));
 
     this.load.on('loaderror', (file) => {
       if (file && spriteKeys.has(file.key)) {
         this.missingMrFingersSprites.add(file.key);
       }
+      if (file && audioKeys.has(file.key)) {
+        this.missingAudioKeys.add(file.key);
+      }
     });
 
     for (const spriteKey of spriteKeys) {
       this.load.image(spriteKey, `${MR_FINGERS_SPRITE_PATH}${spriteKey}.png`);
+    }
+
+    for (const [key, path] of Object.entries(AUDIO_ASSETS)) {
+      this.load.audio(key, path);
     }
 
     this.load.json('lessons_act1', 'src/data/lessons.act1.json');
@@ -443,6 +475,32 @@ export default class TypingScene extends Phaser.Scene {
     this.sessionStartTime = Date.now();
     this.pendingContinueHandler = null;
     this.continueEnabled = false;
+    this.mrFingersAnimationTimer = null;
+    this.mrFingersAnimationActive = false;
+    this.mrFingersAnimationState = null;
+    this._setupAudio();
+
+    this.mrFingersAnimations = {
+      idle: [
+        { key: 'mr_idle_000', duration: MR_FINGERS_FRAME_000_MS },
+        { key: 'mr_idle_001', duration: MR_FINGERS_FRAME_001_MS }
+      ],
+      correct: [
+        { key: 'mr_correct_000', duration: MR_FINGERS_FRAME_000_MS },
+        { key: 'mr_correct_001', duration: MR_FINGERS_FRAME_001_MS }
+      ],
+      incorrect: [
+        { key: 'mr_incorrect_000', duration: MR_FINGERS_FRAME_000_MS },
+        { key: 'mr_incorrect_001', duration: MR_FINGERS_FRAME_001_MS }
+      ],
+      annoyed: [
+        { key: 'mr_annoyed_000', duration: MR_FINGERS_FRAME_000_MS },
+        { key: 'mr_annoyed_001', duration: MR_FINGERS_FRAME_001_MS }
+      ]
+    };
+
+    this.events.once('shutdown', () => this.stopMrFingersAnimation());
+    this.events.once('destroy', () => this.stopMrFingersAnimation());
 
     this._buildUI();
     this._wireEvents();
@@ -921,6 +979,54 @@ export default class TypingScene extends Phaser.Scene {
     this.crtSoftGlow = this.add.rectangle(512, 384, width - 34, 714, 0x9dff63, 0)
       .setStrokeStyle(1, hexToNumber(CRT.phosphor), 0)
       .setDepth(27);
+
+    this._buildGlitchLayers(width);
+  }
+
+  _buildGlitchLayers(width) {
+    // Red corruption speckles scattered across screen
+    this.terminalSpeckles = [];
+    for (let i = 0; i < 48; i++) {
+      const speckle = this.add.rectangle(
+        Phaser.Math.Between(20, 1004),
+        Phaser.Math.Between(42, 710),
+        Phaser.Math.Between(1, 6),
+        Phaser.Math.Between(1, 4),
+        0xb83224
+      ).setAlpha(0).setDepth(30);
+      this.terminalSpeckles.push(speckle);
+    }
+
+    // Vertical smear/stain clusters near left sidebar and right Mr. Fingers panel
+    this.terminalSmears = [];
+    const smearZones = [
+      { x: 55, y: 140 }, { x: 80, y: 300 }, { x: 35, y: 450 },   // left
+      { x: 820, y: 120 }, { x: 880, y: 280 }, { x: 950, y: 420 }, { x: 790, y: 500 } // right
+    ];
+    smearZones.forEach(zone => {
+      for (let j = 0; j < 10; j++) {
+        const smear = this.add.rectangle(
+          zone.x + Phaser.Math.Between(-18, 18),
+          zone.y + Phaser.Math.Between(-45, 45),
+          Phaser.Math.Between(1, 4),
+          Phaser.Math.Between(10, 30),
+          0xb83224
+        ).setAlpha(0).setDepth(30);
+        this.terminalSmears.push(smear);
+      }
+    });
+
+    // Horizontal glitch bars
+    this.terminalGlitchBars = [];
+    for (let i = 0; i < 8; i++) {
+      const bar = this.add.rectangle(512, 300, width, Phaser.Math.Between(1, 3), 0xb83224)
+        .setAlpha(0).setDepth(31);
+      this.terminalGlitchBars.push(bar);
+    }
+
+    // Full-screen phosphor flicker overlay
+    this.terminalFlickerOverlay = this.add.rectangle(512, 384, width, 768, 0x9cff7a)
+      .setAlpha(0).setDepth(32);
   }
 
   // --- EVENT WIRING ---
@@ -965,11 +1071,81 @@ export default class TypingScene extends Phaser.Scene {
     };
 
     this.input.keyboard.on('keydown', (event) => this._handleInputEvent(event));
+    this.input.once('pointerdown', () => this._startBackgroundMusicOnce());
 
     this.input.keyboard.on('keyup', () => {
       this.activeKeyValue = null;
       this._updateKeyboardHighlights();
     });
+  }
+
+  _setupAudio() {
+    this.bgMusic = null;
+    this.bgMusicStarted = false;
+    this.typingClickCooldownUntil = 0;
+    this.sectionClearCooldownUntil = 0;
+
+    this.events.once('shutdown', () => this._destroyAudio());
+    this.events.once('destroy', () => this._destroyAudio());
+  }
+
+  _audioExists(key) {
+    if (!key || !this.sound || (this.missingAudioKeys && this.missingAudioKeys.has(key))) return false;
+    if (!this.cache || !this.cache.audio) return false;
+    if (this.cache.audio.exists) return this.cache.audio.exists(key);
+    if (this.cache.audio.has) return this.cache.audio.has(key);
+    return false;
+  }
+
+  _safePlaySound(key, config = {}) {
+    if (!this._audioExists(key)) return null;
+    try {
+      return this.sound.play(key, config);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  _startBackgroundMusicOnce() {
+    if (this.bgMusicStarted || !this._audioExists('mr_fingers_music')) return;
+    try {
+      this.bgMusic = this.sound.add('mr_fingers_music', {
+        loop: true,
+        volume: 0.3
+      });
+      this.bgMusic.play();
+      this.bgMusicStarted = true;
+    } catch (error) {
+      this.bgMusic = null;
+      this.bgMusicStarted = false;
+    }
+  }
+
+  _playTypingClick() {
+    const now = this.time ? this.time.now : Date.now();
+    if (now < this.typingClickCooldownUntil) return;
+    this.typingClickCooldownUntil = now + 25;
+    this._safePlaySound('typing_click', { volume: 0.2 });
+  }
+
+  _playSectionClearSound() {
+    const now = this.time ? this.time.now : Date.now();
+    if (now < this.sectionClearCooldownUntil) return;
+    this.sectionClearCooldownUntil = now + 500;
+    this._safePlaySound('section_clear', { volume: 0.5 });
+  }
+
+  _destroyAudio() {
+    if (this.bgMusic) {
+      try {
+        this.bgMusic.stop();
+        this.bgMusic.destroy();
+      } catch (error) {
+        // Ignore shutdown-time audio cleanup failures.
+      }
+      this.bgMusic = null;
+    }
+    this.bgMusicStarted = false;
   }
 
   // --- LESSON MANAGEMENT ---
@@ -1021,6 +1197,7 @@ export default class TypingScene extends Phaser.Scene {
     const holdMs = (lesson && lesson.holdMs) || 1500;
 
     this.inputLocked = true;
+    this._playSectionClearSound();
 
     if (lesson && lesson.lingerResponse) {
       if (this.responseTimer) {
@@ -1238,7 +1415,11 @@ export default class TypingScene extends Phaser.Scene {
     this.footerTopLine.setFillStyle(panelBorder);
     this.progressBarBack.setFillStyle(isTerminal ? hexToNumber('#020602') : 0xf1e9d0)
       .setStrokeStyle(1, isTerminal ? panelBorder : 0xb2a684, isTerminal ? 0.8 : 1);
-    this.progressBarFill.setFillStyle(isTerminal ? primary : 0x74bf4c);
+    this.progressBarFill.setFillStyle(
+      isTerminal
+        ? hexToNumber(theme.progressFillColor || theme.primary)
+        : 0x74bf4c
+    );
 
     this.titleText.setColor(theme.light ? '#fff7c4' : theme.primary);
     this.lessonTitle.setColor(theme.light ? '#234d96' : theme.primary);
@@ -1253,7 +1434,11 @@ export default class TypingScene extends Phaser.Scene {
     this.progressText.setColor(theme.light ? TUTOR_PALETTE.text : theme.assignedColor || theme.primary);
     this.debugStats.setColor(theme.primary);
     this.reportCommentText.setColor(theme.light ? TUTOR_PALETTE.textMuted : theme.assignedColor || theme.primary);
-    this.footerHintText.setColor(theme.light ? TUTOR_PALETTE.footerMuted : theme.assignedColor || theme.primary);
+    this.footerHintText.setColor(
+      theme.footerHintColor
+        ? theme.footerHintColor
+        : (theme.light ? TUTOR_PALETTE.footerMuted : theme.assignedColor || theme.primary)
+    );
     this.statusText.setColor(theme.light ? '#4c5872' : theme.assignedColor || theme.primary);
     this.mascotTipText.setColor(theme.light ? '#7a7262' : theme.assignedColor || theme.primary);
 
@@ -1266,6 +1451,7 @@ export default class TypingScene extends Phaser.Scene {
       this._applyTerminalTextSkin(theme);
     }
     this._applyCrtOverlay(theme);
+    this._applyAct5TerminalEnhancements(isTerminal, theme);
     this._updateResponsePanelVisibility();
     this._updateKeyboardHighlights();
   }
@@ -1320,6 +1506,133 @@ export default class TypingScene extends Phaser.Scene {
     this.crtVignette.forEach(edge => edge.setAlpha(vignetteAlpha));
     this.crtFrame.setStrokeStyle(1, hexToNumber(theme.panelBorder || CRT.phosphorDeep), isTerminal ? 0.48 : 0);
     this.crtSoftGlow.setStrokeStyle(1, hexToNumber(theme.primary || CRT.phosphor), isTerminal ? 0.16 : 0);
+  }
+
+  _applyAct5TerminalEnhancements(isTerminal, theme) {
+    // --- Bottom buttons ---
+    const termLabels = ['[P] PRACTICE', '[R] REPEAT', '[N] NEXT', '[?] HELP', '[Q] QUIT'];
+    const normalLabels = ['Practice', 'Repeat', 'Next', 'Help', 'Quit'];
+    const normalColors = [
+      TUTOR_PALETTE.green, TUTOR_PALETTE.sky, TUTOR_PALETTE.gold,
+      TUTOR_PALETTE.purple, TUTOR_PALETTE.redOrange
+    ];
+    const termBorder = isTerminal ? hexToNumber(theme.panelBorder || '#2f7a25') : hexToNumber('#7f765f');
+    const termRedBorder = 0xb83224;
+
+    if (this.tutorButtons) {
+      this.tutorButtons.forEach((btn, i) => {
+        const isQuit = i === 4;
+        btn.label.setText(isTerminal ? termLabels[i] : normalLabels[i]);
+        btn.label.setFontFamily(isTerminal ? 'Courier New, monospace' : 'Trebuchet MS, Verdana, sans-serif');
+        btn.label.setFontSize(isTerminal ? '12px' : '15px');
+        btn.label.setColor(
+          isTerminal
+            ? (isQuit ? '#b83224' : (theme.primary || '#63c94b'))
+            : '#ffffff'
+        );
+        btn.body.setFillStyle(isTerminal ? (isQuit ? 0x1a0404 : 0x030803) : normalColors[i]);
+        btn.body.setStrokeStyle(1, isTerminal ? (isQuit ? termRedBorder : termBorder) : hexToNumber('#7f765f'), 1);
+        btn.shine.setAlpha(isTerminal ? 0 : 0.4);
+        btn.shadow.setAlpha(isTerminal ? 0 : 0.3);
+      });
+    }
+
+    // --- Glitch effects ---
+    this._setGlitchEffectsActive(isTerminal);
+  }
+
+  _setGlitchEffectsActive(active) {
+    if (!this.terminalSpeckles) return;
+    if (!active) {
+      this.terminalSpeckles.forEach(s => s.setAlpha(0));
+      if (this.terminalSmears) this.terminalSmears.forEach(s => s.setAlpha(0));
+      this.terminalGlitchBars.forEach(b => b.setAlpha(0));
+      if (this.terminalFlickerOverlay) this.terminalFlickerOverlay.setAlpha(0);
+      return;
+    }
+    // Seed initial speckle alphas with staggered delays
+    this.terminalSpeckles.forEach((speckle, i) => {
+      this.time.delayedCall(i * 35, () => {
+        if (!this.currentTheme || !this.currentTheme.terminal) return;
+        speckle.setAlpha(0.03 + Math.random() * 0.18);
+      });
+    });
+    // Seed smear alphas (more persistent, lower alpha)
+    if (this.terminalSmears) {
+      this.terminalSmears.forEach((smear, i) => {
+        this.time.delayedCall(i * 20, () => {
+          if (!this.currentTheme || !this.currentTheme.terminal) return;
+          smear.setAlpha(0.04 + Math.random() * 0.12);
+        });
+      });
+    }
+  }
+
+  _tickGlitchEffects() {
+    if (!this.currentTheme || !this.currentTheme.terminal) return;
+    if (!this.terminalSpeckles) return;
+
+    // Reposition and flicker a random speckle
+    if (Math.random() > 0.45) {
+      const speckle = Phaser.Utils.Array.GetRandom(this.terminalSpeckles);
+      speckle.setPosition(
+        Phaser.Math.Between(20, 1004),
+        Phaser.Math.Between(42, 710)
+      );
+      const peak = 0.06 + Math.random() * 0.24;
+      speckle.setAlpha(peak);
+      this.time.delayedCall(400 + Math.random() * 1000, () => {
+        speckle.setAlpha(Math.random() * 0.07);
+      });
+    }
+
+    // Occasionally refresh a smear's alpha
+    if (this.terminalSmears && Math.random() > 0.72) {
+      const smear = Phaser.Utils.Array.GetRandom(this.terminalSmears);
+      smear.setAlpha(0.05 + Math.random() * 0.14);
+      this.time.delayedCall(1200 + Math.random() * 2000, () => {
+        smear.setAlpha(0.02 + Math.random() * 0.06);
+      });
+    }
+
+    // Rare horizontal glitch bar flash
+    if (Math.random() > 0.84) {
+      const bar = Phaser.Utils.Array.GetRandom(this.terminalGlitchBars);
+      const useRed = Math.random() > 0.35;
+      bar.setPosition(512, Phaser.Math.Between(50, 700));
+      bar.setFillStyle(useRed ? 0xb83224 : 0x2f7a25);
+      bar.setAlpha(0.10 + Math.random() * 0.18);
+      this.time.delayedCall(40 + Math.random() * 100, () => bar.setAlpha(0));
+    }
+
+    // Mr. Fingers portrait frame occasional red pulse
+    if (this.mrFingersPortraitFrame && Math.random() > 0.92) {
+      this.mrFingersPortraitFrame.setStrokeStyle(2, 0xb83224, 0.9);
+      this.time.delayedCall(80 + Math.random() * 160, () => {
+        if (this.currentTheme && this.currentTheme.terminal) {
+          const border = hexToNumber(this.currentTheme.panelBorder || '#2f7a25');
+          this.mrFingersPortraitFrame.setStrokeStyle(1, border, 0.7);
+        }
+      });
+    }
+
+    // Subtle full-screen phosphor flicker
+    if (Math.random() > 0.91) {
+      this.terminalFlickerOverlay.setAlpha(0.014 + Math.random() * 0.026);
+      this.time.delayedCall(30 + Math.random() * 65, () => {
+        this.terminalFlickerOverlay.setAlpha(0);
+      });
+    }
+
+    // Occasional red status text jitter in Mr. Fingers speech box
+    if (this.statusText && Math.random() > 0.94) {
+      this.statusText.setColor('#b83224');
+      this.time.delayedCall(120 + Math.random() * 200, () => {
+        if (this.currentTheme && this.currentTheme.terminal) {
+          this.statusText.setColor(this.currentTheme.assignedColor || this.currentTheme.primary);
+        }
+      });
+    }
   }
 
   _updateResponsePanelVisibility() {
@@ -1441,22 +1754,26 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingersPortraitFrame.setStrokeStyle(1, Phaser.Display.Color.HexStringToColor(color).color);
 
     const spriteKey = config && config.spriteKey;
-    const hasSprite = spriteKey &&
-      !this.missingMrFingersSprites.has(spriteKey) &&
-      this.textures.exists(spriteKey);
+    const animationKey = this._getMrFingersAnimationKey(state, spriteKey, config);
+    const fallbackSpriteKey = this._getMrFingersStillKey(animationKey, spriteKey);
+    const hasSprite = fallbackSpriteKey &&
+      !this.missingMrFingersSprites.has(fallbackSpriteKey) &&
+      this.textures.exists(fallbackSpriteKey);
 
     if (hasSprite) {
       if (!this.mrFingersSprite) {
-        this.mrFingersSprite = this.add.image(this.mrPortraitCenterX, this.mrPortraitCenterY, spriteKey);
+        this.mrFingersSprite = this.add.image(this.mrPortraitCenterX, this.mrPortraitCenterY, fallbackSpriteKey)
+          .setOrigin(0.5, 0.5);
       }
-      this.mrFingersSprite
-        .setTexture(spriteKey)
-        .setPosition(this.mrPortraitCenterX, this.mrPortraitCenterY)
-        .setDisplaySize(92, 92)
-        .setAlpha(1)
-        .setVisible(true);
+      this._setMrFingersSpriteFrame(fallbackSpriteKey);
       this.mrFingersFallbackText.setVisible(false);
+      if (animationKey) {
+        this.playMrFingersAnimation(animationKey);
+      } else {
+        this.stopMrFingersAnimation();
+      }
     } else {
+      this.stopMrFingersAnimation();
       if (this.mrFingersSprite) {
         this.mrFingersSprite.setVisible(false);
       }
@@ -1470,6 +1787,83 @@ export default class TypingScene extends Phaser.Scene {
     });
 
     this._playMrFingersReaction(state, config);
+  }
+
+  _getMrFingersAnimationKey(state, spriteKey, config) {
+    if (state === 'idle' || spriteKey === 'mr_idle') return 'idle';
+    if (state === 'encourage' || state === 'corrective_smile') return 'correct';
+    if (state === 'mistake_notice') return 'incorrect';
+    if (state === 'glitch_warning' || state === 'angry' || state === 'emily_bleedthrough' || (config && config.flicker)) return 'annoyed';
+    return null;
+  }
+
+  _getMrFingersStillKey(animationKey, spriteKey) {
+    const stills = {
+      idle: 'mr_idle',
+      correct: 'mr_encourage',
+      incorrect: 'mr_mistake_notice',
+      annoyed: 'mr_glitch_warning'
+    };
+    return stills[animationKey] || spriteKey;
+  }
+
+  _canPlayMrFingersAnimation(stateKey) {
+    const frames = this.mrFingersAnimations && this.mrFingersAnimations[stateKey];
+    return !!frames && frames.every(frame => this.textures.exists(frame.key));
+  }
+
+  _setMrFingersSpriteFrame(textureKey) {
+    if (!this.mrFingersSprite || !textureKey || !this.textures.exists(textureKey)) return false;
+    this.mrFingersSprite
+      .setTexture(textureKey)
+      .setOrigin(0.5, 0.5)
+      .setPosition(this.mrPortraitCenterX, this.mrPortraitCenterY)
+      .setDisplaySize(MR_FINGERS_DISPLAY_SIZE, MR_FINGERS_DISPLAY_SIZE)
+      .setAlpha(1)
+      .setVisible(true);
+    return true;
+  }
+
+  playMrFingersAnimation(stateKey) {
+    this.stopMrFingersAnimation();
+
+    const fallbackKey = this._getMrFingersStillKey(stateKey, null);
+    if (!this.mrFingersSprite || !this._canPlayMrFingersAnimation(stateKey)) {
+      this._setMrFingersSpriteFrame(fallbackKey);
+      return false;
+    }
+
+    const frames = this.mrFingersAnimations[stateKey];
+    this.mrFingersAnimationActive = true;
+    this.mrFingersAnimationState = stateKey;
+
+    const showFrame = (index) => {
+      if (!this.mrFingersAnimationActive || this.mrFingersAnimationState !== stateKey || !this.mrFingersSprite) return;
+      const frame = frames[index];
+      if (!this._setMrFingersSpriteFrame(frame.key)) {
+        this._setMrFingersSpriteFrame(fallbackKey);
+        this.stopMrFingersAnimation();
+        return;
+      }
+      const nextIndex = (index + 1) % frames.length;
+      this.mrFingersAnimationTimer = this.time.delayedCall(frame.duration, () => showFrame(nextIndex));
+    };
+
+    showFrame(0);
+    return true;
+  }
+
+  stopMrFingersAnimation() {
+    this.mrFingersAnimationActive = false;
+    this.mrFingersAnimationState = null;
+    if (this.mrFingersAnimationTimer) {
+      this.mrFingersAnimationTimer.remove(false);
+      this.mrFingersAnimationTimer = null;
+    }
+  }
+
+  startMrPointBlink() {
+    return this.playMrFingersAnimation('idle');
   }
 
   _getMrFingersFallbackGlyph(state) {
@@ -1587,6 +1981,25 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _handleInputEvent(event) {
+    this._startBackgroundMusicOnce();
+
+    if (event.key === "F9") {
+      if (event.preventDefault) {
+        event.preventDefault();
+      }
+      this._toggleTerminalDebugMode();
+      return;
+    }
+
+    const mrDebugAnimations = { 1: 'idle', 2: 'correct', 3: 'incorrect', 4: 'annoyed' };
+    if (mrDebugAnimations[event.key]) {
+      if (event.preventDefault) {
+        event.preventDefault();
+      }
+      this.playMrFingersAnimation(mrDebugAnimations[event.key]);
+      return;
+    }
+
     this.activeKeyValue = normalizeKey(event.key);
     this._updateKeyboardHighlights();
 
@@ -1600,7 +2013,19 @@ export default class TypingScene extends Phaser.Scene {
     }
 
     if (this.actComplete || this.inputLocked) return;
+    const shouldPlayTypingClick = event.key === 'Backspace' || event.key.length === 1;
     this.typingEngine.handleKey(event);
+    if (shouldPlayTypingClick) {
+      this._playTypingClick();
+    }
+  }
+
+  _toggleTerminalDebugMode() {
+    const isCurrentlyTerminal = this.currentTheme && this.currentTheme.terminal;
+    const theme = isCurrentlyTerminal ? ACT_THEMES.act1_home_row : ACT_THEMES.act5_unsanctioned_statement;
+    this._applyActTheme(theme);
+    this.titleText.setText(theme.terminal ? "MR. FINGERS' TYPING ADVENTURE" : "HOME ROW \u2014 Friendly Typing Tutor");
+    this._updateStats();
   }
 
   _toggleDebug() {
@@ -1701,8 +2126,15 @@ export default class TypingScene extends Phaser.Scene {
     this.progressText.setText(`Lesson ${current} of ${total}`);
     this.reportCommentText.setText(score.comment);
     if (this.currentTheme && this.currentTheme.terminal) {
-      this.statsText.setText(`WPM:${stats.wpm}  ACC:${stats.accuracy}%  GRADE:${score.grade}  ERR:${stats.mistakes}`);
-      this.footerHintText.setText(this.currentTheme.footerHint || 'WORKSTATION 02 ACTIVE');
+      if (this.currentTheme.footerHintColor) {
+        // Act 5 specific: left = sys diagnostics, centre = red warning
+        this.statsText.setText('SYS: OK  |  KBD: OK  |  MONO: GREEN  |  WORKSTATION 02 ACTIVE');
+        this.footerHintText.setText(this.currentTheme.footerWarning || 'SECOND USER DETECTED.');
+        this.footerHintText.setColor(this.currentTheme.footerHintColor);
+      } else {
+        this.statsText.setText(`WPM:${stats.wpm}  ACC:${stats.accuracy}%  GRADE:${score.grade}  ERR:${stats.mistakes}`);
+        this.footerHintText.setText(this.currentTheme.footerHint || 'WORKSTATION 02 ACTIVE');
+      }
     } else {
       this.statsText.setText(`WPM ${stats.wpm}  Accuracy ${stats.accuracy}%  Grade ${score.grade}  Mistakes ${stats.mistakes}`);
       this.footerHintText.setText(score.goldStar ? 'Gold Star work today!' : score.comment);
@@ -1792,6 +2224,11 @@ export default class TypingScene extends Phaser.Scene {
       loop: true,
       callback: () => this._atmosphereTick()
     });
+    this.time.addEvent({
+      delay: 360,
+      loop: true,
+      callback: () => this._tickGlitchEffects()
+    });
   }
 
   _atmosphereTick() {
@@ -1874,7 +2311,12 @@ export default class TypingScene extends Phaser.Scene {
   _updateFooterClock() {
     const time = formatDuration(Date.now() - this.sessionStartTime);
     if (this.currentTheme && this.currentTheme.terminal) {
-      this.footerClockText.setText(`${this.currentTheme.footerMode || 'SYS: OK  KBD: OK'}  T:${time}`);
+      if (this.currentTheme.footerHintColor) {
+        // Act 5: right side shows time + ID only (sys info is in statsText)
+        this.footerClockText.setText(`TIME: ${time}  |  ID: 9827-A`);
+      } else {
+        this.footerClockText.setText(`${this.currentTheme.footerMode || 'SYS: OK  KBD: OK'}  T:${time}`);
+      }
       return;
     }
     this.footerClockText.setText(`Time: ${time}`);
@@ -1883,17 +2325,27 @@ export default class TypingScene extends Phaser.Scene {
   _updateKeyboardHighlights() {
     const theme = this.currentTheme || DEFAULT_ACT_THEME;
     if (theme.terminal) {
-      const keyFace = hexToNumber('#071106');
-      const homeFace = hexToNumber('#0d1f0b');
+      const keyFace = hexToNumber('#060d06');
+      const keyBorder = hexToNumber(theme.panelBorder || CRT.phosphorDeep);
+      // Home row: dark red fill with red border
+      const homeKeyFace = 0x1a0404;
+      const homeBorder = 0xb83224;
+      // Active key
       const activeFace = hexToNumber('#1b3f12');
-      const border = hexToNumber(theme.panelBorder || CRT.phosphorDeep);
+      const activeHomeFace = 0x3a0808;
+
       for (const [value, entry] of this.keyboardKeys.entries()) {
-        let fill = HOME_ROW_KEYS.has(value) ? homeFace : keyFace;
-        if (this.activeKeyValue && value === this.activeKeyValue) {
-          fill = activeFace;
-        }
-        entry.face.setFillStyle(fill).setStrokeStyle(1, border, this.activeKeyValue && value === this.activeKeyValue ? 1 : 0.65);
-        entry.label.setColor(this.activeKeyValue && value === this.activeKeyValue ? theme.primary : theme.statsColor || theme.accent);
+        const isHome = HOME_ROW_KEYS.has(value);
+        const isActive = this.activeKeyValue && value === this.activeKeyValue;
+        const fill = isActive ? (isHome ? activeHomeFace : activeFace) : (isHome ? homeKeyFace : keyFace);
+        const stroke = isHome ? homeBorder : keyBorder;
+        const strokeAlpha = isActive ? 1.0 : (isHome ? 0.85 : 0.55);
+        entry.face.setFillStyle(fill).setStrokeStyle(1, stroke, strokeAlpha);
+        entry.label.setColor(
+          isActive
+            ? (isHome ? '#ff5533' : theme.primary)
+            : (isHome ? '#b83224' : (theme.statsColor || theme.accent))
+        );
       }
       return;
     }
