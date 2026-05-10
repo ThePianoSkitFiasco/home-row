@@ -1,6 +1,6 @@
 // MiniGameScene — interstitial mini-games that appear between main lessons.
-// Routes by config.type. Phase 1 supports: 'catch_falling_keys'.
-// Future types: 'keep_the_lights_on', 'correct_the_record', 'do_not_let_the_door_close',
+// Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on'.
+// Future types: 'correct_the_record', 'do_not_let_the_door_close',
 //               'stay_in_your_seat', 'listen_and_type', 'erase_the_chalkboard',
 //               'typing_race', 'final_correct_the_record'
 
@@ -55,7 +55,8 @@ export default class MiniGameScene extends Phaser.Scene {
 
     // Corrupted variant — missed letters accumulate at the bottom and may spell
     // hidden words before the system suppresses them.
-    this.isCorrupted  = this.config.variant === 'corrupted';
+    this.isCorrupted     = this.config.variant === 'corrupted';
+    this.isKTLOCorrupted = (this.gameType === 'keep_lights_on' && this.config.variant === 'corrupted');
     this._missedBuffer = [];   // chars that have collected at the bottom
     this._missedTexts  = [];   // matching Phaser text objects
     this._hiddenWords  = this.config.hiddenWords || ['she', 'no', 'door'];
@@ -74,10 +75,14 @@ export default class MiniGameScene extends Phaser.Scene {
     this.lightLevel     = 5;
     this.currentWord    = '';
     this.typedInput     = '';
-    const defaultWordPool = ['lamp', 'desk', 'chair', 'board', 'paper', 'pencil', 'screen', 'class'];
+    const defaultWordPool = this.isKTLOCorrupted
+      ? ['door', 'behind', 'quiet', 'listen', 'stay', 'screen', 'chair', 'wrong']
+      : ['lamp', 'desk', 'chair', 'board', 'paper', 'pencil', 'screen', 'class'];
     this._wordPool      = this.config.wordPool || defaultWordPool;
     // UI object refs — assigned in _buildKTLOHUD
     this._lightRects    = [];
+    this._ktloLightOn   = PAL.lightOn;
+    this._ktloLightOff  = PAL.lightOff;
     this._bgOverlay     = null;
     this._wordText      = null;
     this._inputText     = null;
@@ -558,13 +563,18 @@ export default class MiniGameScene extends Phaser.Scene {
     // Dark overlay — alpha varies with lightLevel to dim the room
     this._bgOverlay = this.add.rectangle(W / 2, 400, W, 640, 0x000000).setAlpha(0);
 
+    // Corrupted variant uses cold fluorescent palette instead of warm classroom yellow
+    this._ktloLightOn  = this.isKTLOCorrupted ? 0xd0e8ff : PAL.lightOn;
+    this._ktloLightOff = this.isKTLOCorrupted ? 0x1a1a22 : PAL.lightOff;
+    const strokeColor  = this.isKTLOCorrupted ? 0x2244aa : 0x888800;
+
     // 5 lights across the upper game area
     const lightW = 130, lightH = 46, lightGap = 18;
     const totalW = 5 * lightW + 4 * lightGap;
     const lx0    = (W - totalW) / 2 + lightW / 2;
     for (let i = 0; i < 5; i++) {
-      const rect = this.add.rectangle(lx0 + i * (lightW + lightGap), 125, lightW, lightH, PAL.lightOn)
-        .setStrokeStyle(2, 0x888800);
+      const rect = this.add.rectangle(lx0 + i * (lightW + lightGap), 125, lightW, lightH, this._ktloLightOn)
+        .setStrokeStyle(2, strokeColor);
       this._lightRects.push(rect);
     }
 
@@ -608,8 +618,7 @@ export default class MiniGameScene extends Phaser.Scene {
     this._spawnKTLOWord();
 
     // One light drains per interval; configurable for harder variants
-    // TODO corrupted: shorter drain, irregular timing, wrong words invade pool
-    const drainMs = this.config.lightDrainMs || 6000;
+    const drainMs = this.config.lightDrainMs || (this.isKTLOCorrupted ? 3500 : 6000);
     this._lightTimer = this.time.addEvent({
       delay:         drainMs,
       callback:      this._drainLight,
@@ -625,7 +634,6 @@ export default class MiniGameScene extends Phaser.Scene {
     this.typedInput  = '';
     this._wordText.setText(this.currentWord).setColor('#003399');
     this._inputText.setText('> _').setColor('#006600');
-    // TODO corrupted: pool shifts toward DOOR, BEHIND, QUIET, LISTEN
   }
 
   _ktloOnKey(event) {
@@ -641,12 +649,13 @@ export default class MiniGameScene extends Phaser.Scene {
         this._ktloCompleteWord();
       }
     } else {
-      // Wrong key — brief red flash, no harsh penalty in early variant
       this._inputText.setColor('#cc0000');
       this.time.delayedCall(140, () => {
         if (!this.gameOver) this._inputText.setColor('#006600');
       });
-      // TODO corrupted: accumulate errors; word pool shifts after enough wrong keys
+      if (this.isKTLOCorrupted) {
+        this.cameras.main.shake(120, 0.004);
+      }
     }
   }
 
@@ -682,21 +691,66 @@ export default class MiniGameScene extends Phaser.Scene {
     this._wordText.setAlpha(0);
     this._inputText.setAlpha(0);
 
+    if (this.isKTLOCorrupted) {
+      this._ktloShowBlackoutReveal();
+    }
+
     this.time.delayedCall(700, () => {
       if (!this.gameOver) {
         this.lightLevel = 2;
         this._updateKTLOLights();
         this._wordText.setAlpha(1);
         this._inputText.setAlpha(1);
-        // TODO corrupted: flash wrong classroom detail during blackout
-        // TODO corrupted: brief reveal of second workstation between blackout and restore
       }
+    });
+  }
+
+  _ktloShowBlackoutReveal() {
+    const W = 1024;
+    const H = 768;
+    // TODO: tie reveal choice to act progress / MemoryState for narrative weight
+    // TODO: write revealed detail to MemoryState so story can reference it later
+    const reveals = [
+      'SECOND WORKSTATION ACTIVE',
+      'DOOR: OPEN',
+      'FACE FORWARD',
+      'DO NOT TURN AROUND'
+    ];
+    const msg = reveals[Phaser.Math.Between(0, reveals.length - 1)];
+
+    const revealText = this.add.text(W / 2, H / 2, msg, {
+      fontFamily: FONT,
+      fontSize:   '28px',
+      color:      '#ffffff',
+      fontStyle:  'bold'
+    }).setOrigin(0.5).setDepth(10);
+
+    // Flash for ~200ms, then replace with system correction line
+    this.time.delayedCall(200, () => {
+      revealText.destroy();
+      if (this.gameOver) return;
+
+      const corrText = this.add.text(W / 2, H / 2, 'DISPLAY ERROR CORRECTED', {
+        fontFamily: FONT,
+        fontSize:   '16px',
+        color:      '#aaaaaa'
+      }).setOrigin(0.5).setDepth(10);
+
+      // Fade out before the 700ms blackout ends
+      this.time.delayedCall(300, () => {
+        this.tweens.add({
+          targets:    corrText,
+          alpha:      0,
+          duration:   180,
+          onComplete: () => corrText.destroy()
+        });
+      });
     });
   }
 
   _updateKTLOLights() {
     this._lightRects.forEach((rect, i) => {
-      rect.setFillStyle(i < this.lightLevel ? PAL.lightOn : PAL.lightOff);
+      rect.setFillStyle(i < this.lightLevel ? this._ktloLightOn : this._ktloLightOff);
     });
     this._bgOverlay.setAlpha((1 - this.lightLevel / 5) * 0.62);
   }
