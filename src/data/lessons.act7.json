@@ -24,6 +24,49 @@
       }
     ]
   },
+  "miniGameAfterActChain": [
+    {
+      "type": "erase_chalkboard",
+      "variant": "corrupted",
+      "duration": 40,
+      "layers": [
+        {
+          "visibleText": "SHE WAS ABSENT",
+          "hiddenText": "SHE WAS NOT ABSENT",
+          "eraseWord": "ERASE"
+        },
+        {
+          "visibleText": "THE CLASSROOM WAS QUIET",
+          "hiddenText": "I HEARD HER",
+          "eraseWord": "WIPE"
+        },
+        {
+          "visibleText": "THE CHILD STAYED FOCUSED",
+          "hiddenText": "DO NOT TURN AROUND",
+          "eraseWord": "CORRECT"
+        }
+      ]
+    },
+    {
+      "type": "typing_race",
+      "variant": "corrupted",
+      "duration": 45,
+      "rounds": [
+        {
+          "playerText": "I WAS A CHILD AND I WAS THERE",
+          "opponentText": "I DID NOT SEE ANYTHING"
+        },
+        {
+          "playerText": "SHE WAS NOT ABSENT",
+          "opponentText": "ERRORS ARE NOT EVIDENCE"
+        },
+        {
+          "playerText": "I HEARD HER SAY NO",
+          "opponentText": "GOOD CHILDREN FINISH THE EXERCISE"
+        }
+      ]
+    }
+  ],
   "lessons": [
     {
       "id": "act7_final_review",

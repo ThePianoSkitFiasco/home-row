@@ -1296,7 +1296,10 @@ export default class TypingScene extends Phaser.Scene {
         this._armContinueHandler(() => {
           this.completionBg.setAlpha(0);
           this.completionText.setAlpha(0);
-          const miniGameConfig = act && act.miniGameAfterAct;
+          const miniGameChain = act && act.miniGameAfterActChain;
+          const miniGameConfig = Array.isArray(miniGameChain) && miniGameChain.length > 0
+            ? miniGameChain
+            : (act && act.miniGameAfterAct);
           if (miniGameConfig) {
             this._launchMiniGame(miniGameConfig);
           } else {
@@ -2384,12 +2387,24 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingers.setState('idle');
   }
 
-  _launchMiniGame(config) {
-    this.events.once('minigame-complete', () => {
+  _launchMiniGame(config, chainIndex = 0) {
+    const chain = Array.isArray(config) ? config : [config];
+    const currentConfig = chain[chainIndex];
+    if (!currentConfig) {
       this._advanceToNextAct();
+      return;
+    }
+
+    this.events.once('minigame-complete', () => {
+      if (chainIndex + 1 < chain.length) {
+        // Phase 9.5: run the pre-finale mini-game chain before entering final_statement.
+        this.time.delayedCall(0, () => this._launchMiniGame(chain, chainIndex + 1));
+      } else {
+        this._advanceToNextAct();
+      }
     });
     // Launch mini-game scene additively (before sleeping so launch() sees RUNNING status)
-    this.scene.launch('MiniGameScene', { config, actTheme: this.currentTheme });
+    this.scene.launch('MiniGameScene', { config: currentConfig, actTheme: this.currentTheme });
     this.scene.sleep();
   }
 }
