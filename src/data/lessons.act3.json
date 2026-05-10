@@ -2,6 +2,28 @@
   "actId": "act3_system_log",
   "title": "SYSTEM LOG",
   "playerSection": "Computer Skills Practice",
+  "miniGameAfterAct": {
+    "type": "correct_the_record",
+    "variant": "middle",
+    "duration": 45,
+    "records": [
+      {
+        "label": "ATTENDANCE RECORD",
+        "displayedText": "EMILY VALE WAS PRESENT",
+        "targetText": "EMILY VALE WAS ABSENT"
+      },
+      {
+        "label": "CLASSROOM NOTE",
+        "displayedText": "THE SECOND COMPUTER WAS ON",
+        "targetText": "THE SECOND COMPUTER WAS OFF"
+      },
+      {
+        "label": "BEHAVIOUR REPORT",
+        "displayedText": "THE CHILD LOOKED BACK",
+        "targetText": "THE CHILD STAYED FOCUSED"
+      }
+    ]
+  },
   "lessons": [
     {
       "id": "act3_computer_words",
