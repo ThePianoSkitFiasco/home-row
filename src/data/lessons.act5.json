@@ -2,6 +2,17 @@
   "actId": "act5_unsanctioned_statement",
   "title": "UNSANCTIONED STATEMENT",
   "playerSection": "Correction Practice",
+  "miniGameAfterAct": {
+    "type": "stay_in_your_seat",
+    "variant": "middle",
+    "duration": 35,
+    "phrases": [
+      "FACE THE SCREEN",
+      "KEEP YOUR HANDS STILL",
+      "FINISH THE EXERCISE",
+      "DO NOT TURN AROUND"
+    ]
+  },
   "lessons": [
     {
       "id": "act5_correct_sentence",

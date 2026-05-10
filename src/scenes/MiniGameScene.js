@@ -1,8 +1,7 @@
 // MiniGameScene — interstitial mini-games that appear between main lessons.
-// Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on', 'correct_the_record', 'door_close'.
-// Future types:
-//               'stay_in_your_seat', 'listen_and_type', 'erase_the_chalkboard',
-//               'typing_race', 'final_correct_the_record'
+// Routes by config.type. Supports: 'catch_falling_keys', 'keep_lights_on', 'correct_the_record',
+//                                   'door_close', 'stay_in_your_seat'.
+// Future types: 'listen_and_type', 'erase_the_chalkboard', 'typing_race', 'final_correct_the_record'
 
 const FONT = 'Courier New, monospace';
 
@@ -124,6 +123,30 @@ export default class MiniGameScene extends Phaser.Scene {
     this._doorScoreText   = null;
     this._doorClosureText = null;
     this._doorStatusText  = null;
+
+    // ── Seat state ────────────────────────────────────────────────────────────
+    this._turnAmount           = 20;   // 0–100: proximity to turning around
+    this._seatLookedBackActive = false; // re-entry guard for _seatLookedBack
+    const defaultSeatPhrases   = [
+      'FACE THE SCREEN',
+      'KEEP YOUR HANDS STILL',
+      'FINISH THE EXERCISE',
+      'DO NOT TURN AROUND',
+      'GOOD CHILDREN STAY FOCUSED'
+    ];
+    this._seatPhrases     = this.config.phrases || defaultSeatPhrases;
+    this._seatPhraseIndex = 0;
+    this._seatTyped       = '';
+    this._seatCompleted   = 0;
+    this._seatLookbacks   = 0;
+    this._seatDriftTimer  = null;
+    // UI refs — assigned in _buildSeatHUD
+    this._seatGraphics    = null;
+    this._seatMeterLabel  = null;
+    this._seatPhraseText  = null;
+    this._seatInputText   = null;
+    this._seatScoreText   = null;
+    this._seatLookText    = null;
   }
 
   create() {
@@ -137,6 +160,8 @@ export default class MiniGameScene extends Phaser.Scene {
         this._buildCTRHUD(1024, 768);
       } else if (this.gameType === 'door_close') {
         this._buildDoorHUD(1024, 768);
+      } else if (this.gameType === 'stay_in_your_seat') {
+        this._buildSeatHUD(1024, 768);
       }
       this._showIntro();
     } catch (e) {
@@ -298,6 +323,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._startCorrectTheRecord();
     } else if (this.gameType === 'door_close') {
       this._startDoorClose();
+    } else if (this.gameType === 'stay_in_your_seat') {
+      this._startStayInYourSeat();
     } else {
       console.warn(`[MiniGameScene] Unknown game type: ${this.gameType}`);
       this._endGame();
@@ -313,6 +340,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._keyHandler = this._ctrOnKey.bind(this);
     } else if (this.gameType === 'door_close') {
       this._keyHandler = this._doorOnKey.bind(this);
+    } else if (this.gameType === 'stay_in_your_seat') {
+      this._keyHandler = this._seatOnKey.bind(this);
     } else {
       this._keyHandler = this._cfkOnKey.bind(this);
     }
@@ -501,6 +530,11 @@ export default class MiniGameScene extends Phaser.Scene {
       this._doorDrainTimer = null;
     }
 
+    if (this._seatDriftTimer) {
+      this._seatDriftTimer.remove(false);
+      this._seatDriftTimer = null;
+    }
+
     if (this.activeLetter) {
       this.activeLetter.destroy();
       this.activeLetter = null;
@@ -586,6 +620,12 @@ export default class MiniGameScene extends Phaser.Scene {
         subtitle: 'Type each phrase to keep the classroom door open.'
       };
     }
+    if (this.gameType === 'stay_in_your_seat') {
+      return {
+        title:    'BONUS DRILL: STAY IN YOUR SEAT',
+        subtitle: 'Type each phrase to stay focused on the screen.'
+      };
+    }
     return {
       title:    'BONUS DRILL: FALLING KEYS',
       subtitle: 'Improve your home row reflexes!'
@@ -599,6 +639,8 @@ export default class MiniGameScene extends Phaser.Scene {
       this._showCTRResults();
     } else if (this.gameType === 'door_close') {
       this._showDoorResults();
+    } else if (this.gameType === 'stay_in_your_seat') {
+      this._showSeatResults();
     } else {
       this._showCFKResults();
     }
@@ -1276,6 +1318,280 @@ export default class MiniGameScene extends Phaser.Scene {
     this.time.delayedCall(2800, this._complete, [], this);
   }
 
+  // ─── Seat HUD ─────────────────────────────────────────────────────────────────
+
+  _buildSeatHUD(W, H) {
+    // Graphics object redrawn every frame via _updateSeatVisual
+    this._seatGraphics = this.add.graphics();
+    this._updateSeatVisual();
+
+    // Static labels
+    this.add.text(145, 128, 'WORKSTATION', {
+      fontFamily: FONT, fontSize: '12px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // TURNING meter label — updated in _updateSeatVisual
+    this._seatMeterLabel = this.add.text(145, 589, 'TURNING: 20%', {
+      fontFamily: FONT, fontSize: '11px', color: '#cc8800'
+    }).setOrigin(0.5);
+
+    // Phrase area (right side)
+    this.add.text(635, 260, 'TYPE THIS PHRASE:', {
+      fontFamily: FONT, fontSize: '13px', color: '#445566'
+    }).setOrigin(0.5);
+
+    this._seatPhraseText = this.add.text(635, 330, '', {
+      fontFamily: FONT, fontSize: '22px', color: '#003399', fontStyle: 'bold',
+      align: 'center', wordWrap: { width: 680 }
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._seatInputText = this.add.text(635, 420, '> _', {
+      fontFamily: FONT, fontSize: '22px', color: '#006600'
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._seatScoreText = this.add.text(490, 530, 'Phrases: 0', {
+      fontFamily: FONT, fontSize: '16px', color: PAL.score
+    }).setOrigin(0.5).setAlpha(0);
+
+    this._seatLookText = this.add.text(760, 530, 'Looked Back: 0', {
+      fontFamily: FONT, fontSize: '16px', color: '#cc3300'
+    }).setOrigin(0.5).setAlpha(0);
+  }
+
+  _startStayInYourSeat() {
+    this._seatPhraseText.setAlpha(1);
+    this._seatInputText.setAlpha(1);
+    this._seatScoreText.setAlpha(1);
+    this._seatLookText.setAlpha(1);
+    this._spawnSeatPhrase();
+
+    const driftMs = this.config.driftIntervalMs || 2000;
+    this._seatDriftTimer = this.time.addEvent({
+      delay:         driftMs,
+      callback:      this._seatDrift,
+      callbackScope: this,
+      loop:          true
+    });
+  }
+
+  // ─── Seat — phrase lifecycle ──────────────────────────────────────────────────
+
+  _spawnSeatPhrase() {
+    const phrase = this._seatPhrases[this._seatPhraseIndex % this._seatPhrases.length];
+    this._seatTyped = '';
+    this._seatPhraseText.setText(phrase).setColor('#003399');
+    this._seatInputText.setText('> _').setColor('#006600').setAlpha(1);
+    // TODO: act-based phrase selection tied to MemoryState / story progress
+  }
+
+  _seatOnKey(event) {
+    if (this.gameOver) return;
+    const key = event.key;
+
+    if (key === 'Backspace') {
+      event.preventDefault();
+      if (this._seatTyped.length > 0) {
+        this._seatTyped = this._seatTyped.slice(0, -1);
+        this._seatUpdateInput();
+      }
+      return;
+    }
+
+    if (key.length !== 1) return;
+
+    const target = this._seatPhrases[this._seatPhraseIndex % this._seatPhrases.length];
+    const pos    = this._seatTyped.length;
+    if (pos >= target.length) return;
+
+    const expected = target[pos];
+    if (key.toUpperCase() === expected.toUpperCase()) {
+      this._seatTyped += expected;
+      this._seatUpdateInput();
+      if (this._seatTyped === target) {
+        this._seatCompletePhrase();
+      }
+    } else {
+      // Wrong key — red flash + small turn increase
+      this._seatInputText.setColor('#cc0000');
+      this.time.delayedCall(140, () => {
+        if (!this.gameOver) this._seatInputText.setColor('#006600');
+      });
+      this._turnAmount = Math.min(100, this._turnAmount + 8);
+      this._updateSeatVisual();
+      if (this._turnAmount >= 100) this._seatLookedBack();
+      // TODO corrupted: wrong key accelerates turn more aggressively
+      // TODO MemoryState: accumulate wrong-key count → disclosure axis
+    }
+  }
+
+  _seatUpdateInput() {
+    const target = this._seatPhrases[this._seatPhraseIndex % this._seatPhrases.length];
+    const cursor = this._seatTyped.length < target.length ? '_' : '';
+    this._seatInputText.setText(`> ${this._seatTyped}${cursor}`);
+  }
+
+  _seatCompletePhrase() {
+    this._seatCompleted++;
+    this._seatPhraseIndex++;
+    this._seatScoreText.setText(`Phrases: ${this._seatCompleted}`);
+
+    this._turnAmount = Math.max(0, this._turnAmount - 30);
+    this._updateSeatVisual();
+
+    this._seatPhraseText.setColor('#006600');
+    this.time.delayedCall(300, () => {
+      if (!this.gameOver) this._spawnSeatPhrase();
+    });
+  }
+
+  // ─── Seat — drift / lookback ──────────────────────────────────────────────────
+
+  _seatDrift() {
+    if (this.gameOver) return;
+    const amount = this.config.driftAmount || 9;
+    this._turnAmount = Math.min(100, this._turnAmount + amount);
+    this._updateSeatVisual();
+    if (this._turnAmount >= 100) this._seatLookedBack();
+  }
+
+  _seatLookedBack() {
+    if (this._seatLookedBackActive) return;  // prevent re-entry during reset delay
+    this._seatLookedBackActive = true;
+    this._seatLookbacks++;
+    this._seatLookText.setText(`Looked Back: ${this._seatLookbacks}`);
+
+    this._seatPhraseText.setText('LOOKED BACK').setColor('#cc0000');
+    this._seatInputText.setAlpha(0);
+    this.cameras.main.shake(200, 0.006);
+
+    // TODO corrupted: one-frame glimpse of figure near door during the shake
+    // TODO corrupted: child nearly turns despite correct typing
+
+    this.time.delayedCall(800, () => {
+      this._seatLookedBackActive = false;
+      if (!this.gameOver) {
+        this._turnAmount = 55;
+        this._updateSeatVisual();
+        this._spawnSeatPhrase();
+        this._seatInputText.setAlpha(1);
+      }
+    });
+  }
+
+  _updateSeatVisual() {
+    const gfx  = this._seatGraphics;
+    const turn = Math.max(0, Math.min(100, this._turnAmount));
+    gfx.clear();
+
+    // ── Desk ──────────────────────────────────────────────────────────────────
+    gfx.fillStyle(0xb08060);
+    gfx.fillRect(30, 545, 240, 28);
+    gfx.lineStyle(2, 0x7a5840);
+    gfx.strokeRect(30, 545, 240, 28);
+
+    // ── Monitor ───────────────────────────────────────────────────────────────
+    gfx.fillStyle(0x222233);
+    gfx.fillRect(70, 405, 110, 82);
+    gfx.lineStyle(2, 0x111122);
+    gfx.strokeRect(70, 405, 110, 82);
+
+    // Screen glow dims as child turns away
+    const glowAlpha = Math.max(0.25, 1 - (turn / 100) * 0.75);
+    gfx.fillStyle(0x3355aa, glowAlpha);
+    gfx.fillRect(78, 412, 94, 68);
+
+    // ── Monitor stand ─────────────────────────────────────────────────────────
+    gfx.fillStyle(0x555566);
+    gfx.fillRect(113, 487, 24, 58);
+
+    // ── Body ──────────────────────────────────────────────────────────────────
+    gfx.fillStyle(0x4466aa);
+    gfx.fillRect(132, 395, 26, 150);
+
+    // ── Head — shifts right as turn increases ──────────────────────────────────
+    const headX = 145 + Math.round(turn * 0.28);
+    const headY = 370;
+    gfx.fillStyle(0xc8a882);
+    gfx.fillRect(headX - 14, headY - 14, 28, 28);
+    gfx.lineStyle(1, 0x9a7a62);
+    gfx.strokeRect(headX - 14, headY - 14, 28, 28);
+
+    // Nose line — rotates from LEFT (facing screen) to RIGHT (facing door)
+    const angle = Math.PI * (1 - turn / 100);
+    const noseX = headX + Math.cos(angle) * 18;
+    const noseY = headY + Math.sin(angle) * 8;
+    gfx.lineStyle(3, 0x443322);
+    gfx.lineBetween(headX, headY, Math.round(noseX), Math.round(noseY));
+
+    // ── Turn meter ─────────────────────────────────────────────────────────────
+    const mX = 30, mY = 602, mW = 240, mH = 14;
+    gfx.fillStyle(0xbbbbaa);
+    gfx.fillRect(mX, mY, mW, mH);
+
+    const fillW   = Math.floor(mW * turn / 100);
+    const fillCol = turn < 40 ? 0x006600 : turn < 70 ? 0xcc8800 : 0xcc0000;
+    gfx.fillStyle(fillCol);
+    gfx.fillRect(mX, mY, fillW, mH);
+
+    gfx.lineStyle(2, 0x888877);
+    gfx.strokeRect(mX, mY, mW, mH);
+
+    // Update meter label text object
+    if (this._seatMeterLabel) {
+      const col = turn < 40 ? '#006600' : turn < 70 ? '#cc8800' : '#cc0000';
+      this._seatMeterLabel.setText(`TURNING: ${Math.round(turn)}%`).setColor(col);
+    }
+  }
+
+  // ─── Seat — grade / results ───────────────────────────────────────────────────
+
+  _getSeatGrade() {
+    if (this._seatLookbacks === 0) return { label: 'FOCUSED',        color: PAL.caught };
+    if (this._seatLookbacks <= 1)  return { label: 'MOSTLY FOCUSED', color: PAL.gold   };
+    return                          { label: 'DISTRACTED',       color: PAL.missed };
+  }
+
+  _showSeatResults() {
+    const W = 1024;
+    const H = 768;
+    const grade = this._getSeatGrade();
+
+    this.add.rectangle(W / 2, H / 2, W, H, PAL.overlay).setAlpha(0.45);
+    this.add.rectangle(W / 2, H / 2, 460, 310, PAL.panelBg)
+      .setStrokeStyle(3, PAL.panelBorder);
+
+    this.add.text(W / 2, H / 2 - 118, 'DRILL COMPLETE', {
+      fontFamily: FONT, fontSize: '23px', color: '#003399', fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 62, grade.label, {
+      fontFamily: FONT, fontSize: '28px', color: grade.color, fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 - 6,
+      `${this._seatCompleted} Phrase${this._seatCompleted !== 1 ? 's' : ''} Completed`, {
+        fontFamily: FONT, fontSize: '20px', color: PAL.score
+    }).setOrigin(0.5);
+
+    const lookColor = this._seatLookbacks > 0 ? PAL.missed : PAL.caught;
+    this.add.text(W / 2, H / 2 + 36,
+      `${this._seatLookbacks} Looked Back`, {
+        fontFamily: FONT, fontSize: '20px', color: lookColor
+    }).setOrigin(0.5);
+
+    this.add.text(W / 2, H / 2 + 108, 'Returning to lessons...', {
+      fontFamily: FONT, fontSize: '14px', color: PAL.hint
+    }).setOrigin(0.5);
+
+    // TODO: write Seat result to MemoryState (lookbacks → disclosure+, phrases → obedience+)
+    // TODO: corrupted variant — child turns despite correct typing; one-frame glimpse near door
+    // TODO: visual shadow cast behind the child
+    // TODO: act-based phrase selection tied to story progress
+    // TODO: optional resistance mechanic — looking back becomes desirable late game
+
+    this.time.delayedCall(2800, this._complete, [], this);
+  }
+
   // ─── Return to TypingScene ───────────────────────────────────────────────────
 
   _complete() {
@@ -1286,6 +1602,8 @@ export default class MiniGameScene extends Phaser.Scene {
       result = { completed: this._ctrCompleted, total: this._ctrRecords.length };
     } else if (this.gameType === 'door_close') {
       result = { phrases: this._doorCompleted, closures: this._doorClosures };
+    } else if (this.gameType === 'stay_in_your_seat') {
+      result = { phrases: this._seatCompleted, lookbacks: this._seatLookbacks };
     } else {
       result = { caught: this.caught, missed: this.missed };
     }
