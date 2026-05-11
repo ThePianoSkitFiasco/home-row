@@ -20,11 +20,35 @@ Open:
 http://127.0.0.1:8123/index.html
 ```
 
-Dev URL shortcuts:
+## Dev Test URLs
+
+Start the local server from the project root:
+
+```bash
+python3 -m http.server 8123
+```
+
+Normal start:
+
+```text
+http://127.0.0.1:8123/index.html
+```
+
+Jump to the final witness statement:
 
 ```text
 http://127.0.0.1:8123/index.html?dev=1&act=final_statement
+```
+
+Jump to Act 7:
+
+```text
 http://127.0.0.1:8123/index.html?dev=1&act=act7
+```
+
+Jump to a specific lesson by lesson id:
+
+```text
 http://127.0.0.1:8123/index.html?dev=1&lesson=LESSON_ID
 ```
 

@@ -469,6 +469,38 @@ After UI-B, the next pass should be a full playtest + pacing / reachability pass
 - check whether Act 5 feels like Emily is present
 - check whether Act 8 feels self-judging
 
+## Dev Test URLs
+
+Start the local server from the project root:
+
+```bash
+python3 -m http.server 8123
+```
+
+Normal start:
+
+```text
+http://127.0.0.1:8123/index.html
+```
+
+Jump to the final witness statement:
+
+```text
+http://127.0.0.1:8123/index.html?dev=1&act=final_statement
+```
+
+Jump to Act 7:
+
+```text
+http://127.0.0.1:8123/index.html?dev=1&act=act7
+```
+
+Jump to a specific lesson by lesson id:
+
+```text
+http://127.0.0.1:8123/index.html?dev=1&lesson=LESSON_ID
+```
+
 ## Agent Workflow Rules
 
 - The canonical active folder is `/Users/jamesmurphy/Desktop/Home Row`.
