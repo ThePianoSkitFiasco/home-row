@@ -1177,7 +1177,11 @@ export default class TypingScene extends Phaser.Scene {
 
     this.witnessActive = false;
     this.assignedText.setFontSize('24px');
+    this.assignedText.setLineSpacing(0);
+    this.assignedText.setDepth(0);
     this.typedTextDisplay.setFontSize('24px');
+    this.typedTextDisplay.setAlpha(1);
+    this.typedTextDisplay.setDepth(0);
     this.responseText.setFontSize('18px');
 
     if (act && act.actId === 'final_statement') {
@@ -1284,9 +1288,12 @@ export default class TypingScene extends Phaser.Scene {
     this.sectionText.setText(act.playerSection || 'Final Typing Test');
     this.instructionText.setText((config.subtitle || 'Choose what the record will say.').toUpperCase());
     this.mascotTipText.setText('CHOOSE WHAT THE RECORD WILL SAY');
-    this.statusText.setText('Select 1-4, then type the recorded line.');
-    this.assignedText.setFontSize('18px');
+    this.statusText.setText('PRESS 1-4 TO CHOOSE WHAT THE RECORD WILL SAY');
+    this.assignedText.setFontSize('14px');
+    this.assignedText.setLineSpacing(1);
+    this.assignedText.setDepth(5);
     this.typedTextDisplay.setFontSize('22px');
+    this.typedTextDisplay.setDepth(5);
     this.responseText.setFontSize('16px');
     this.responseText.setText('').setAlpha(0);
     this._updateResponsePanelVisibility();
@@ -1310,20 +1317,7 @@ export default class TypingScene extends Phaser.Scene {
     this.witnessTarget = '';
     this.completionBg.setAlpha(0);
     this.completionText.setAlpha(0);
-
-    this.assignedText.setText([
-      record.label,
-      '',
-      `OFFICIAL: ${record.official}`,
-      '',
-      '1 PRESERVE',
-      '2 CORRECT',
-      '3 DELETE',
-      '4 REFUSE'
-    ].join('\n'));
-    this.responseText.setText('AWAITING FINAL CORRECTION INPUT').setAlpha(1);
-    this._updateResponsePanelVisibility();
-    this._renderTypedText();
+    this._renderWitnessChoiceMode(record);
     this._setFooterMessage(`Final statement ${this.witnessIndex + 1} / ${this.witnessConfig.records.length}`);
   }
 
@@ -1361,21 +1355,61 @@ export default class TypingScene extends Phaser.Scene {
     this.witnessTarget = action === 'delete' ? 'DELETE' : (record.choices[action] || '');
     this.witnessMode = 'typing';
 
+    this._renderWitnessTypingMode(record, action);
+    this._playTypingClick();
+  }
+
+  _renderWitnessChoiceMode(record) {
+    this.instructionText.setText('CHOOSE WHAT THE RECORD WILL SAY');
+    this.assignedLabel.setText('WITNESS RECORD');
+    this.inputLabel.setText('INPUT BUFFER INACTIVE');
+    this.statusText.setText('PRESS 1-4 TO CHOOSE WHAT THE RECORD WILL SAY');
+    this.assignedText.setFontSize('14px');
+    this.assignedText.setText([
+      record.label,
+      `OFFICIAL: ${record.official}`,
+      '',
+      `[1] PRESERVE`,
+      `    ${this._getWitnessSelectedLine(record, 'preserve')}`,
+      `[2] CORRECT`,
+      `    ${this._getWitnessSelectedLine(record, 'correct')}`,
+      `[3] DELETE`,
+      `    ${this._getWitnessSelectedLine(record, 'delete') || '[LINE REMOVED]'}`,
+      `[4] REFUSE`,
+      `    ${this._getWitnessSelectedLine(record, 'refuse')}`
+    ].join('\n'));
+    this.responseText.setText('PRESS 1-4 TO CHOOSE').setAlpha(1);
+    this._updateResponsePanelVisibility();
+    this._renderTypedText();
+  }
+
+  _renderWitnessTypingMode(record, action) {
     const selectedLine = this._getWitnessSelectedLine(record, action);
+    const selectedLabel = this._getWitnessChoiceLabel(action);
+    const helpText = action === 'delete'
+      ? 'TYPE DELETE OR PRESS ENTER TO REMOVE THIS LINE'
+      : 'TYPE THE SELECTED LINE TO RECORD IT';
+
+    this.instructionText.setText(helpText);
+    this.assignedLabel.setText('TYPE TO RECORD');
+    this.inputLabel.setText('INPUT');
+    this.statusText.setText(helpText);
+    this.assignedText.setFontSize('16px');
     this.assignedText.setText([
       record.label,
       '',
       `OFFICIAL: ${record.official}`,
       '',
-      `${this._getWitnessChoiceLabel(action)} SELECTED:`,
+      `SELECTED: ${selectedLabel}`,
+      '',
+      'TYPE TO RECORD:',
       selectedLine || '[LINE REMOVED]',
       '',
-      action === 'delete' ? 'Type DELETE or press Enter to remove this line.' : 'Type the selected line to record it.'
+      helpText
     ].join('\n'));
     this.responseText.setText('STATEMENT READY FOR RECORDING').setAlpha(1);
     this._updateResponsePanelVisibility();
     this._renderTypedText();
-    this._playTypingClick();
   }
 
   _handleWitnessTyping(event) {
@@ -1979,6 +2013,12 @@ export default class TypingScene extends Phaser.Scene {
         return;
       }
       const cursor = this.witnessMode === 'typing' && this.witnessTyped.length < this.witnessTarget.length ? '_' : '';
+      if (this.witnessMode === 'choice') {
+        this.typedTextDisplay.setAlpha(0.45);
+        this.typedTextDisplay.setText('> [PRESS 1-4 TO CHOOSE]');
+        return;
+      }
+      this.typedTextDisplay.setAlpha(1);
       this.typedTextDisplay.setText(`> ${this.witnessTyped}${cursor}`);
       return;
     }
