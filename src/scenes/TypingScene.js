@@ -478,6 +478,7 @@ export default class TypingScene extends Phaser.Scene {
     this.continueEnabled = false;
     this.transitionedToFinalWitness = false;
     this.lastMiniGameResult = null;
+    this.actStartStats = null;
     this.mrFingersAnimationTimer = null;
     this.mrFingersAnimationActive = false;
     this.mrFingersAnimationState = null;
@@ -1185,6 +1186,10 @@ export default class TypingScene extends Phaser.Scene {
     const act = this.lessonManager.getCurrentAct();
     const theme = this._getThemeForAct(act);
     let assignedText = lesson.assignedText;
+
+    if (this.lessonManager.getLessonNumber() === 1) {
+      this.actStartStats = this.typingEngine.getStats();
+    }
 
     if (act && act.actId === 'final_statement' && act.witnessStatement) {
       this.transitionedToFinalWitness = true;
@@ -2429,25 +2434,39 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingers.setState('idle');
   }
 
-  _getTeacherTimePerformanceSnapshot() {
+  _getActPerformanceSnapshot() {
     const stats = this.typingEngine.getStats();
+    const baseline = this.actStartStats || {
+      correct: 0,
+      mistakes: 0,
+      backspaces: 0,
+      pauseTime: 0,
+      completedLines: 0
+    };
+    const correct = Math.max(0, stats.correct - (baseline.correct || 0));
+    const mistakes = Math.max(0, stats.mistakes - (baseline.mistakes || 0));
+    const backspaces = Math.max(0, stats.backspaces - (baseline.backspaces || 0));
+    const pauseTime = Math.max(0, stats.pauseTime - (baseline.pauseTime || 0));
+    const completedLines = Math.max(0, stats.completedLines - (baseline.completedLines || 0));
+    const totalTyped = correct + mistakes;
+    const accuracy = totalTyped > 0 ? Math.round((correct / totalTyped) * 100) : 100;
     let category = 'default';
 
-    if (stats.accuracy < 50 || stats.mistakes > stats.correct) {
+    if (accuracy < 50 || mistakes > correct) {
       category = 'chaotic';
-    } else if (stats.accuracy < 75) {
+    } else if (accuracy < 75) {
       category = 'poor';
-    } else if (stats.accuracy >= 95) {
+    } else if (accuracy >= 95) {
       category = 'excellent';
     }
 
     return {
-      accuracy: stats.accuracy,
-      correct: stats.correct,
-      mistakes: stats.mistakes,
-      backspaces: stats.backspaces,
-      pauseTime: stats.pauseTime,
-      completedLines: stats.completedLines,
+      accuracy,
+      correct,
+      mistakes,
+      backspaces,
+      pauseTime,
+      completedLines,
       wpm: stats.wpm,
       category
     };
@@ -2465,7 +2484,7 @@ export default class TypingScene extends Phaser.Scene {
     this.scene.launch('TeacherTimeScene', {
       teacherTime: config,
       returnScene: 'TypingScene',
-      performance: this._getTeacherTimePerformanceSnapshot(),
+      performance: this._getActPerformanceSnapshot(),
       miniGameResult: this.lastMiniGameResult || null
     });
     this.scene.sleep();
