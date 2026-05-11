@@ -104,6 +104,13 @@ const TUTOR_PALETTE = {
   footerBlue: '#1c4c92',
   footerMuted: '#4a4d56'
 };
+const DEGRADED_FOOTER_LINES = [
+  'GOOD CHILDREN FINISH THE EXERCISE.',
+  'YOU MADE MR. FINGERS ANGRY.',
+  'ERRORS ARE NOT EVIDENCE.',
+  'KEEP TYPING.',
+  'DO NOT TURN AROUND.'
+];
 const KEY_LAYOUT = [
   [
     { label: '`', w: 28, value: '`' },
@@ -263,107 +270,149 @@ const ACT_THEMES = {
     responseBorder: '#665544'
   },
   act5_unsanctioned_statement: {
-    primary: '#63c94b',
-    accent: '#2f742c',
-    warning: '#b83224',
+    primary: '#d7d3c5',
+    accent: '#7a6f63',
+    warning: '#9f3124',
     panelLabel: 'TYPE:',
     modeStamp: 'UNDERLAYER',
-    bg: '#020602',
-    gridAlpha: 0.09,
-    overlayAlpha: 0.06,
-    terminal: true,
-    panelBg: '#041004',
-    panelBorder: '#2f7a25',
-    textCorrect: '#9cff7a',
-    textWrong: '#b83224',
-    textCursor: '#9cff7a',
-    assignedColor: '#9cff7a',
-    statsColor: '#2f742c',
-    mrColor: '#63c94b',
-    responseColor: '#b83224',
-    responseBorder: '#5f1512',
-    progressFillColor: '#b83224',
-    scanlineAlpha: 0.14,
-    vignetteAlpha: 0.38,
-    footerMode: 'SYS: OK  |  KBD: OK  |  MONO: GREEN  |  ID: 9827-A',
-    footerHint: 'WORKSTATION 02 ACTIVE',
-    footerHintColor: '#b83224',
-    footerWarning: 'SECOND USER DETECTED.'
+    bg: '#201b18',
+    gridAlpha: 0.03,
+    overlayAlpha: 0.22,
+    overlayTint: '#140b09',
+    degraded: true,
+    panelBg: '#48413b',
+    panelBorder: '#271d19',
+    textCorrect: '#d6d0c1',
+    textWrong: '#a72d1f',
+    textCursor: '#d6d0c1',
+    assignedColor: '#ede7da',
+    statsColor: '#89796c',
+    mrColor: '#9e7c74',
+    responseColor: '#c25545',
+    responseBorder: '#5d211d',
+    progressFillColor: '#6c2018',
+    scanlineAlpha: 0.1,
+    vignetteAlpha: 0.42,
+    footerMode: 'RECORDER: OPEN  |  ROOM: WATCHED',
+    footerHint: 'GOOD CHILDREN FINISH THE EXERCISE.',
+    footerHintColor: '#b84e3e',
+    footerMessages: DEGRADED_FOOTER_LINES
   },
   act6_protective_routine: {
-    primary: '#91f45b',
-    accent: CRT.phosphorDim,
-    warning: CRT.warning,
+    primary: '#d8d5ca',
+    accent: '#756c61',
+    warning: '#ab4635',
     panelLabel: 'TYPE:',
     modeStamp: 'CONTROL',
-    bg: '#040704',
-    gridAlpha: 0.13,
-    overlayAlpha: 0.1,
-    terminal: true,
-    panelBg: '#071106',
-    panelBorder: '#5fa93e',
-    textCorrect: '#91f45b',
-    textWrong: CRT.warning,
-    textCursor: '#9dff63',
-    assignedColor: '#b0ff7c',
-    statsColor: CRT.phosphorDim,
-    mrColor: '#9dff63',
-    responseColor: '#ff8d54',
-    responseBorder: '#7fc94e',
-    scanlineAlpha: 0.1,
-    vignetteAlpha: 0.22,
-    footerMode: 'SYS: PROTECT  KBD: LOCKED',
-    footerHint: 'ROUTINE MONITOR ACTIVE // RECORD OPEN'
+    bg: '#191515',
+    gridAlpha: 0.035,
+    overlayAlpha: 0.26,
+    overlayTint: '#120909',
+    degraded: true,
+    panelBg: '#413b39',
+    panelBorder: '#241a17',
+    textCorrect: '#ddd7ca',
+    textWrong: '#b3523f',
+    textCursor: '#ddd7ca',
+    assignedColor: '#ebe5d9',
+    statsColor: '#8a7c71',
+    mrColor: '#8e6f68',
+    responseColor: '#c8644f',
+    responseBorder: '#5e2a22',
+    progressFillColor: '#7b2f24',
+    scanlineAlpha: 0.095,
+    vignetteAlpha: 0.32,
+    footerMode: 'ROUTINE: LOCKED  |  RECORDER: OPEN',
+    footerHint: 'KEEP TYPING.',
+    footerHintColor: '#b55d4d',
+    footerMessages: DEGRADED_FOOTER_LINES
   },
   act7_correction_exam: {
-    primary: '#b8ff86',
-    accent: '#74c54d',
-    warning: '#ff6b43',
+    primary: '#dbd7cd',
+    accent: '#786d64',
+    warning: '#bf5641',
     panelLabel: 'TYPE:',
     modeStamp: 'EXAM',
-    bg: '#030603',
-    gridAlpha: 0.08,
-    overlayAlpha: 0.08,
-    terminal: true,
-    panelBg: '#060c05',
-    panelBorder: '#568f39',
-    textCorrect: '#b8ff86',
-    textWrong: '#ff6b43',
-    textCursor: '#b8ff86',
-    assignedColor: '#c6ff9d',
-    statsColor: '#74c54d',
-    mrColor: '#9dff63',
-    responseColor: '#ff6b43',
-    responseBorder: '#74c54d',
-    scanlineAlpha: 0.08,
-    vignetteAlpha: 0.26,
-    footerMode: 'SYS: EXAM  KBD: REC',
-    footerHint: 'OFFICIAL INPUT CHANNEL // CORRECTION RECORD'
+    bg: '#171313',
+    gridAlpha: 0.03,
+    overlayAlpha: 0.28,
+    overlayTint: '#170b0b',
+    degraded: true,
+    panelBg: '#403937',
+    panelBorder: '#261b18',
+    textCorrect: '#e0dbd0',
+    textWrong: '#cb644d',
+    textCursor: '#e0dbd0',
+    assignedColor: '#efe7dd',
+    statsColor: '#8c7d73',
+    mrColor: '#927069',
+    responseColor: '#d06a54',
+    responseBorder: '#672921',
+    progressFillColor: '#8b2e22',
+    scanlineAlpha: 0.085,
+    vignetteAlpha: 0.34,
+    footerMode: 'RECORD: OPEN  |  EXAM: ACTIVE',
+    footerHint: 'ERRORS ARE NOT EVIDENCE.',
+    footerHintColor: '#c15f4e',
+    footerMessages: DEGRADED_FOOTER_LINES
   },
   final_statement: {
-    primary: '#d5ffb8',
-    accent: '#6fbf45',
-    warning: '#ff7a45',
+    primary: '#e1ddd4',
+    accent: '#80736a',
+    warning: '#d06a52',
     panelLabel: 'TYPE:',
     modeStamp: 'FINAL',
-    bg: '#020402',
-    gridAlpha: 0.025,
-    overlayAlpha: 0.04,
-    terminal: true,
-    panelBg: '#030703',
-    panelBorder: '#3d7228',
-    textCorrect: '#d5ffb8',
-    textWrong: '#ff7a45',
-    textCursor: '#d5ffb8',
-    assignedColor: '#d5ffb8',
-    statsColor: '#6fbf45',
-    mrColor: '#9dff63',
-    responseColor: '#ff7a45',
-    responseBorder: '#6fbf45',
-    scanlineAlpha: 0.055,
-    vignetteAlpha: 0.34,
-    footerMode: 'SYS: FINAL  KBD: OPEN  MONO: GREEN',
-    footerHint: 'STATEMENT CHANNEL ISOLATED'
+    bg: '#151010',
+    gridAlpha: 0.02,
+    overlayAlpha: 0.3,
+    overlayTint: '#14090a',
+    degraded: true,
+    panelBg: '#3d3735',
+    panelBorder: '#241917',
+    textCorrect: '#e6e1d8',
+    textWrong: '#d17059',
+    textCursor: '#e6e1d8',
+    assignedColor: '#f1ebe3',
+    statsColor: '#928278',
+    mrColor: '#8f6962',
+    responseColor: '#d87861',
+    responseBorder: '#6b2d24',
+    progressFillColor: '#8f2b1f',
+    scanlineAlpha: 0.08,
+    vignetteAlpha: 0.4,
+    footerMode: 'STATEMENT: OPEN  |  WITNESS: ACTIVE',
+    footerHint: 'DO NOT TURN AROUND.',
+    footerHintColor: '#c76857',
+    footerMessages: DEGRADED_FOOTER_LINES
+  },
+  act5Degraded: {
+    primary: '#d7d3c5',
+    accent: '#7a6f63',
+    warning: '#9f3124',
+    panelLabel: 'TYPE:',
+    modeStamp: 'UNDERLAYER',
+    bg: '#201b18',
+    gridAlpha: 0.03,
+    overlayAlpha: 0.22,
+    overlayTint: '#140b09',
+    degraded: true,
+    panelBg: '#48413b',
+    panelBorder: '#271d19',
+    textCorrect: '#d6d0c1',
+    textWrong: '#a72d1f',
+    textCursor: '#d6d0c1',
+    assignedColor: '#ede7da',
+    statsColor: '#89796c',
+    mrColor: '#9e7c74',
+    responseColor: '#c25545',
+    responseBorder: '#5d211d',
+    progressFillColor: '#6c2018',
+    scanlineAlpha: 0.1,
+    vignetteAlpha: 0.42,
+    footerMode: 'RECORDER: OPEN  |  ROOM: WATCHED',
+    footerHint: 'GOOD CHILDREN FINISH THE EXERCISE.',
+    footerHintColor: '#b84e3e',
+    footerMessages: DEGRADED_FOOTER_LINES
   }
 };
 
@@ -1422,11 +1471,15 @@ export default class TypingScene extends Phaser.Scene {
     const panelBg = theme.panelBg ? hexToNumber(theme.panelBg) : hexToNumber(COLORS.panel);
     const panelBorder = theme.panelBorder ? hexToNumber(theme.panelBorder) : primary;
     const responseBorder = theme.responseBorder ? hexToNumber(theme.responseBorder) : warning;
-    const isTerminal = !!theme.terminal;
+    const isLegacyTerminal = !!theme.terminal;
+    const isDegraded = !!theme.degraded;
+    const hasCorruptionSkin = isLegacyTerminal || isDegraded;
 
     this.cameras.main.setBackgroundColor(theme.bg);
     this.backgroundRect.setFillStyle(hexToNumber(theme.bg));
-    this.themeOverlay.setFillStyle(primary).setAlpha(theme.overlayAlpha);
+    this.themeOverlay
+      .setFillStyle(hexToNumber(theme.overlayTint || theme.primary))
+      .setAlpha(theme.overlayAlpha);
 
     this.themeGridLines.forEach((line, index) => {
       const useAccent = index % 4 === 0;
@@ -1438,7 +1491,7 @@ export default class TypingScene extends Phaser.Scene {
     this.debugDivider.setFillStyle(accent).setAlpha(0.35);
     this.eventDivider.setFillStyle(accent).setAlpha(0.35);
 
-    const panels = isTerminal ? this.themePanels : [
+    const panels = [
       this.statsPanel,
       this.lessonPanel,
       this.mrFingersPanel,
@@ -1450,23 +1503,27 @@ export default class TypingScene extends Phaser.Scene {
     ];
     panels.forEach(panel => {
       panel.setFillStyle(panelBg);
-      panel.setStrokeStyle(isTerminal ? 1 : 1, panelBorder, isTerminal ? 0.72 : 1);
+      panel.setStrokeStyle(1, panelBorder, hasCorruptionSkin ? 0.88 : 1);
     });
-    this.themePanelShadows.forEach(shadow => shadow.setAlpha(isTerminal ? 0 : 1));
-    this.keyboardKeyShadows.forEach(shadow => shadow.setAlpha(isTerminal ? 0 : 1));
+    this.themePanelShadows.forEach(shadow => shadow.setAlpha(isDegraded ? 0.14 : (isLegacyTerminal ? 0 : 1)));
+    this.keyboardKeyShadows.forEach(shadow => shadow.setAlpha(isDegraded ? 0.18 : (isLegacyTerminal ? 0 : 1)));
     this.responsePanel.setStrokeStyle(1, responseBorder);
-    this.lessonHeader.setFillStyle(isTerminal ? panelBg : primary);
-    this.lessonHeader.setStrokeStyle(1, isTerminal ? panelBorder : accent, isTerminal ? 0.9 : 1);
+    this.lessonHeader.setFillStyle(isDegraded ? hexToNumber('#312523') : (isLegacyTerminal ? panelBg : primary));
+    this.lessonHeader.setStrokeStyle(1, hasCorruptionSkin ? panelBorder : accent, hasCorruptionSkin ? 0.9 : 1);
     this.instructionPanel.setFillStyle(theme.light ? 0xfcf5de : panelBg).setStrokeStyle(1, panelBorder);
-    this.titleBar.setFillStyle(isTerminal ? hexToNumber('#061006') : primary);
-    this.titleBarShadow.setFillStyle(isTerminal ? hexToNumber('#020402') : accent).setAlpha(isTerminal ? 0.8 : 0.35);
-    this.titleBarHighlight.setFillStyle(isTerminal ? primary : 0x5f8fd1).setAlpha(isTerminal ? 0.45 : 1);
+    this.titleBar.setFillStyle(isDegraded ? hexToNumber('#251715') : (isLegacyTerminal ? hexToNumber('#061006') : primary));
+    this.titleBarShadow
+      .setFillStyle(isDegraded ? hexToNumber('#120b0a') : (isLegacyTerminal ? hexToNumber('#020402') : accent))
+      .setAlpha(hasCorruptionSkin ? 0.8 : 0.35);
+    this.titleBarHighlight
+      .setFillStyle(isDegraded ? hexToNumber('#6a3e39') : (isLegacyTerminal ? primary : 0x5f8fd1))
+      .setAlpha(isDegraded ? 0.32 : (isLegacyTerminal ? 0.45 : 1));
     this.footerBar.setFillStyle(theme.light ? 0xe0d8c4 : panelBg);
     this.footerTopLine.setFillStyle(panelBorder);
-    this.progressBarBack.setFillStyle(isTerminal ? hexToNumber('#020602') : 0xf1e9d0)
-      .setStrokeStyle(1, isTerminal ? panelBorder : 0xb2a684, isTerminal ? 0.8 : 1);
+    this.progressBarBack.setFillStyle(hasCorruptionSkin ? hexToNumber('#2b221f') : 0xf1e9d0)
+      .setStrokeStyle(1, hasCorruptionSkin ? panelBorder : 0xb2a684, hasCorruptionSkin ? 0.8 : 1);
     this.progressBarFill.setFillStyle(
-      isTerminal
+      hasCorruptionSkin
         ? hexToNumber(theme.progressFillColor || theme.primary)
         : 0x74bf4c
     );
@@ -1475,8 +1532,8 @@ export default class TypingScene extends Phaser.Scene {
     this.lessonTitle.setColor(theme.light ? '#234d96' : theme.primary);
     this.modeStampText.setText(theme.modeStamp).setColor(theme.light ? '#325fa2' : theme.accent);
     this.sectionText.setColor(theme.light ? '#fff7c4' : theme.primary);
-    this.assignedLabel.setText(isTerminal ? 'TARGET BUFFER' : 'Target Text').setColor(theme.light ? '#325fa2' : theme.accent);
-    this.inputLabel.setText(isTerminal ? 'INPUT BUFFER' : 'Student Input').setColor(theme.light ? '#325fa2' : theme.accent);
+    this.assignedLabel.setText(isLegacyTerminal ? 'TARGET BUFFER' : 'Target Text').setColor(theme.light ? '#325fa2' : theme.accent);
+    this.inputLabel.setText(isLegacyTerminal ? 'INPUT BUFFER' : 'Student Input').setColor(theme.light ? '#325fa2' : theme.accent);
     this.assignedText.setColor(theme.assignedColor || theme.accent);
     this.instructionText.setColor(theme.light ? TUTOR_PALETTE.text : theme.assignedColor || theme.primary);
     this.responseText.setColor(theme.responseColor || theme.warning);
@@ -1497,11 +1554,11 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingersPortraitFrame.setFillStyle(theme.light ? 0xf6dfb4 : panelBg);
     this.mrFingersPortraitFrame.setStrokeStyle(2, panelBorder);
 
-    if (isTerminal) {
+    if (isLegacyTerminal) {
       this._applyTerminalTextSkin(theme);
     }
     this._applyCrtOverlay(theme);
-    this._applyAct5TerminalEnhancements(isTerminal, theme);
+    this._applyCorruptionThemeEnhancements(theme);
     this._updateResponsePanelVisibility();
     this._updateKeyboardHighlights();
   }
@@ -1544,51 +1601,69 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _applyCrtOverlay(theme) {
-    const isTerminal = !!theme.terminal;
-    const scanlineAlpha = isTerminal ? theme.scanlineAlpha || 0.08 : 0;
-    const vignetteAlpha = isTerminal ? theme.vignetteAlpha || 0.2 : 0;
+    const isLegacyTerminal = !!theme.terminal;
+    const isDegraded = !!theme.degraded;
+    const hasCorruptionSkin = isLegacyTerminal || isDegraded;
+    const scanlineAlpha = hasCorruptionSkin ? theme.scanlineAlpha || 0.08 : 0;
+    const vignetteAlpha = hasCorruptionSkin ? theme.vignetteAlpha || 0.2 : 0;
+    const deepColor = isDegraded ? hexToNumber('#140d0d') : hexToNumber(CRT.phosphorDeep);
+    const glowColor = isDegraded ? hexToNumber('#5a2a23') : hexToNumber(theme.primary || CRT.phosphor);
 
     this.crtScanlines.forEach((line, index) => {
       line
-        .setFillStyle(index % 3 === 0 ? hexToNumber(CRT.phosphorDeep) : 0x000000)
+        .setFillStyle(index % 3 === 0 ? deepColor : 0x000000)
         .setAlpha(index % 3 === 0 ? scanlineAlpha * 0.55 : scanlineAlpha);
     });
     this.crtVignette.forEach(edge => edge.setAlpha(vignetteAlpha));
-    this.crtFrame.setStrokeStyle(1, hexToNumber(theme.panelBorder || CRT.phosphorDeep), isTerminal ? 0.48 : 0);
-    this.crtSoftGlow.setStrokeStyle(1, hexToNumber(theme.primary || CRT.phosphor), isTerminal ? 0.16 : 0);
+    this.crtFrame.setStrokeStyle(1, hexToNumber(theme.panelBorder || CRT.phosphorDeep), hasCorruptionSkin ? 0.48 : 0);
+    this.crtSoftGlow.setStrokeStyle(1, glowColor, hasCorruptionSkin ? (isDegraded ? 0.1 : 0.16) : 0);
   }
 
-  _applyAct5TerminalEnhancements(isTerminal, theme) {
+  // Legacy terminal mode still exists for future one-off scenes, but Act 5+ now uses degraded tutor mode.
+  _applyCorruptionThemeEnhancements(theme) {
+    const isLegacyTerminal = !!theme.terminal;
+    const isDegraded = !!theme.degraded;
     // --- Bottom buttons ---
-    const termLabels = ['[P] PRACTICE', '[R] REPEAT', '[N] NEXT', '[?] HELP', '[Q] QUIT'];
     const normalLabels = ['Practice', 'Repeat', 'Next', 'Help', 'Quit'];
     const normalColors = [
       TUTOR_PALETTE.green, TUTOR_PALETTE.sky, TUTOR_PALETTE.gold,
       TUTOR_PALETTE.purple, TUTOR_PALETTE.redOrange
     ];
-    const termBorder = isTerminal ? hexToNumber(theme.panelBorder || '#2f7a25') : hexToNumber('#7f765f');
-    const termRedBorder = 0xb83224;
+    const degradedColors = [0x62635e, 0x5c6569, 0x726450, 0x63586e, 0x612723];
+    const edgeBorder = hexToNumber(theme.panelBorder || '#2f7a25');
+    const warnBorder = hexToNumber(theme.warning || '#b83224');
 
     if (this.tutorButtons) {
       this.tutorButtons.forEach((btn, i) => {
         const isQuit = i === 4;
-        btn.label.setText(isTerminal ? termLabels[i] : normalLabels[i]);
-        btn.label.setFontFamily(isTerminal ? 'Courier New, monospace' : 'Trebuchet MS, Verdana, sans-serif');
-        btn.label.setFontSize(isTerminal ? '12px' : '15px');
+        btn.label.setText(normalLabels[i]);
+        btn.label.setFontFamily('Trebuchet MS, Verdana, sans-serif');
+        btn.label.setFontSize(isDegraded ? '14px' : (isLegacyTerminal ? '12px' : '15px'));
         btn.label.setColor(
-          isTerminal
-            ? (isQuit ? '#b83224' : (theme.primary || '#63c94b'))
-            : '#ffffff'
+          isDegraded
+            ? (isQuit ? '#f0cbc2' : '#ebe0d2')
+            : (isLegacyTerminal ? (isQuit ? '#b83224' : (theme.primary || '#63c94b')) : '#ffffff')
         );
-        btn.body.setFillStyle(isTerminal ? (isQuit ? 0x1a0404 : 0x030803) : normalColors[i]);
-        btn.body.setStrokeStyle(1, isTerminal ? (isQuit ? termRedBorder : termBorder) : hexToNumber('#7f765f'), 1);
-        btn.shine.setAlpha(isTerminal ? 0 : 0.4);
-        btn.shadow.setAlpha(isTerminal ? 0 : 0.3);
+        btn.body.setFillStyle(
+          isDegraded
+            ? degradedColors[i]
+            : (isLegacyTerminal ? (isQuit ? 0x1a0404 : 0x030803) : normalColors[i])
+        );
+        btn.body.setStrokeStyle(
+          1,
+          isDegraded
+            ? (isQuit ? warnBorder : edgeBorder)
+            : (isLegacyTerminal ? (isQuit ? warnBorder : edgeBorder) : hexToNumber('#7f765f')),
+          1
+        );
+        btn.shine
+          .setFillStyle(isDegraded ? 0x2f211f : 0xffffff)
+          .setAlpha(isDegraded ? 0.18 : (isLegacyTerminal ? 0 : 0.4));
+        btn.shadow.setAlpha(isDegraded ? 0.2 : (isLegacyTerminal ? 0 : 0.3));
       });
     }
 
-    // --- Glitch effects ---
-    this._setGlitchEffectsActive(isTerminal);
+    this._setGlitchEffectsActive(isDegraded || isLegacyTerminal);
   }
 
   _setGlitchEffectsActive(active) {
@@ -1603,7 +1678,7 @@ export default class TypingScene extends Phaser.Scene {
     // Seed initial speckle alphas with staggered delays
     this.terminalSpeckles.forEach((speckle, i) => {
       this.time.delayedCall(i * 35, () => {
-        if (!this.currentTheme || !this.currentTheme.terminal) return;
+        if (!this.currentTheme || (!this.currentTheme.terminal && !this.currentTheme.degraded)) return;
         speckle.setAlpha(0.03 + Math.random() * 0.18);
       });
     });
@@ -1611,7 +1686,7 @@ export default class TypingScene extends Phaser.Scene {
     if (this.terminalSmears) {
       this.terminalSmears.forEach((smear, i) => {
         this.time.delayedCall(i * 20, () => {
-          if (!this.currentTheme || !this.currentTheme.terminal) return;
+          if (!this.currentTheme || (!this.currentTheme.terminal && !this.currentTheme.degraded)) return;
           smear.setAlpha(0.04 + Math.random() * 0.12);
         });
       });
@@ -1619,12 +1694,14 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _tickGlitchEffects() {
-    if (!this.currentTheme || !this.currentTheme.terminal) return;
+    if (!this.currentTheme || (!this.currentTheme.terminal && !this.currentTheme.degraded)) return;
     if (!this.terminalSpeckles) return;
+    const isDegraded = !!this.currentTheme.degraded;
 
     // Reposition and flicker a random speckle
     if (Math.random() > 0.45) {
       const speckle = Phaser.Utils.Array.GetRandom(this.terminalSpeckles);
+      speckle.setFillStyle(isDegraded ? 0x7b241d : 0xb83224);
       speckle.setPosition(
         Phaser.Math.Between(20, 1004),
         Phaser.Math.Between(42, 710)
@@ -1639,6 +1716,7 @@ export default class TypingScene extends Phaser.Scene {
     // Occasionally refresh a smear's alpha
     if (this.terminalSmears && Math.random() > 0.72) {
       const smear = Phaser.Utils.Array.GetRandom(this.terminalSmears);
+      smear.setFillStyle(isDegraded ? 0x4f1b17 : 0xb83224);
       smear.setAlpha(0.05 + Math.random() * 0.14);
       this.time.delayedCall(1200 + Math.random() * 2000, () => {
         smear.setAlpha(0.02 + Math.random() * 0.06);
@@ -1648,18 +1726,18 @@ export default class TypingScene extends Phaser.Scene {
     // Rare horizontal glitch bar flash
     if (Math.random() > 0.84) {
       const bar = Phaser.Utils.Array.GetRandom(this.terminalGlitchBars);
-      const useRed = Math.random() > 0.35;
+      const useRed = Math.random() > 0.2;
       bar.setPosition(512, Phaser.Math.Between(50, 700));
-      bar.setFillStyle(useRed ? 0xb83224 : 0x2f7a25);
-      bar.setAlpha(0.10 + Math.random() * 0.18);
+      bar.setFillStyle(useRed ? 0x7f2118 : (isDegraded ? 0x231514 : 0x2f7a25));
+      bar.setAlpha(0.08 + Math.random() * 0.14);
       this.time.delayedCall(40 + Math.random() * 100, () => bar.setAlpha(0));
     }
 
     // Mr. Fingers portrait frame occasional red pulse
     if (this.mrFingersPortraitFrame && Math.random() > 0.92) {
-      this.mrFingersPortraitFrame.setStrokeStyle(2, 0xb83224, 0.9);
+      this.mrFingersPortraitFrame.setStrokeStyle(2, isDegraded ? 0x7f2118 : 0xb83224, 0.9);
       this.time.delayedCall(80 + Math.random() * 160, () => {
-        if (this.currentTheme && this.currentTheme.terminal) {
+        if (this.currentTheme && (this.currentTheme.terminal || this.currentTheme.degraded)) {
           const border = hexToNumber(this.currentTheme.panelBorder || '#2f7a25');
           this.mrFingersPortraitFrame.setStrokeStyle(1, border, 0.7);
         }
@@ -1668,7 +1746,9 @@ export default class TypingScene extends Phaser.Scene {
 
     // Subtle full-screen phosphor flicker
     if (Math.random() > 0.91) {
-      this.terminalFlickerOverlay.setAlpha(0.014 + Math.random() * 0.026);
+      this.terminalFlickerOverlay
+        .setFillStyle(isDegraded ? 0x140b0b : 0x9cff7a)
+        .setAlpha(isDegraded ? 0.03 + Math.random() * 0.04 : 0.014 + Math.random() * 0.026);
       this.time.delayedCall(30 + Math.random() * 65, () => {
         this.terminalFlickerOverlay.setAlpha(0);
       });
@@ -1676,9 +1756,9 @@ export default class TypingScene extends Phaser.Scene {
 
     // Occasional red status text jitter in Mr. Fingers speech box
     if (this.statusText && Math.random() > 0.94) {
-      this.statusText.setColor('#b83224');
+      this.statusText.setColor(isDegraded ? '#c86b57' : '#b83224');
       this.time.delayedCall(120 + Math.random() * 200, () => {
-        if (this.currentTheme && this.currentTheme.terminal) {
+        if (this.currentTheme && (this.currentTheme.terminal || this.currentTheme.degraded)) {
           this.statusText.setColor(this.currentTheme.assignedColor || this.currentTheme.primary);
         }
       });
@@ -1790,7 +1870,7 @@ export default class TypingScene extends Phaser.Scene {
   _updateMrFingersVisual(state, label, config) {
     const theme = this.currentTheme || DEFAULT_ACT_THEME;
     const themeBase = theme.mrColor || COLORS.mrFingers;
-    const defaultColor = theme.terminal
+    const defaultColor = (theme.terminal || theme.degraded)
       ? (state === 'angry' || state === 'glitch_warning' ? (theme.warning || CRT.warning) : themeBase)
       : (state === 'idle' || state === 'encourage' || state === 'mistake_notice')
       ? themeBase
@@ -1816,6 +1896,15 @@ export default class TypingScene extends Phaser.Scene {
           .setOrigin(0.5, 0.5);
       }
       this._setMrFingersSpriteFrame(fallbackSpriteKey);
+      if (this.mrFingersSprite) {
+        if (theme.degraded) {
+          this.mrFingersSprite.setTint(hexToNumber(state === 'angry' || state === 'glitch_warning' ? '#9f3124' : '#6a4742'));
+          this.mrFingersSprite.setAlpha(0.88);
+        } else {
+          this.mrFingersSprite.clearTint();
+          this.mrFingersSprite.setAlpha(1);
+        }
+      }
       this.mrFingersFallbackText.setVisible(false);
       if (animationKey) {
         this.playMrFingersAnimation(animationKey);
@@ -2037,7 +2126,7 @@ export default class TypingScene extends Phaser.Scene {
       if (event.preventDefault) {
         event.preventDefault();
       }
-      this._toggleTerminalDebugMode();
+      this._toggleAct5DegradedDebugMode();
       return;
     }
 
@@ -2070,11 +2159,16 @@ export default class TypingScene extends Phaser.Scene {
     }
   }
 
-  _toggleTerminalDebugMode() {
-    const isCurrentlyTerminal = this.currentTheme && this.currentTheme.terminal;
-    const theme = isCurrentlyTerminal ? ACT_THEMES.act1_home_row : ACT_THEMES.act5_unsanctioned_statement;
+  _toggleAct5DegradedDebugMode() {
+    const isCurrentlyDegraded = this.currentTheme && this.currentTheme.degraded;
+    const theme = isCurrentlyDegraded ? ACT_THEMES.act1_home_row : ACT_THEMES.act5Degraded;
+    const lesson = this.lessonManager.getCurrentLesson();
     this._applyActTheme(theme);
-    this.titleText.setText(theme.terminal ? "MR. FINGERS' TYPING ADVENTURE" : "HOME ROW \u2014 Friendly Typing Tutor");
+    this.titleText.setText('HOME ROW — Friendly Typing Tutor');
+    if (lesson) {
+      this.instructionText.setText(this._getInstructionText(lesson));
+      this.mascotTipText.setText(this._getTipText(lesson));
+    }
     this._updateStats();
   }
 
@@ -2175,7 +2269,18 @@ export default class TypingScene extends Phaser.Scene {
     this.progressBarFill.width = Math.max(0, this.progressBarMaxW * progressRatio);
     this.progressText.setText(`Lesson ${current} of ${total}`);
     this.reportCommentText.setText(score.comment);
-    if (this.currentTheme && this.currentTheme.terminal) {
+    if (this.currentTheme && this.currentTheme.degraded) {
+      const footerLines = this.currentTheme.footerMessages || DEGRADED_FOOTER_LINES;
+      const footerLine = footerLines[(current + stats.mistakes + stats.backspaces) % footerLines.length];
+      this.statsText.setText(`WPM ${Math.max(0, Math.min(stats.wpm, 14))}  Accuracy ${stats.accuracy}%  Grade ${score.grade}  Mistakes ${stats.mistakes}`);
+      this.footerHintText.setText(footerLine);
+      this.footerHintText.setColor(this.currentTheme.footerHintColor || this.currentTheme.warning);
+      this.wpmValueText.setColor(stats.wpm <= 12 ? '#b96f63' : '#c7c1b3');
+      this.accuracyValueText.setColor(stats.accuracy < 92 ? '#b84e3e' : '#d0c8bb');
+      this.gradeValueText.setColor(score.stars <= 1 ? '#a44d42' : '#b8aa9a');
+      this.starsValueText.setColor(score.stars === 0 ? '#5f4f4d' : '#8d5c56');
+      this.reportCommentText.setText(footerLine);
+    } else if (this.currentTheme && this.currentTheme.terminal) {
       if (this.currentTheme.footerHintColor) {
         // Act 5 specific: left = sys diagnostics, centre = red warning
         this.statsText.setText('SYS: OK  |  KBD: OK  |  MONO: GREEN  |  WORKSTATION 02 ACTIVE');
@@ -2209,6 +2314,13 @@ export default class TypingScene extends Phaser.Scene {
 
   _setFooterMessage(message) {
     if (this.footerHintText) {
+      if (this.currentTheme && this.currentTheme.degraded) {
+        const footerLines = this.currentTheme.footerMessages || DEGRADED_FOOTER_LINES;
+        const index = Math.abs(message.length) % footerLines.length;
+        this.footerHintText.setText(footerLines[index]);
+        this.footerHintText.setColor(this.currentTheme.footerHintColor || this.currentTheme.warning);
+        return;
+      }
       this.footerHintText.setText(message);
     }
   }
@@ -2257,7 +2369,7 @@ export default class TypingScene extends Phaser.Scene {
   _flickerOnReveal() {
     const theme = this.currentTheme;
     if (!theme) return;
-    const glitchColor = theme.terminal
+    const glitchColor = (theme.terminal || theme.degraded)
       ? Phaser.Utils.Array.GetRandom([theme.primary, theme.accent, theme.warning])
       : Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
     this.assignedText.setColor(glitchColor);
@@ -2295,7 +2407,7 @@ export default class TypingScene extends Phaser.Scene {
 
   _flickerAssignedText() {
     const theme = this.currentTheme;
-    const color = theme && theme.terminal
+    const color = theme && (theme.terminal || theme.degraded)
       ? Phaser.Utils.Array.GetRandom([theme.primary, theme.accent, theme.warning])
       : Phaser.Utils.Array.GetRandom(GLITCH_COLORS);
     this.assignedText.setColor(color);
@@ -2333,6 +2445,16 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _getInstructionText(lesson) {
+    if (this.currentTheme && this.currentTheme.degraded) {
+      const map = {
+        correction: 'Correct every detail. The record is waiting.',
+        accuracy: 'Accuracy matters now. Do not make him angry.',
+        test: 'The lesson is watching your hands.',
+        final: 'Choose carefully. The record will keep it.'
+      };
+      return map[lesson.drillType] || 'Finish the exercise exactly as shown.';
+    }
+
     const map = {
       keys: 'Find each key slowly and keep your fingers in position.',
       words: 'Type each word carefully and keep a gentle rhythm.',
@@ -2349,6 +2471,13 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _getTipText(lesson) {
+    if (this.currentTheme && this.currentTheme.degraded) {
+      if (lesson.drillType === 'final' || lesson.drillType === 'test') {
+        return 'TIP: KEEP TYPING. DO NOT TURN AROUND.';
+      }
+      return 'TIP: YOUR HANDS REMEMBER.';
+    }
+
     if (lesson.drillType === 'speed') {
       return 'TIP: Relax your shoulders. Smooth typing beats rushed typing.';
     }
@@ -2360,13 +2489,8 @@ export default class TypingScene extends Phaser.Scene {
 
   _updateFooterClock() {
     const time = formatDuration(Date.now() - this.sessionStartTime);
-    if (this.currentTheme && this.currentTheme.terminal) {
-      if (this.currentTheme.footerHintColor) {
-        // Act 5: right side shows time + ID only (sys info is in statsText)
-        this.footerClockText.setText(`TIME: ${time}  |  ID: 9827-A`);
-      } else {
-        this.footerClockText.setText(`${this.currentTheme.footerMode || 'SYS: OK  KBD: OK'}  T:${time}`);
-      }
+    if (this.currentTheme && (this.currentTheme.terminal || this.currentTheme.degraded)) {
+      this.footerClockText.setText(`${this.currentTheme.footerMode || 'ROOM: WATCHED'}  T:${time}`);
       return;
     }
     this.footerClockText.setText(`Time: ${time}`);
@@ -2374,6 +2498,26 @@ export default class TypingScene extends Phaser.Scene {
 
   _updateKeyboardHighlights() {
     const theme = this.currentTheme || DEFAULT_ACT_THEME;
+    if (theme.degraded) {
+      const keyFace = hexToNumber('#5b544d');
+      const keyBorder = hexToNumber(theme.panelBorder || '#2b211e');
+      const homeKeyFace = hexToNumber('#58221d');
+      const homeBorder = hexToNumber(theme.warning || '#9f3124');
+      const activeFace = hexToNumber('#7b736c');
+      const activeHomeFace = hexToNumber('#7a2e24');
+
+      for (const [value, entry] of this.keyboardKeys.entries()) {
+        const isHome = HOME_ROW_KEYS.has(value);
+        const isActive = this.activeKeyValue && value === this.activeKeyValue;
+        const fill = isActive ? (isHome ? activeHomeFace : activeFace) : (isHome ? homeKeyFace : keyFace);
+        const stroke = isHome ? homeBorder : keyBorder;
+        const strokeAlpha = isActive ? 1 : (isHome ? 0.95 : 0.78);
+        entry.face.setFillStyle(fill).setStrokeStyle(1, stroke, strokeAlpha);
+        entry.label.setColor(isHome ? '#f0d9d2' : '#e6ded0');
+      }
+      return;
+    }
+
     if (theme.terminal) {
       const keyFace = hexToNumber('#060d06');
       const keyBorder = hexToNumber(theme.panelBorder || CRT.phosphorDeep);
