@@ -1,11 +1,30 @@
-const CRT = {
-  bg: 0x050805,
-  panel: 0x081008,
-  panelSoft: 0x0b1609,
-  border: 0x3d7228,
-  phosphor: '#d5ffb8',
-  phosphorDim: '#6fbf45',
-  warning: '#ff7a45'
+const THEMES = {
+  early: {
+    bg: 0xf4e6bd,
+    panel: 0xfff7df,
+    panelSoft: 0xfcf5de,
+    border: 0x7f765f,
+    titleBar: 0x245fa8,
+    titleBorder: 0x123f72,
+    titleText: '#fff7c4',
+    text: '#202838',
+    textMuted: '#4c5872',
+    footer: '#1c4c92',
+    overlayAlpha: 0
+  },
+  terminal: {
+    bg: 0x050805,
+    panel: 0x081008,
+    panelSoft: 0x0b1609,
+    border: 0x3d7228,
+    titleBar: 0x061006,
+    titleBorder: 0x3d7228,
+    titleText: '#d5ffb8',
+    text: '#d5ffb8',
+    textMuted: '#6fbf45',
+    footer: '#ff7a45',
+    overlayAlpha: 0.18
+  }
 };
 
 export default class TeacherTimeScene extends Phaser.Scene {
@@ -26,7 +45,8 @@ export default class TeacherTimeScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor(CRT.bg);
+    this.theme = this._getTheme();
+    this.cameras.main.setBackgroundColor(this.theme.bg);
     this._buildUi();
     this.input.keyboard.on('keydown', (event) => this._handleKey(event));
     this.input.on('pointerdown', () => this._advance());
@@ -34,36 +54,43 @@ export default class TeacherTimeScene extends Phaser.Scene {
   }
 
   _buildUi() {
-    this.add.rectangle(512, 384, 1024, 768, CRT.bg);
+    const theme = this.theme;
+
+    this.add.rectangle(512, 384, 1024, 768, theme.bg);
     for (let x = 0; x <= 1024; x += 32) {
-      this.add.rectangle(x, 384, 1, 768, CRT.border).setAlpha(0.07);
+      this.add.rectangle(x, 384, 1, 768, theme.border).setAlpha(0.07);
     }
     for (let y = 0; y <= 768; y += 24) {
-      this.add.rectangle(512, y, 1024, 1, CRT.border).setAlpha(0.07);
+      this.add.rectangle(512, y, 1024, 1, theme.border).setAlpha(0.07);
     }
-    this.add.rectangle(512, 384, 1024, 768, 0x000000).setAlpha(0.18);
+    this.add.rectangle(512, 384, 1024, 768, 0x000000).setAlpha(theme.overlayAlpha);
+
+    this.titleBar = this.add.rectangle(512, 52, 760, 54, theme.titleBar)
+      .setStrokeStyle(2, theme.titleBorder, 1);
 
     this.titleText = this.add.text(512, 42, 'TEACHER TIME', {
-      fontFamily: 'Courier New, monospace',
+      fontFamily: 'Trebuchet MS, Verdana, sans-serif',
       fontSize: '32px',
-      color: CRT.phosphor,
+      fontStyle: 'bold',
+      color: theme.titleText,
       align: 'center'
     }).setOrigin(0.5, 0);
 
-    this.dialoguePanel = this.add.rectangle(390, 340, 620, 410, CRT.panel)
-      .setStrokeStyle(2, CRT.border, 0.9);
-    this.portraitPanel = this.add.rectangle(810, 340, 260, 410, CRT.panelSoft)
-      .setStrokeStyle(1, CRT.border, 0.75);
+    this.dialoguePanel = this.add.rectangle(390, 340, 620, 410, theme.panel)
+      .setStrokeStyle(2, theme.border, 0.9);
+    this.portraitPanel = this.add.rectangle(810, 340, 260, 410, theme.panelSoft)
+      .setStrokeStyle(2, theme.border, 0.8);
     this.add.text(810, 160, 'MR FINGERS AREA', {
-      fontFamily: 'Courier New, monospace',
+      fontFamily: 'Verdana, sans-serif',
       fontSize: '16px',
-      color: CRT.phosphorDim,
+      fontStyle: 'bold',
+      color: theme.textMuted,
       align: 'center'
     }).setOrigin(0.5, 0);
     this.add.text(810, 218, 'PORTRAIT\nRESERVED', {
       fontFamily: 'Courier New, monospace',
       fontSize: '18px',
-      color: CRT.phosphor,
+      color: theme.text,
       align: 'center',
       lineSpacing: 8
     }).setOrigin(0.5, 0);
@@ -71,28 +98,36 @@ export default class TeacherTimeScene extends Phaser.Scene {
     this.speakerText = this.add.text(112, 155, `${this.speaker}:`, {
       fontFamily: 'Courier New, monospace',
       fontSize: '20px',
-      color: CRT.phosphorDim
+      color: theme.textMuted
     });
     this.lineText = this.add.text(112, 212, '', {
       fontFamily: 'Courier New, monospace',
       fontSize: '28px',
-      color: CRT.phosphor,
+      color: theme.text,
       wordWrap: { width: 560 },
       lineSpacing: 8
     });
     this.choiceText = this.add.text(112, 370, '', {
       fontFamily: 'Courier New, monospace',
       fontSize: '20px',
-      color: CRT.phosphor,
+      color: theme.text,
       wordWrap: { width: 560 },
       lineSpacing: 8
     });
     this.footerText = this.add.text(512, 704, 'PRESS SPACE TO CONTINUE', {
       fontFamily: 'Courier New, monospace',
       fontSize: '18px',
-      color: CRT.warning,
+      color: theme.footer,
       align: 'center'
     }).setOrigin(0.5, 0);
+  }
+
+  _getTheme() {
+    const variant = this.teacherTime.theme || this.teacherTime.variant || 'terminal';
+    if (variant === 'early' || variant === 'friendly') {
+      return THEMES.early;
+    }
+    return THEMES.terminal;
   }
 
   _handleKey(event) {
@@ -163,11 +198,11 @@ export default class TeacherTimeScene extends Phaser.Scene {
   }
 
   _flashChoicePrompt() {
-    this.footerText.setColor(CRT.phosphor);
+    this.footerText.setColor(this.theme.text);
     this.cameras.main.shake(80, 0.002);
     this.time.delayedCall(120, () => {
       if (this.footerText && this.footerText.active) {
-        this.footerText.setColor(CRT.warning);
+        this.footerText.setColor(this.theme.footer);
       }
     });
   }

@@ -429,7 +429,7 @@ export default class TypingScene extends Phaser.Scene {
       this.load.audio(key, path);
     }
 
-    this.load.json('lessons_act1', 'src/data/lessons.act1.json');
+    this.load.json('lessons_act1', 'src/data/lessons.act1.json?v=teacher-time');
     this.load.json('lessons_act2', 'src/data/lessons.act2.json');
     this.load.json('lessons_act3', 'src/data/lessons.act3.json');
     this.load.json('lessons_act4', 'src/data/lessons.act4.json');
@@ -2443,13 +2443,12 @@ export default class TypingScene extends Phaser.Scene {
     this.scene.sleep();
   }
 
-  _launchMiniGame(config, chainIndex = 0) {
+  _launchMiniGame(config, chainIndex = 0, completedAct = this.lessonManager.getCurrentAct()) {
     const chain = Array.isArray(config) ? config : [config];
     const currentConfig = chain[chainIndex];
     if (!currentConfig) {
-      const act = this.lessonManager.getCurrentAct();
-      if (act && act.teacherTimeAfterAct) {
-        this._launchTeacherTime(act.teacherTimeAfterAct);
+      if (completedAct && completedAct.teacherTimeAfterAct) {
+        this._launchTeacherTime(completedAct.teacherTimeAfterAct);
       } else {
         this._advanceToNextAct();
       }
@@ -2459,11 +2458,10 @@ export default class TypingScene extends Phaser.Scene {
     this.events.once('minigame-complete', () => {
       if (chainIndex + 1 < chain.length) {
         // Phase 9.5: run the pre-finale mini-game chain before entering final_statement.
-        this.time.delayedCall(0, () => this._launchMiniGame(chain, chainIndex + 1));
+        this.time.delayedCall(0, () => this._launchMiniGame(chain, chainIndex + 1, completedAct));
       } else {
-        const act = this.lessonManager.getCurrentAct();
-        if (act && act.teacherTimeAfterAct) {
-          this._launchTeacherTime(act.teacherTimeAfterAct);
+        if (completedAct && completedAct.teacherTimeAfterAct) {
+          this._launchTeacherTime(completedAct.teacherTimeAfterAct);
         } else {
           this._advanceToNextAct();
         }
