@@ -26,6 +26,20 @@ const THEMES = {
     overlayAlpha: 0.18
   }
 };
+const MR_SPEAKING_FRAMES = [
+  {
+    key: 'teacher_mr_speak_1',
+    path: 'assets/sprites/mr_fingers/mrfingers_speaks1.png'
+  },
+  {
+    key: 'teacher_mr_speak_2',
+    path: 'assets/sprites/mr_fingers/mrfingers_speaks2.png'
+  },
+  {
+    key: 'teacher_mr_speak_3',
+    path: 'assets/sprites/mr_fingers/mrfingers_speaks3.png'
+  }
+];
 
 export default class TeacherTimeScene extends Phaser.Scene {
   constructor() {
@@ -42,6 +56,17 @@ export default class TeacherTimeScene extends Phaser.Scene {
     this.lineIndex = 0;
     this.mode = 'lines';
     this.done = false;
+    this.speakingFrameSequence = [1, 2, 1, 3];
+    this.speakingFrameIndex = 0;
+    this.speakingTimer = null;
+  }
+
+  preload() {
+    MR_SPEAKING_FRAMES.forEach((frame) => {
+      if (!this.textures.exists(frame.key)) {
+        this.load.image(frame.key, frame.path);
+      }
+    });
   }
 
   create() {
@@ -76,50 +101,39 @@ export default class TeacherTimeScene extends Phaser.Scene {
       align: 'center'
     }).setOrigin(0.5, 0);
 
-    this.dialoguePanel = this.add.rectangle(390, 340, 620, 410, theme.panel)
-      .setStrokeStyle(2, theme.border, 0.9);
-    this.portraitPanel = this.add.rectangle(810, 340, 260, 410, theme.panelSoft)
-      .setStrokeStyle(2, theme.border, 0.8);
-    this.add.text(810, 160, 'MR FINGERS AREA', {
-      fontFamily: 'Verdana, sans-serif',
-      fontSize: '16px',
-      fontStyle: 'bold',
-      color: theme.textMuted,
-      align: 'center'
-    }).setOrigin(0.5, 0);
-    this.add.text(810, 218, 'PORTRAIT\nRESERVED', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '18px',
-      color: theme.text,
-      align: 'center',
-      lineSpacing: 8
-    }).setOrigin(0.5, 0);
+    this.mrSprite = this.add.image(512, 330, 'teacher_mr_speak_1')
+      .setOrigin(0.5)
+      .setScale(0.42);
 
-    this.speakerText = this.add.text(112, 155, `${this.speaker}:`, {
+    this.dialoguePanel = this.add.rectangle(512, 626, 900, 174, theme.panel)
+      .setStrokeStyle(3, theme.border, 0.95);
+
+    this.speakerText = this.add.text(96, 558, `${this.speaker}:`, {
       fontFamily: 'Courier New, monospace',
       fontSize: '20px',
+      fontStyle: 'bold',
       color: theme.textMuted
     });
-    this.lineText = this.add.text(112, 212, '', {
+    this.lineText = this.add.text(96, 596, '', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '28px',
+      fontSize: '25px',
       color: theme.text,
-      wordWrap: { width: 560 },
+      wordWrap: { width: 832 },
       lineSpacing: 8
     });
-    this.choiceText = this.add.text(112, 370, '', {
+    this.choiceText = this.add.text(96, 592, '', {
       fontFamily: 'Courier New, monospace',
       fontSize: '20px',
       color: theme.text,
-      wordWrap: { width: 560 },
+      wordWrap: { width: 832 },
       lineSpacing: 8
     });
-    this.footerText = this.add.text(512, 704, 'PRESS SPACE TO CONTINUE', {
+    this.footerText = this.add.text(928, 704, 'PRESS SPACE TO CONTINUE', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '18px',
+      fontSize: '15px',
       color: theme.footer,
-      align: 'center'
-    }).setOrigin(0.5, 0);
+      align: 'right'
+    }).setOrigin(1, 0);
   }
 
   _getTheme() {
@@ -166,17 +180,23 @@ export default class TeacherTimeScene extends Phaser.Scene {
     const activeLines = this.mode === 'reply' ? this.replyLines : this.lines;
     const line = activeLines[this.lineIndex] || '';
     this.choiceText.setText('');
+    this.choiceText.setVisible(false);
+    this.lineText.setVisible(true);
     this.lineText.setText(`"${line}"`);
     this.footerText.setText('PRESS SPACE TO CONTINUE');
+    this._startSpeakingAnimation();
   }
 
   _showChoices() {
     this.mode = 'choices';
-    this.lineText.setText('"What would you like to say?"');
+    this.lineText.setText('');
+    this.lineText.setVisible(false);
     this.choiceText.setText(this.choices.map((choice) => {
       return `[${choice.key}] ${choice.label}`;
     }).join('\n'));
+    this.choiceText.setVisible(true);
     this.footerText.setText('PRESS 1-3 TO ANSWER');
+    this._stopSpeakingAnimation();
   }
 
   _handleChoice(key) {
@@ -210,6 +230,7 @@ export default class TeacherTimeScene extends Phaser.Scene {
   _finish() {
     if (this.done) return;
     this.done = true;
+    this._stopSpeakingAnimation();
 
     // TODO: add performance-aware lines based on accuracy/deletions/pauses.
     // TODO: integrate Mr Fingers portrait/state changes.
@@ -229,5 +250,36 @@ export default class TeacherTimeScene extends Phaser.Scene {
     }
 
     this.scene.stop();
+  }
+
+  _startSpeakingAnimation() {
+    if (this.speakingTimer) return;
+
+    this.speakingFrameIndex = 0;
+    this._setSpeakingFrame(this.speakingFrameSequence[this.speakingFrameIndex]);
+    this.speakingTimer = this.time.addEvent({
+      delay: 170,
+      loop: true,
+      callback: () => {
+        this.speakingFrameIndex = (this.speakingFrameIndex + 1) % this.speakingFrameSequence.length;
+        this._setSpeakingFrame(this.speakingFrameSequence[this.speakingFrameIndex]);
+      }
+    });
+  }
+
+  _stopSpeakingAnimation() {
+    if (this.speakingTimer) {
+      this.speakingTimer.remove(false);
+      this.speakingTimer = null;
+    }
+    this._setSpeakingFrame(1);
+  }
+
+  _setSpeakingFrame(frameNumber) {
+    if (!this.mrSprite) return;
+    const key = `teacher_mr_speak_${frameNumber}`;
+    if (this.textures.exists(key)) {
+      this.mrSprite.setTexture(key);
+    }
   }
 }
