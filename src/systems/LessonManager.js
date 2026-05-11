@@ -41,6 +41,41 @@ export default class LessonManager {
     return this.getCurrentAct() !== null;
   }
 
+  jumpToActId(actId) {
+    const target = String(actId || '').trim();
+    if (!target) return false;
+
+    const index = this.acts.findIndex((act) => {
+      if (!act || !act.actId) return false;
+      return act.actId === target || act.actId.startsWith(`${target}_`);
+    });
+    if (index < 0) return false;
+
+    this.currentActIndex = index;
+    this.currentLessonIndex = 0;
+    return true;
+  }
+
+  jumpToLessonId(lessonId) {
+    const target = String(lessonId || '').trim();
+    if (!target) return false;
+
+    for (let actIndex = 0; actIndex < this.acts.length; actIndex++) {
+      const act = this.acts[actIndex];
+      const lessons = act && act.lessons;
+      if (!Array.isArray(lessons)) continue;
+
+      const lessonIndex = lessons.findIndex((lesson) => lesson && lesson.id === target);
+      if (lessonIndex >= 0) {
+        this.currentActIndex = actIndex;
+        this.currentLessonIndex = lessonIndex;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   isActComplete() {
     const act = this.getCurrentAct();
     if (!act) return true;

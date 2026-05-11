@@ -459,6 +459,7 @@ export default class TypingScene extends Phaser.Scene {
       this.cache.json.get('lessons_act7'),
       this.cache.json.get('lessons_final')
     ]);
+    this._applyDevUrlJump();
     this.intentEngine.loadIntents(this.cache.json.get('intents'));
 
     this.responseQueue = [];
@@ -531,6 +532,27 @@ export default class TypingScene extends Phaser.Scene {
       loop: true,
       callback: () => this._updateFooterClock()
     });
+  }
+
+  _applyDevUrlJump() {
+    if (typeof window === 'undefined' || !window.location) return;
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('dev') !== '1') return;
+
+    const lessonId = params.get('lesson');
+    const actId = params.get('act');
+
+    if (lessonId) {
+      if (!this.lessonManager.jumpToLessonId(lessonId)) {
+        console.warn(`[HOME ROW DEV] Lesson not found for URL jump: ${lessonId}`);
+      }
+      return;
+    }
+
+    if (actId && !this.lessonManager.jumpToActId(actId)) {
+      console.warn(`[HOME ROW DEV] Act not found for URL jump: ${actId}`);
+    }
   }
 
   // --- UI CONSTRUCTION ---

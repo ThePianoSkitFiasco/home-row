@@ -20,6 +20,14 @@ Open:
 http://127.0.0.1:8123/index.html
 ```
 
+Dev URL shortcuts:
+
+```text
+http://127.0.0.1:8123/index.html?dev=1&act=final_statement
+http://127.0.0.1:8123/index.html?dev=1&act=act7
+http://127.0.0.1:8123/index.html?dev=1&lesson=LESSON_ID
+```
+
 Do not use:
 
 ```sh
