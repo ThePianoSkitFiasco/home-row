@@ -473,18 +473,10 @@ export default class TypingScene extends Phaser.Scene {
     this.activeKeyValue = null;
     this.keyboardKeys = new Map();
     this.typedRichText = [];
-    this.witnessActive = false;
-    this.witnessConfig = null;
-    this.witnessIndex = 0;
-    this.witnessMode = 'choice';
-    this.witnessChoice = null;
-    this.witnessTyped = '';
-    this.witnessTarget = '';
-    this.witnessSelections = [];
-    this.witnessCounts = { preserve: 0, correct: 0, delete: 0, refuse: 0 };
     this.sessionStartTime = Date.now();
     this.pendingContinueHandler = null;
     this.continueEnabled = false;
+    this.transitionedToFinalWitness = false;
     this.mrFingersAnimationTimer = null;
     this.mrFingersAnimationActive = false;
     this.mrFingersAnimationState = null;
@@ -516,6 +508,7 @@ export default class TypingScene extends Phaser.Scene {
     this._wireEvents();
     this._updateMrFingersVisual(this.mrFingers.getState(), this.mrFingers.getLabel(), this.mrFingers.getStateConfig());
     this._startLesson();
+    if (this.transitionedToFinalWitness) return;
     this._setupAtmosphere();
     this._setDebugVisible(this.debugVisible);
 
@@ -1193,11 +1186,11 @@ export default class TypingScene extends Phaser.Scene {
     let assignedText = lesson.assignedText;
 
     if (act && act.actId === 'final_statement' && act.witnessStatement) {
-      this._startWitnessStatement(act.witnessStatement, lesson);
+      this.transitionedToFinalWitness = true;
+      this.scene.start('FinalWitnessScene', { witnessStatement: act.witnessStatement });
       return;
     }
 
-    this.witnessActive = false;
     this.assignedText.setFontSize('24px');
     this.assignedText.setLineSpacing(0);
     this.assignedText.setDepth(0);
@@ -1275,320 +1268,6 @@ export default class TypingScene extends Phaser.Scene {
         this.mrFingers.setState('idle');
       } else {
         this._showActComplete();
-      }
-    });
-  }
-
-  // --- FINAL WITNESS STATEMENT ---
-
-  _startWitnessStatement(config, lesson) {
-    const act = this.lessonManager.getCurrentAct();
-    const theme = this._getThemeForAct(act);
-
-    this.witnessActive = true;
-    this.witnessConfig = config;
-    this.witnessIndex = 0;
-    this.witnessMode = 'choice';
-    this.witnessChoice = null;
-    this.witnessTyped = '';
-    this.witnessTarget = '';
-    this.witnessSelections = [];
-    this.witnessCounts = { preserve: 0, correct: 0, delete: 0, refuse: 0 };
-    this.inputLocked = false;
-    this.actComplete = false;
-    this.finalEnding = null;
-    this.responseQueue = [];
-
-    if (this.responseTimer) {
-      this.responseTimer.remove(false);
-      this.responseTimer = null;
-    }
-
-    this._applyActTheme(theme);
-    this.titleText.setText('HOME ROW // WORKSTATION 02');
-    this.lessonTitle.setText(config.title || 'FINAL CORRECTION EXERCISE');
-    this.sectionText.setText(act.playerSection || 'Final Typing Test');
-    this.instructionText.setText((config.subtitle || 'Choose what the record will say.').toUpperCase());
-    this.mascotTipText.setText('CHOOSE WHAT THE RECORD WILL SAY');
-    this.statusText.setText('PRESS 1-4 TO CHOOSE WHAT THE RECORD WILL SAY');
-    this.assignedText.setFontSize('14px');
-    this.assignedText.setLineSpacing(1);
-    this.assignedText.setDepth(5);
-    this.typedTextDisplay.setFontSize('22px');
-    this.typedTextDisplay.setDepth(5);
-    this.responseText.setFontSize('16px');
-    this.responseText.setText('').setAlpha(0);
-    this._updateResponsePanelVisibility();
-    this.typingEngine.loadLine('');
-    this._updateStats();
-    this._updateDebug();
-
-    this._showWitnessRecord();
-  }
-
-  _showWitnessRecord() {
-    const record = this._getCurrentWitnessRecord();
-    if (!record) {
-      this._showWitnessSummary();
-      return;
-    }
-
-    this.witnessMode = 'choice';
-    this.witnessChoice = null;
-    this.witnessTyped = '';
-    this.witnessTarget = '';
-    this.completionBg.setAlpha(0);
-    this.completionText.setAlpha(0);
-    this._renderWitnessChoiceMode(record);
-    this._setFooterMessage(`Final statement ${this.witnessIndex + 1} / ${this.witnessConfig.records.length}`);
-  }
-
-  _handleWitnessInput(event) {
-    if (this.inputLocked || this.actComplete) return;
-
-    if (this.witnessMode === 'choice') {
-      this._handleWitnessChoice(event);
-      return;
-    }
-
-    if (this.witnessMode === 'typing') {
-      this._handleWitnessTyping(event);
-    }
-  }
-
-  _handleWitnessChoice(event) {
-    const actionByKey = {
-      1: 'preserve',
-      2: 'correct',
-      3: 'delete',
-      4: 'refuse'
-    };
-    const action = actionByKey[event.key];
-    if (!action) {
-      this._flashWitnessInput();
-      return;
-    }
-
-    const record = this._getCurrentWitnessRecord();
-    if (!record) return;
-
-    this.witnessChoice = action;
-    this.witnessTyped = '';
-    this.witnessTarget = action === 'delete' ? 'DELETE' : (record.choices[action] || '');
-    this.witnessMode = 'typing';
-
-    this._renderWitnessTypingMode(record, action);
-    this._playTypingClick();
-  }
-
-  _renderWitnessChoiceMode(record) {
-    this.instructionText.setText('CHOOSE WHAT THE RECORD WILL SAY');
-    this.assignedLabel.setText('WITNESS RECORD');
-    this.inputLabel.setText('INPUT BUFFER INACTIVE');
-    this.statusText.setText('PRESS 1-4 TO CHOOSE WHAT THE RECORD WILL SAY');
-    this.assignedText.setFontSize('14px');
-    this.assignedText.setText([
-      record.label,
-      `OFFICIAL: ${record.official}`,
-      '',
-      `[1] PRESERVE`,
-      `    ${this._getWitnessSelectedLine(record, 'preserve')}`,
-      `[2] CORRECT`,
-      `    ${this._getWitnessSelectedLine(record, 'correct')}`,
-      `[3] DELETE`,
-      `    ${this._getWitnessSelectedLine(record, 'delete') || '[LINE REMOVED]'}`,
-      `[4] REFUSE`,
-      `    ${this._getWitnessSelectedLine(record, 'refuse')}`
-    ].join('\n'));
-    this.responseText.setText('PRESS 1-4 TO CHOOSE').setAlpha(1);
-    this._updateResponsePanelVisibility();
-    this._renderTypedText();
-  }
-
-  _renderWitnessTypingMode(record, action) {
-    const selectedLine = this._getWitnessSelectedLine(record, action);
-    const selectedLabel = this._getWitnessChoiceLabel(action);
-    const helpText = action === 'delete'
-      ? 'TYPE DELETE OR PRESS ENTER TO REMOVE THIS LINE'
-      : 'TYPE THE SELECTED LINE TO RECORD IT';
-
-    this.instructionText.setText(helpText);
-    this.assignedLabel.setText('TYPE TO RECORD');
-    this.inputLabel.setText('INPUT');
-    this.statusText.setText(helpText);
-    this.assignedText.setFontSize('16px');
-    this.assignedText.setText([
-      record.label,
-      '',
-      `OFFICIAL: ${record.official}`,
-      '',
-      `SELECTED: ${selectedLabel}`,
-      '',
-      'TYPE TO RECORD:',
-      selectedLine || '[LINE REMOVED]',
-      '',
-      helpText
-    ].join('\n'));
-    this.responseText.setText('STATEMENT READY FOR RECORDING').setAlpha(1);
-    this._updateResponsePanelVisibility();
-    this._renderTypedText();
-  }
-
-  _handleWitnessTyping(event) {
-    if (event.key === 'Backspace') {
-      if (event.preventDefault) event.preventDefault();
-      if (this.witnessTyped.length > 0) {
-        this.witnessTyped = this.witnessTyped.slice(0, -1);
-        this._renderTypedText();
-        this._playTypingClick();
-      }
-      return;
-    }
-
-    if (this.witnessChoice === 'delete' && event.key === 'Enter' && this.witnessTyped.length === 0) {
-      this._completeWitnessRecord();
-      return;
-    }
-
-    if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return;
-
-    const expected = this.witnessTarget[this.witnessTyped.length];
-    if (!expected) return;
-
-    if (event.key.toUpperCase() === expected.toUpperCase()) {
-      this.witnessTyped += expected;
-      this._renderTypedText();
-      this._playTypingClick();
-      if (this.witnessTyped === this.witnessTarget) {
-        this._completeWitnessRecord();
-      }
-    } else {
-      this._flashWitnessInput();
-    }
-  }
-
-  _completeWitnessRecord() {
-    const record = this._getCurrentWitnessRecord();
-    if (!record || !this.witnessChoice) return;
-
-    const action = this.witnessChoice;
-    const selectedLine = this._getWitnessSelectedLine(record, action);
-    const stampByAction = {
-      preserve: 'PRESERVED',
-      correct: 'CORRECTED',
-      delete: 'DELETED',
-      refuse: 'UNSANCTIONED'
-    };
-
-    this.inputLocked = true;
-    this.witnessCounts[action]++;
-    this.witnessSelections.push({
-      id: record.id,
-      label: record.label,
-      action,
-      line: selectedLine
-    });
-
-    this.responseText.setText(stampByAction[action] || 'STATEMENT RECORDED').setAlpha(1);
-    this._updateResponsePanelVisibility();
-    this.statusText.setText('STATEMENT RECORDED');
-    this._playSectionClearSound();
-
-    this.time.delayedCall(850, () => {
-      this.inputLocked = false;
-      this.witnessIndex++;
-      this._showWitnessRecord();
-    });
-  }
-
-  _showWitnessSummary() {
-    this.witnessMode = 'summary';
-    this.inputLocked = true;
-    this.actComplete = true;
-    this.assignedText.setText('FINAL STATEMENT RECORDED');
-    this.typedTextDisplay.setText('');
-    this.responseText.setText('').setAlpha(0);
-    this._updateResponsePanelVisibility();
-
-    const outcome = this._getWitnessOutcome();
-    const statementLines = this.witnessSelections.map((entry) => {
-      const line = entry.action === 'delete' ? '[LINE REMOVED]' : entry.line;
-      return `${entry.label}: ${line}`;
-    });
-
-    const lines = [
-      `=== ${outcome} ===`,
-      '',
-      'FINAL STATEMENT',
-      '',
-      ...statementLines,
-      '',
-      `PRESERVED: ${this.witnessCounts.preserve}`,
-      `CORRECTED: ${this.witnessCounts.correct}`,
-      `DELETED: ${this.witnessCounts.delete}`,
-      `REFUSED: ${this.witnessCounts.refuse}`,
-      '',
-      'You may close this program.'
-    ];
-
-    this._applyCompletionTheme(this.currentTheme || DEFAULT_ACT_THEME);
-    this.completionBg.setAlpha(1);
-    this.completionText.setText(lines.join('\n')).setAlpha(1);
-    this._setFooterMessage('FINAL STATEMENT RECORDED');
-
-    // TODO: replace temporary outcome labels with full ending scenes.
-    // TODO: route final endings from preserved/corrected/deleted/refused choices.
-    // TODO: connect final witness statement choices to MemoryState when ending logic is ready.
-  }
-
-  _getCurrentWitnessRecord() {
-    const records = this.witnessConfig && this.witnessConfig.records;
-    return records ? records[this.witnessIndex] : null;
-  }
-
-  _getWitnessSelectedLine(record, action) {
-    if (!record || !record.choices) return '';
-    return record.choices[action] || '';
-  }
-
-  _getWitnessChoiceLabel(action) {
-    const labels = {
-      preserve: 'PRESERVE',
-      correct: 'CORRECT',
-      delete: 'DELETE',
-      refuse: 'REFUSE'
-    };
-    return labels[action] || 'CHOICE';
-  }
-
-  _getWitnessOutcome() {
-    const priority = ['refuse', 'correct', 'delete', 'preserve'];
-    const labels = {
-      preserve: 'GOLD STAR REPORT',
-      correct: 'WITNESS STATEMENT',
-      delete: 'BACKSPACE REPORT',
-      refuse: 'UNSANCTIONED TESTIMONY'
-    };
-    const max = Math.max(
-      this.witnessCounts.preserve,
-      this.witnessCounts.correct,
-      this.witnessCounts.delete,
-      this.witnessCounts.refuse
-    );
-    if (max <= 0) return labels.preserve;
-
-    for (const action of priority) {
-      if (this.witnessCounts[action] === max) return labels[action];
-    }
-    return labels.preserve;
-  }
-
-  _flashWitnessInput() {
-    this.typedTextDisplay.setColor(this.currentTheme.warning || '#ff7a45');
-    this.cameras.main.shake(90, 0.003);
-    this.time.delayedCall(140, () => {
-      if (this.witnessActive) {
-        this.typedTextDisplay.setColor(this.currentTheme.textCorrect || '#d5ffb8');
       }
     });
   }
@@ -2025,26 +1704,6 @@ export default class TypingScene extends Phaser.Scene {
   // --- TYPED TEXT RENDERING ---
 
   _renderTypedText() {
-    if (this.witnessActive) {
-      if (this.typedRichText) {
-        this.typedRichText.forEach(t => t.destroy());
-      }
-      this.typedRichText = [];
-      if (this.witnessMode === 'summary') {
-        this.typedTextDisplay.setText('');
-        return;
-      }
-      const cursor = this.witnessMode === 'typing' && this.witnessTyped.length < this.witnessTarget.length ? '_' : '';
-      if (this.witnessMode === 'choice') {
-        this.typedTextDisplay.setAlpha(0.45);
-        this.typedTextDisplay.setText('> [PRESS 1-4 TO CHOOSE]');
-        return;
-      }
-      this.typedTextDisplay.setAlpha(1);
-      this.typedTextDisplay.setText(`> ${this.witnessTyped}${cursor}`);
-      return;
-    }
-
     const states = this.typingEngine.getCharStates();
 
     this.typedTextDisplay.setText('');
@@ -2371,13 +2030,6 @@ export default class TypingScene extends Phaser.Scene {
         event.preventDefault();
       }
       this._toggleTerminalDebugMode();
-      return;
-    }
-
-    if (this.witnessActive) {
-      this.activeKeyValue = normalizeKey(event.key);
-      this._updateKeyboardHighlights();
-      this._handleWitnessInput(event);
       return;
     }
 
