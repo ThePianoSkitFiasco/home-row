@@ -17,6 +17,23 @@
       "Your home row accuracy is improving.",
       "Remember: good typing starts with good posture."
     ],
+    "performanceLines": {
+      "excellent": [
+        "Excellent work!",
+        "Your accuracy was very strong.",
+        "Good fingers make good habits."
+      ],
+      "poor": [
+        "A few errors today.",
+        "Your fingers were unsettled.",
+        "That is all right. Some keys take time."
+      ],
+      "chaotic": [
+        "That was not typing.",
+        "That was noise.",
+        "We will call it practice."
+      ]
+    },
     "choices": [
       {
         "key": "1",

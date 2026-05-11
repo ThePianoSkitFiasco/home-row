@@ -477,6 +477,7 @@ export default class TypingScene extends Phaser.Scene {
     this.pendingContinueHandler = null;
     this.continueEnabled = false;
     this.transitionedToFinalWitness = false;
+    this.lastMiniGameResult = null;
     this.mrFingersAnimationTimer = null;
     this.mrFingersAnimationActive = false;
     this.mrFingersAnimationState = null;
@@ -2423,8 +2424,33 @@ export default class TypingScene extends Phaser.Scene {
   _advanceToNextAct() {
     this.lessonManager.advanceAct();
     this.actComplete = false;
+    this.lastMiniGameResult = null;
     this._startLesson();
     this.mrFingers.setState('idle');
+  }
+
+  _getTeacherTimePerformanceSnapshot() {
+    const stats = this.typingEngine.getStats();
+    let category = 'default';
+
+    if (stats.accuracy < 50 || stats.mistakes > stats.correct) {
+      category = 'chaotic';
+    } else if (stats.accuracy < 75) {
+      category = 'poor';
+    } else if (stats.accuracy >= 95) {
+      category = 'excellent';
+    }
+
+    return {
+      accuracy: stats.accuracy,
+      correct: stats.correct,
+      mistakes: stats.mistakes,
+      backspaces: stats.backspaces,
+      pauseTime: stats.pauseTime,
+      completedLines: stats.completedLines,
+      wpm: stats.wpm,
+      category
+    };
   }
 
   _launchTeacherTime(config) {
@@ -2438,7 +2464,9 @@ export default class TypingScene extends Phaser.Scene {
     });
     this.scene.launch('TeacherTimeScene', {
       teacherTime: config,
-      returnScene: 'TypingScene'
+      returnScene: 'TypingScene',
+      performance: this._getTeacherTimePerformanceSnapshot(),
+      miniGameResult: this.lastMiniGameResult || null
     });
     this.scene.sleep();
   }
@@ -2455,7 +2483,8 @@ export default class TypingScene extends Phaser.Scene {
       return;
     }
 
-    this.events.once('minigame-complete', () => {
+    this.events.once('minigame-complete', (result) => {
+      this.lastMiniGameResult = result || null;
       if (chainIndex + 1 < chain.length) {
         // Phase 9.5: run the pre-finale mini-game chain before entering final_statement.
         this.time.delayedCall(0, () => this._launchMiniGame(chain, chainIndex + 1, completedAct));

@@ -49,8 +49,10 @@ export default class TeacherTimeScene extends Phaser.Scene {
   init(data) {
     this.teacherTime = data.teacherTime || {};
     this.returnScene = data.returnScene || 'TypingScene';
+    this.performance = data.performance || null;
+    this.miniGameResult = data.miniGameResult || null;
     this.speaker = this.teacherTime.speaker || 'MR FINGERS';
-    this.lines = Array.isArray(this.teacherTime.lines) ? this.teacherTime.lines : [];
+    this.lines = this._selectInitialLines();
     this.choices = Array.isArray(this.teacherTime.choices) ? this.teacherTime.choices : [];
     this.replyLines = [];
     this.lineIndex = 0;
@@ -142,6 +144,19 @@ export default class TeacherTimeScene extends Phaser.Scene {
       return THEMES.early;
     }
     return THEMES.terminal;
+  }
+
+  _selectInitialLines() {
+    const category = this.performance && this.performance.category;
+    const performanceLines = this.teacherTime.performanceLines;
+    if (
+      category &&
+      performanceLines &&
+      Array.isArray(performanceLines[category])
+    ) {
+      return performanceLines[category];
+    }
+    return Array.isArray(this.teacherTime.lines) ? this.teacherTime.lines : [];
   }
 
   _handleKey(event) {
