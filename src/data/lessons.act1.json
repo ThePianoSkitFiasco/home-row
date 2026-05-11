@@ -8,6 +8,45 @@
     "letterPool": "asdfjkl",
     "duration": 30
   },
+  "teacherTimeAfterAct": {
+    "id": "act1_teacher_time",
+    "variant": "early",
+    "speaker": "MR FINGERS",
+    "lines": [
+      "WELL DONE!",
+      "Your home row accuracy is improving.",
+      "Remember: good typing starts with good posture."
+    ],
+    "choices": [
+      {
+        "key": "1",
+        "label": "THANK YOU",
+        "reply": [
+          "You are very welcome.",
+          "I am here to help you learn."
+        ],
+        "tags": ["obedience"]
+      },
+      {
+        "key": "2",
+        "label": "I MADE MISTAKES",
+        "reply": [
+          "Mistakes are how we learn.",
+          "For now."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "3",
+        "label": "CONTINUE LESSON",
+        "reply": [
+          "Very good.",
+          "We will continue."
+        ],
+        "tags": ["obedience"]
+      }
+    ]
+  },
   "lessons": [
     {
       "id": "act1_basic_keys",

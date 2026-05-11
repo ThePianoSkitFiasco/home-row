@@ -1340,6 +1340,8 @@ export default class TypingScene extends Phaser.Scene {
             : (act && act.miniGameAfterAct);
           if (miniGameConfig) {
             this._launchMiniGame(miniGameConfig);
+          } else if (act && act.teacherTimeAfterAct) {
+            this._launchTeacherTime(act.teacherTimeAfterAct);
           } else {
             this._advanceToNextAct();
           }
@@ -2425,11 +2427,32 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingers.setState('idle');
   }
 
+  _launchTeacherTime(config) {
+    if (!config) {
+      this._advanceToNextAct();
+      return;
+    }
+
+    this.events.once('teacher-time-complete', () => {
+      this._advanceToNextAct();
+    });
+    this.scene.launch('TeacherTimeScene', {
+      teacherTime: config,
+      returnScene: 'TypingScene'
+    });
+    this.scene.sleep();
+  }
+
   _launchMiniGame(config, chainIndex = 0) {
     const chain = Array.isArray(config) ? config : [config];
     const currentConfig = chain[chainIndex];
     if (!currentConfig) {
-      this._advanceToNextAct();
+      const act = this.lessonManager.getCurrentAct();
+      if (act && act.teacherTimeAfterAct) {
+        this._launchTeacherTime(act.teacherTimeAfterAct);
+      } else {
+        this._advanceToNextAct();
+      }
       return;
     }
 
@@ -2438,7 +2461,12 @@ export default class TypingScene extends Phaser.Scene {
         // Phase 9.5: run the pre-finale mini-game chain before entering final_statement.
         this.time.delayedCall(0, () => this._launchMiniGame(chain, chainIndex + 1));
       } else {
-        this._advanceToNextAct();
+        const act = this.lessonManager.getCurrentAct();
+        if (act && act.teacherTimeAfterAct) {
+          this._launchTeacherTime(act.teacherTimeAfterAct);
+        } else {
+          this._advanceToNextAct();
+        }
       }
     });
     // Launch mini-game scene additively (before sleeping so launch() sees RUNNING status)
