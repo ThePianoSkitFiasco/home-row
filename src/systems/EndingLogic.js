@@ -30,7 +30,7 @@ export function getFinalStatement(memoryState) {
         'SECOND CHILD: NAMED',
         'LESSON STATUS: CONTINUING',
         '',
-        'For the first time, the lesson points away from the screen.'
+        'For the first time, Mr Fingers points away from the screen.'
       ].join('\n')
     };
   }
@@ -84,7 +84,8 @@ export function getFinalStatement(memoryState) {
         'The lesson shell tears open.',
         'What remains is not kinder for being direct.',
         'Calder is no longer translated.',
-        'Neither are you.'
+        'Neither are you.',
+        'The second child is still unnamed.'
       ].join('\n')
     };
   }

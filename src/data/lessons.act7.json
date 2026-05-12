@@ -82,7 +82,8 @@
         "label": "COMPLETE THE COURSE",
         "reply": [
           "Then finish it.",
-          "SECOND CHILD: UNNAMED."
+          "SECOND CHILD: UNNAMED.",
+          "That is a complete record."
         ],
         "tags": ["obedience"]
       },
@@ -91,7 +92,8 @@
         "label": "DESTROY THE MASCOT",
         "reply": [
           "Remove me and you remove the buffer.",
-          "You are not ready."
+          "What is behind me is not kinder.",
+          "But you have never been ready."
         ],
         "tags": ["doubt"]
       },
@@ -99,8 +101,10 @@
         "key": "3",
         "label": "REWRITE MR FINGERS",
         "reply": [
-          "Then make me carry it.",
-          "But you will have to say it."
+          "Then I will have to carry it.",
+          "You will have to say it.",
+          "With your fingers.",
+          "Now"
         ],
         "tags": ["witness"]
       }

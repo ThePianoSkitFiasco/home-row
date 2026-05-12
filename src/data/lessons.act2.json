@@ -13,26 +13,26 @@
     "variant": "early",
     "speaker": "MR FINGERS",
     "lines": [
-      "Emily Vale was a classmate.",
-      "That is all this exercise requires.",
-      "Friendship is not part of the record."
+      "Good data entry practice today.",
+      "Names are just letters.",
+      "Keep the record clean."
     ],
     "choices": [
       {
         "key": "1",
         "label": "I UNDERSTAND",
         "reply": [
-          "Then keep typing.",
-          "Do not add anything extra."
+          "Good.",
+          "Begin the next section."
         ],
         "tags": ["obedience"]
       },
       {
         "key": "2",
-        "label": "SHE WAS MY FRIEND",
+        "label": "THAT NAME WAS REAL",
         "reply": [
-          "Friendship is not a lesson objective.",
-          "Eyes on screen."
+          "All names are real.",
+          "That is not relevant to data entry."
         ],
         "tags": ["doubt"]
       },
@@ -40,8 +40,8 @@
         "key": "3",
         "label": "CONTINUE LESSON",
         "reply": [
-          "Good.",
-          "Begin the next section."
+          "There we go.",
+          "Keep the record clean."
         ],
         "tags": ["obedience"]
       }

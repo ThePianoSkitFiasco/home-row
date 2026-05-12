@@ -35,8 +35,8 @@
         "key": "1",
         "label": "YOU KEPT ME QUIET",
         "reply": [
-          "I kept you breathing.",
-          "Quiet was part of that."
+          "I kept your name out of the record.",
+          "Quiet was a side effect."
         ],
         "tags": ["doubt"]
       },
@@ -44,8 +44,9 @@
         "key": "2",
         "label": "SHE PROTECTED ME",
         "reply": [
-          "She left the second child unnamed.",
-          "I kept it that way."
+          "She left you unnamed.",
+          "That is not protection. That is a gap.",
+          "I kept you in the gap."
         ],
         "tags": ["doubt"]
       },
@@ -53,7 +54,6 @@
         "key": "3",
         "label": "CONTINUE LESSON",
         "reply": [
-          "And this is how you thank me?",
           "Now type."
         ],
         "tags": ["obedience"]

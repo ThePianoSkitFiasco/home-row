@@ -31,7 +31,8 @@
     "lines": [
       "Eyes on screen.",
       "Good children finish.",
-      "Disruption will not be rewarded."
+      "Disruption will not be rewarded.",
+      "Those are important rules."
     ],
     "choices": [
       {
@@ -118,7 +119,7 @@
       "displayTitle": "Lesson 24: Pattern Review",
       "playerLabel": "Lesson 24: Pattern Review",
       "drillType": "review",
-      "assignedText": "you completed this lesson before",
+      "assignedText": "session record retained",
       "revealDelayMs": 1500,
       "holdMs": 2500,
       "lingerResponse": true

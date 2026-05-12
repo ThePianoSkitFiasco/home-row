@@ -13,14 +13,13 @@
     "variant": "early",
     "speaker": "MR FINGERS",
     "lines": [
-      "WELL DONE!",
-      "HOME ROW is an old favourite.",
-      "Some names stay in your fingers longer than others.",
-      "Keep your eyes on the screen."
+      "Well done.",
+      "HOME ROW is a good place to start.",
+      "Some things come back faster than you expect."
     ],
     "performanceLines": {
       "excellent": [
-        "Excellent work!",
+        "Excellent work.",
         "Good fingers stay on home row.",
         "You followed the lesson exactly."
       ],
@@ -30,36 +29,36 @@
         "Sit straight and try again."
       ],
       "chaotic": [
-        "That was not typing.",
-        "That was noise.",
-        "Disruption will not be rewarded."
+        "Let us slow down.",
+        "No rush.",
+        "Start with the home keys. Just the home keys."
       ]
     },
     "choices": [
       {
         "key": "1",
-        "label": "THANK YOU",
+        "label": "THAT WAS EASY",
         "reply": [
-          "Good.",
-          "Good fingers stay where they belong."
+          "Good fingers always say that.",
+          "Keep them there."
         ],
         "tags": ["obedience"]
       },
       {
         "key": "2",
-        "label": "I REMEMBER EMILY",
+        "label": "MY HANDS FEEL STIFF",
         "reply": [
-          "This lesson did not ask for that name.",
-          "We will continue."
+          "That is normal.",
+          "They will loosen up."
         ],
-        "tags": ["doubt"]
+        "tags": ["neutral"]
       },
       {
         "key": "3",
         "label": "CONTINUE LESSON",
         "reply": [
-          "Very good.",
-          "Keep your eyes on the screen."
+          "There you go.",
+          "Eyes on the screen."
         ],
         "tags": ["obedience"]
       }

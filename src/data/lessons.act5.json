@@ -19,8 +19,8 @@
     "speaker": "MR FINGERS",
     "lines": [
       "Listening was not required.",
-      "Curiosity is how children get hurt.",
-      "Finish the sentence."
+      "You heard things that were not part of the lesson.",
+      "That is how children get hurt."
     ],
     "choices": [
       {
@@ -28,7 +28,8 @@
         "label": "HE SAID MY NAME",
         "reply": [
           "Your fingers stopped.",
-          "Then you started again."
+          "Then you started again.",
+          "That is the only part that matters."
         ],
         "tags": ["doubt"]
       },
