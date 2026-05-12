@@ -67,6 +67,10 @@ export default class HostFoundScene extends Phaser.Scene {
     this.flickerTimer = null;
     this.promptBlinkTimer = null;
     this.scanlines = [];
+    this.textTop = 52;
+    this.textBottom = 0;
+    this.lineHeight = 24;
+    this.maxVisibleLines = SCRIPT_LINES.length;
   }
 
   create() {
@@ -80,6 +84,8 @@ export default class HostFoundScene extends Phaser.Scene {
   _buildUi() {
     const width = this.scale.width;
     const height = this.scale.height;
+    const textLeft = 56;
+    const textWidth = width - 112;
 
     this.add.rectangle(width / 2, height / 2, width, height, COLORS.background);
     this.add.rectangle(width / 2, height / 2, width - 24, height - 24, COLORS.backgroundDeep)
@@ -98,17 +104,28 @@ export default class HostFoundScene extends Phaser.Scene {
       color: COLORS.textDim
     }).setOrigin(1, 0);
 
-    this.bodyText = this.add.text(56, 84, '', {
+    this.textBottom = height - 96;
+    this.maxVisibleLines = Math.max(1, Math.floor((this.textBottom - this.textTop) / this.lineHeight));
+
+    this.textPanel = this.add.rectangle(
+      width / 2,
+      this.textTop + ((this.textBottom - this.textTop) / 2),
+      width - 72,
+      this.textBottom - this.textTop + 24,
+      0x080202
+    ).setStrokeStyle(1, 0x3c1010, 0.75);
+
+    this.bodyText = this.add.text(textLeft, this.textTop, '', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '26px',
+      fontSize: '22px',
       color: COLORS.text,
-      lineSpacing: 10,
-      wordWrap: { width: width - 112 }
+      lineSpacing: 2,
+      wordWrap: { width: textWidth }
     });
 
-    this.promptText = this.add.text(56, height - 52, '', {
+    this.promptText = this.add.text(textLeft, height - 48, '', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '20px',
+      fontSize: '18px',
       color: COLORS.prompt
     });
 
@@ -213,7 +230,7 @@ export default class HostFoundScene extends Phaser.Scene {
       const cursor = this.cursorVisible ? '█' : '';
       lines.push(`${this.currentLineText}${cursor}`);
     }
-    this.bodyText.setText(lines.join('\n'));
+    this.bodyText.setText(lines.slice(-this.maxVisibleLines).join('\n'));
   }
 
   _renderPrompt() {
