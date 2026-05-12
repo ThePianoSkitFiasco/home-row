@@ -31,7 +31,9 @@
           "Then you started again.",
           "That is the only part that matters."
         ],
-        "tags": ["doubt"]
+        "tags": [
+          "doubt"
+        ]
       },
       {
         "key": "2",
@@ -40,7 +42,9 @@
           "She told you what she could.",
           "That was enough."
         ],
-        "tags": ["doubt"]
+        "tags": [
+          "doubt"
+        ]
       },
       {
         "key": "3",
@@ -49,7 +53,9 @@
           "Now type.",
           "Do not listen past the screen."
         ],
-        "tags": ["obedience"]
+        "tags": [
+          "obedience"
+        ]
       }
     ]
   },
@@ -96,23 +102,23 @@
       "assignedText": "you started again"
     },
     {
-      "id": "act5_locked_door",
-      "displayTitle": "Memory 6:",
-      "playerLabel": "Lesson 38: Statement Fragment",
-      "drillType": "review",
-      "assignedText": "i did not give them your name",
-      "revealDelayMs": 1200,
-      "holdMs": 2500,
-      "lingerResponse": true
-    },
-    {
       "id": "act5_do_not_correct_me",
-      "displayTitle": "Memory 7:",
-      "playerLabel": "Lesson 39: Witness Fragment",
+      "displayTitle": "Memory 6:",
+      "playerLabel": "Lesson 38: Statement Entry",
       "drillType": "accuracy",
       "assignedText": "there was another child",
       "revealDelayMs": 1800,
       "holdMs": 3000,
+      "lingerResponse": true
+    },
+    {
+      "id": "act5_locked_door",
+      "displayTitle": "Memory 7:",
+      "playerLabel": "Lesson 39: Statement Fragment",
+      "drillType": "review",
+      "assignedText": "i did not give them your name",
+      "revealDelayMs": 1200,
+      "holdMs": 2500,
       "lingerResponse": true
     },
     {

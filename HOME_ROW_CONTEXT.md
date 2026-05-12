@@ -29,11 +29,13 @@ Core direction:
 
 HOME ROW is about complicity, memory, and coercion expressed through typing drills.
 
-Years ago, Emily Vale disappeared after being kept behind in a school computer room by Mr. Calder. The player was another child in the room. They did not cause the harm, but they were present, heard enough, and kept typing. The program replays that buried event as educational software: lessons, drills, records, corrections, report cards, and final judgement.
+The real software — HOME ROW — existed. It was a 1990s typing tutor used in a school computer lab. The session the player is playing is not the original software. It is a fever-dream memory reconstruction built by the player's subconscious using the real program as a safe container.
+
+Years ago, Emily Vale was kept behind in a school computer room by Mr. Calder. The player was another child in the room. They did not cause the harm, but they were present, heard enough, and kept typing. Emily survived. She later gave a partial statement. She left the second child unnamed. The player is the lost witness — the unnamed gap in Emily's record.
 
 The horror should emerge gradually from inside the teaching tool. The player should feel that their hands are participating before they fully understand what they are participating in.
 
-Supernatural explanation remains intentionally ambiguous. HOME ROW may be a haunted program, a repression machine, Emily's persistence inside the software, the player's damaged memory, or some overlap of all four.
+The session is intentionally ambiguous in nature — software, memory, dream, or interface — but the core fact is fixed: HOME ROW existed. This session does not.
 
 ## Slow-Burn Act Structure
 
@@ -125,45 +127,50 @@ Purpose:
 
 ### Act 5
 
-Player-facing feel: correction practice invaded by Emily.
+Player-facing feel: dictation becoming audio memory.
 
 Implemented lesson arc:
 
-- `correct the sentence`
-- `bad input must be fixed`
-- `this is not a lesson`
-- `my name is emily vale`
-- `i was kept behind`
-- `mr calder locked the door`
-- `please do not correct me`
-- `please record what happened`
+- `type what you hear`
+- `the typing got louder`
+- `your fingers stopped`
+- `he said your name`
+- `you started again`
+- `there was another child`
+- `i did not give them your name`
+- `they were my friend`
 
 Purpose:
 
-- shift from ordinary correction practice into direct software invasion
-- make Emily feel active, interrupted, and resistant to correction
-- avoid framing this act as a static formal testimony dump
+- player-memory fragments come first (what the player's body remembers)
+- Emily's partial statement fragments follow (what Emily chose to record)
+- the sequence makes visible that the player recovered their own memory before reaching Emily's words
+- Mr Fingers is angry that the dictation turned inward
+- Emily is not invading the software; the player is recovering what they buried
 
 ### Act 6
 
-Player-facing feel: behaviour / correction routine.
+Player-facing feel: Emily's partial statement, typed in sequence.
 
 Implemented lesson arc:
 
-- `quiet hands make fewer errors`
-- `good children finish the exercise`
-- `memory makes errors`
-- `i kept the lesson running`
-- `i corrected the loud parts`
-- `i was trying to help you forget`
-- `you were so good that day`
-- `but you have to type`
+- `there was another child`
+- `they were my friend`
+- `they were scared`
+- `i told them what i could`
+- `i did not give them your name`
+- `do not make them say it yet`
+- `emily vale: recorded`
+- `second child: unnamed`
 
 Purpose:
 
-- recast Mr Fingers as a coercive tutor routine
-- move from discipline language into repression language
-- keep ambiguity around whether this is software, teacher logic, or both
+- the player types Emily's actual statement, line by line
+- Emily is real, restrained, and protective — not ghostly, not supernatural
+- each line sounds like careful sworn testimony
+- the arc ends on the gap: second child unnamed is the player's own non-existence in the record
+- Mr Fingers claims the unnamed gap as something he preserved
+- his protector identity begins to look indistinguishable from the suppressor
 
 ### Act 7
 
@@ -293,26 +300,41 @@ Mr Fingers should not read as a horror watcher from frame one.
 Current direction:
 
 - Early: cheesy, friendly typing tutor mascot
-- Middle: corrective teacher voice
-- Later: coercive authority, possibly echoing Calder's logic
-- Final: ambiguous protector / repressor / witness pressure
+- Middle: corrective authority, Calder's cadences bleeding in without Mr Fingers noticing
+- Later: coercive, controlling, frightening — protects by shaming, commanding, and threatening
+- Final: tragic admission of function — he learned Calder's voice so the player would not have to hear it directly
 
-Keep the ambiguity:
+Canon:
 
-- Do not explicitly confirm Mr Fingers is Mr. Calder.
-- He may echo Calder's logic.
-- He may be software, repression, a ghost-container, a coercive routine, or some overlap.
+- Mr Fingers is not Calder's ghost.
+- Mr Fingers is not simply evil software.
+- Mr Fingers is a repression mechanism the player built from their internalised version of Calder's authority.
+- He genuinely believes he protected the player.
+- His horror is that he protected them exactly the way Calder controlled them: through obedience, correction, shame, and eyes-on-screen.
+- Do not make him gentle or therapeutic. He becomes frightening, not sympathetic.
+- Do not explicitly confirm he is Mr. Calder. The bleed-through is the point.
 
 ## Emily Direction
 
-Emily should feel like a ghost in the machine, not a static document.
+Emily is real. She survived. She gave a partial statement. She is not a ghost.
 
 Current direction:
 
-- she should feel active and present
-- she should fight the lesson and correction format
-- Mr Fingers and system language should try to suppress or correct her
-- Act 5 should feel like software invasion, not merely witness statement playback
+- Emily is the player's childhood best friend who was in the room when the incident happened
+- She remembered more than the player and gave a partial statement to whoever came asking
+- She left the second child unnamed — this was protective, not an omission
+- In Acts 5–6, her lines are fragments of that real statement being recovered or typed by the player
+- She should sound restrained, careful, and precise — the language of someone who chose every word
+- She should not sound plaintive, supernatural, or desperate
+- She does not need to be heard; she already spoke
+- The player is what remains unspoken
+
+Do not write Emily as:
+- a ghost persisting inside the software
+- a voice fighting the lesson format from within the program
+- someone who needs the player to rescue her story
+
+Emily's statement is partial and complete at the same time. The gap is not Emily's failure. The gap is the player.
 
 ## Gameplay / Agency Direction
 
