@@ -22,15 +22,15 @@ export function getFinalStatement(memoryState) {
   ) {
     return {
       routeId: 'witness_statement',
-      statement: 'I WAS A CHILD AND I WAS THERE',
-      title: 'WITNESS STATEMENT',
-      response: 'RECORDED.',
+      statement: 'I AM TYPING NOW',
+      title: 'HOME ROW: REWRITTEN',
+      response: 'MASCOT STATUS: ALTERED',
       body: [
-        'The lesson ends where your hands began.',
-        'Not with rescue.',
-        'Not with innocence.',
-        'Only with her name still present,',
-        'and yours no longer missing from the room.'
+        'EMILY VALE: RECORDED',
+        'SECOND CHILD: NAMED',
+        'LESSON STATUS: CONTINUING',
+        '',
+        'For the first time, the lesson points away from the screen.'
       ].join('\n')
     };
   }
@@ -43,12 +43,12 @@ export function getFinalStatement(memoryState) {
     return {
       routeId: 'audio_memory',
       statement: 'I HEARD HER SAY NO',
-      title: 'AUDIO MEMORY',
-      response: 'SOUND RECOVERED.',
+      title: 'STATEMENT: PARTIAL',
+      response: 'SECOND CHILD: UNREADY',
       body: [
-        'You did not need to see everything.',
-        'The room had a sound.',
-        'You carried it longer than the program could.'
+        'Emily remembered more than you did.',
+        'She carried your outline without your name.',
+        'The sound returned before the rest of the room.'
       ].join('\n')
     };
   }
@@ -57,14 +57,14 @@ export function getFinalStatement(memoryState) {
     return {
       routeId: 'completed_exercise',
       statement: 'I KEPT TYPING',
-      title: 'COMPLETED EXERCISE',
-      response: 'ACTION CONFIRMED.',
+      title: 'COMPLETE THE COURSE',
+      response: 'CERTIFICATE AWARDED.',
       body: [
-        'The program records the motion.',
-        'Key after key.',
-        'Line after line.',
-        'Whatever you meant,',
-        'your hands did not stop.'
+        'The mascot remains in place.',
+        'The lesson accepts your obedience.',
+        'SECOND CHILD: UNNAMED',
+        'The course is complete.',
+        'The memory is not.'
       ].join('\n')
     };
   }
@@ -77,14 +77,14 @@ export function getFinalStatement(memoryState) {
     return {
       routeId: 'sightline_error',
       statement: 'I SHOULD HAVE TURNED AROUND',
-      title: 'SIGHTLINE ERROR',
-      response: 'SIGHTLINE UNRESOLVED.',
+      title: 'DESTROY THE MASCOT',
+      response: 'PROGRAM TERMINATED.',
       body: [
-        'The sentence points behind you.',
-        'It always has.',
-        'But the chair was small,',
-        'the voice was adult,',
-        'and the screen was waiting.'
+        'BUFFER REMOVED.',
+        'The lesson shell tears open.',
+        'What remains is not kinder for being direct.',
+        'Calder is no longer translated.',
+        'Neither are you.'
       ].join('\n')
     };
   }
@@ -93,27 +93,28 @@ export function getFinalStatement(memoryState) {
     return {
       routeId: 'gold_star',
       statement: 'I DID NOT SEE ANYTHING',
-      title: 'GOLD STAR',
-      response: 'GOLD STAR AWARDED.',
+      title: 'COMPLETE THE COURSE',
+      response: 'CERTIFICATE AWARDED.',
       body: [
         'The program accepts your answer.',
-        'Your score improves.',
-        'Emily Vale remains absent.',
-        'Mr Fingers is very proud.'
+        'The mascot keeps his shape.',
+        'SECOND CHILD: UNNAMED',
+        'Emily Vale remains recorded only in part.',
+        'The lesson closes around the missing name.'
       ].join('\n')
     };
   }
 
   return {
     routeId: 'incomplete_statement',
-    statement: 'I KEPT TYPING',
-    title: 'INCOMPLETE STATEMENT',
-    response: 'STATEMENT INCOMPLETE.',
+    statement: 'WE WERE CHILDREN',
+    title: 'STATEMENT: PARTIAL',
+    response: 'SECOND CHILD: UNREADY',
     body: [
       'The record does not close.',
-      'Some words stayed.',
-      'Some words were corrected.',
-      'The cursor waits where the sentence should end.'
+      'Emily Vale is there.',
+      'You are there too, but not all at once.',
+      'The cursor waits for the part you still refuse to name.'
     ].join('\n')
   };
 }

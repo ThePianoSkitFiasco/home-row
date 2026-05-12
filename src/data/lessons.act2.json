@@ -8,6 +8,45 @@
     "duration": 30,
     "wordPool": ["lamp", "desk", "chair", "board", "paper", "pencil", "screen", "class"]
   },
+  "teacherTimeAfterAct": {
+    "id": "act2_teacher_time",
+    "variant": "early",
+    "speaker": "MR FINGERS",
+    "lines": [
+      "Emily Vale was a classmate.",
+      "That is all this exercise requires.",
+      "Friendship is not part of the record."
+    ],
+    "choices": [
+      {
+        "key": "1",
+        "label": "I UNDERSTAND",
+        "reply": [
+          "Then keep typing.",
+          "Do not add anything extra."
+        ],
+        "tags": ["obedience"]
+      },
+      {
+        "key": "2",
+        "label": "SHE WAS MY FRIEND",
+        "reply": [
+          "Friendship is not a lesson objective.",
+          "Eyes on screen."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "3",
+        "label": "CONTINUE LESSON",
+        "reply": [
+          "Good.",
+          "Begin the next section."
+        ],
+        "tags": ["obedience"]
+      }
+    ]
+  },
   "lessons": [
     {
       "id": "act2_school_words",

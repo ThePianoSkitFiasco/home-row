@@ -1,6 +1,6 @@
 {
   "actId": "act7_correction_exam",
-  "title": "CORRECTION EXAM",
+  "title": "FINAL REVIEW",
   "playerSection": "Final Review",
   "miniGameAfterAct": {
     "type": "erase_chalkboard",
@@ -13,13 +13,13 @@
         "eraseWord": "ERASE"
       },
       {
-        "visibleText": "THE CLASSROOM WAS QUIET",
-        "hiddenText": "I HEARD HER",
+        "visibleText": "SECOND CHILD: NONE",
+        "hiddenText": "I DID NOT GIVE THEM YOUR NAME",
         "eraseWord": "WIPE"
       },
       {
-        "visibleText": "THE CHILD STAYED FOCUSED",
-        "hiddenText": "DO NOT TURN AROUND",
+        "visibleText": "RECORD COMPLETE",
+        "hiddenText": "SECOND CHILD: UNNAMED",
         "eraseWord": "CORRECT"
       }
     ]
@@ -36,13 +36,13 @@
           "eraseWord": "ERASE"
         },
         {
-          "visibleText": "THE CLASSROOM WAS QUIET",
-          "hiddenText": "I HEARD HER",
+          "visibleText": "SECOND CHILD: NONE",
+          "hiddenText": "I DID NOT GIVE THEM YOUR NAME",
           "eraseWord": "WIPE"
         },
         {
-          "visibleText": "THE CHILD STAYED FOCUSED",
-          "hiddenText": "DO NOT TURN AROUND",
+          "visibleText": "RECORD COMPLETE",
+          "hiddenText": "SECOND CHILD: UNNAMED",
           "eraseWord": "CORRECT"
         }
       ]
@@ -57,37 +57,76 @@
           "opponentText": "I DID NOT SEE ANYTHING"
         },
         {
-          "playerText": "SHE WAS NOT ABSENT",
-          "opponentText": "ERRORS ARE NOT EVIDENCE"
+          "playerText": "WE WERE CHILDREN",
+          "opponentText": "SECOND CHILD: UNNAMED"
         },
         {
-          "playerText": "I HEARD HER SAY NO",
-          "opponentText": "GOOD CHILDREN FINISH THE EXERCISE"
+          "playerText": "I AM TYPING NOW",
+          "opponentText": "YOU WILL COMPLETE THE LESSON"
         }
       ]
     }
   ],
+  "teacherTimeAfterAct": {
+    "id": "act7_teacher_time",
+    "variant": "early",
+    "speaker": "MR FINGERS",
+    "lines": [
+      "I learned his voice so you would not have to hear it.",
+      "I kept your eyes on the screen.",
+      "That is why I was made."
+    ],
+    "choices": [
+      {
+        "key": "1",
+        "label": "COMPLETE THE COURSE",
+        "reply": [
+          "Then finish it.",
+          "SECOND CHILD: UNNAMED."
+        ],
+        "tags": ["obedience"]
+      },
+      {
+        "key": "2",
+        "label": "DESTROY THE MASCOT",
+        "reply": [
+          "Remove me and you remove the buffer.",
+          "You are not ready."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "3",
+        "label": "REWRITE MR FINGERS",
+        "reply": [
+          "Then make me carry it.",
+          "But you will have to say it."
+        ],
+        "tags": ["witness"]
+      }
+    ]
+  },
   "lessons": [
     {
       "id": "act7_final_review",
       "displayTitle": "Exam 1:",
       "playerLabel": "Lesson 49: Final Review",
       "drillType": "review",
-      "assignedText": "final accuracy review"
+      "assignedText": "eyes on screen"
     },
     {
       "id": "act7_errors_corrected",
       "displayTitle": "Exam 2:",
       "playerLabel": "Lesson 50: Error Correction",
       "drillType": "correction",
-      "assignedText": "errors must be corrected"
+      "assignedText": "you will complete the lesson"
     },
     {
       "id": "act7_records_completed",
       "displayTitle": "Exam 3:",
       "playerLabel": "Lesson 51: Record Practice",
       "drillType": "accuracy",
-      "assignedText": "records must be completed",
+      "assignedText": "disruption will not be rewarded",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
@@ -97,7 +136,7 @@
       "displayTitle": "Exam 4:",
       "playerLabel": "Lesson 52: Attendance Review",
       "drillType": "accuracy",
-      "assignedText": "emily vale was absent",
+      "assignedText": "good children do not invent stories",
       "revealDelayMs": 1500,
       "holdMs": 2500,
       "lingerResponse": true
@@ -107,21 +146,21 @@
       "displayTitle": "Exam 5:",
       "playerLabel": "Lesson 53: Sentence Accuracy",
       "drillType": "test",
-      "assignedText": "the classroom was supervised"
+      "assignedText": "i kept you alive"
     },
     {
       "id": "act7_no_distress",
       "displayTitle": "Exam 6:",
       "playerLabel": "Lesson 54: Report Accuracy",
       "drillType": "test",
-      "assignedText": "no distress was reported"
+      "assignedText": "i kept your name out of her mouth"
     },
     {
       "id": "act7_heard_nothing",
       "displayTitle": "Exam 7:",
       "playerLabel": "Lesson 55: Listening Review",
       "drillType": "accuracy",
-      "assignedText": "the second user heard nothing",
+      "assignedText": "you were never ready",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
@@ -131,7 +170,7 @@
       "displayTitle": "Exam 8:",
       "playerLabel": "Lesson 56: Final Exercise",
       "drillType": "final",
-      "assignedText": "the second user kept typing",
+      "assignedText": "now type",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true

@@ -14,7 +14,7 @@
           "preserve": "I DID NOT SEE ANYTHING",
           "correct": "I HEARD HER SAY NO",
           "delete": "",
-          "refuse": "I WAS TOLD NOT TO TURN AROUND"
+          "refuse": "I WAS THERE"
         }
       },
       {
@@ -23,31 +23,31 @@
         "official": "EMILY VALE WAS ABSENT",
         "choices": {
           "preserve": "EMILY VALE WAS ABSENT",
-          "correct": "EMILY VALE WAS NOT ABSENT",
+          "correct": "EMILY VALE WAS THERE",
           "delete": "",
-          "refuse": "SHE WAS THERE"
+          "refuse": "I DID NOT GIVE THEM YOUR NAME"
         }
       },
       {
-        "id": "workstation",
-        "label": "STATEMENT 03: WORKSTATION",
-        "official": "THE SECOND WORKSTATION WAS INACTIVE",
+        "id": "second_child",
+        "label": "STATEMENT 03: SECOND CHILD",
+        "official": "SECOND CHILD: UNNAMED",
         "choices": {
-          "preserve": "THE SECOND WORKSTATION WAS INACTIVE",
-          "correct": "THE SECOND WORKSTATION WAS ACTIVE",
+          "preserve": "SECOND CHILD: UNNAMED",
+          "correct": "SECOND CHILD: NAMED",
           "delete": "",
-          "refuse": "THE SECOND WORKSTATION WAS MINE"
+          "refuse": "SECOND CHILD: UNREADY"
         }
       },
       {
-        "id": "child",
-        "label": "STATEMENT 04: THE CHILD",
+        "id": "lesson",
+        "label": "STATEMENT 04: LESSON",
         "official": "THE CHILD COMPLETED THE LESSON",
         "choices": {
           "preserve": "THE CHILD COMPLETED THE LESSON",
           "correct": "THE CHILD KEPT TYPING",
           "delete": "",
-          "refuse": "I WAS A CHILD AND I WAS THERE"
+          "refuse": "I AM TYPING NOW"
         }
       }
     ]

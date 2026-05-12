@@ -12,6 +12,45 @@
       "STAY AT YOUR DESK"
     ]
   },
+  "teacherTimeAfterAct": {
+    "id": "act4_teacher_time",
+    "variant": "early",
+    "speaker": "MR FINGERS",
+    "lines": [
+      "There did not need to be a second child in the record.",
+      "You were safer unnamed.",
+      "You will keep your eyes on the screen."
+    ],
+    "choices": [
+      {
+        "key": "1",
+        "label": "I HEARD HER",
+        "reply": [
+          "Hearing is not the same as knowing.",
+          "Do not make more of it."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "2",
+        "label": "WHY UNNAMED",
+        "reply": [
+          "Because names can be used.",
+          "I did not allow yours."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "3",
+        "label": "CONTINUE LESSON",
+        "reply": [
+          "Good.",
+          "Keep typing."
+        ],
+        "tags": ["obedience"]
+      }
+    ]
+  },
   "lessons": [
     {
       "id": "act4_listen_type",
@@ -51,9 +90,9 @@
     {
       "id": "act4_emily_please_wait",
       "displayTitle": "Dictation 6:",
-      "playerLabel": "Lesson 30: Request Entry",
+      "playerLabel": "Lesson 30: Witness Recall",
       "drillType": "dictation",
-      "assignedText": "emily says please wait",
+      "assignedText": "there was another child",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true

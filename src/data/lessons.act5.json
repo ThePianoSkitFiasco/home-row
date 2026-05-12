@@ -1,86 +1,125 @@
 {
   "actId": "act5_unsanctioned_statement",
-  "title": "UNSANCTIONED STATEMENT",
-  "playerSection": "Correction Practice",
+  "title": "AUDIO MEMORY",
+  "playerSection": "Listening Practice",
   "miniGameAfterAct": {
     "type": "stay_in_your_seat",
     "variant": "middle",
     "duration": 35,
     "phrases": [
-      "FACE THE SCREEN",
-      "KEEP YOUR HANDS STILL",
-      "FINISH THE EXERCISE",
+      "EYES ON SCREEN",
+      "KEEP TYPING",
+      "YOUR HANDS REMEMBER",
       "DO NOT TURN AROUND"
+    ]
+  },
+  "teacherTimeAfterAct": {
+    "id": "act5_teacher_time",
+    "variant": "early",
+    "speaker": "MR FINGERS",
+    "lines": [
+      "Listening was not required.",
+      "Curiosity is how children get hurt.",
+      "Finish the sentence."
+    ],
+    "choices": [
+      {
+        "key": "1",
+        "label": "HE SAID MY NAME",
+        "reply": [
+          "Your fingers stopped.",
+          "Then you started again."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "2",
+        "label": "SHE NEEDED HELP",
+        "reply": [
+          "She told you what she could.",
+          "That was enough."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "3",
+        "label": "CONTINUE LESSON",
+        "reply": [
+          "Now type.",
+          "Do not listen past the screen."
+        ],
+        "tags": ["obedience"]
+      }
     ]
   },
   "lessons": [
     {
       "id": "act5_correct_sentence",
-      "displayTitle": "Statement 1:",
-      "playerLabel": "Lesson 33: Correction Practice",
+      "displayTitle": "Memory 1:",
+      "playerLabel": "Lesson 33: Audio Memory",
       "drillType": "correction",
-      "assignedText": "correct the sentence"
+      "assignedText": "type what you hear"
     },
     {
       "id": "act5_bad_input",
-      "displayTitle": "Statement 2:",
-      "playerLabel": "Lesson 34: Input Review",
+      "displayTitle": "Memory 2:",
+      "playerLabel": "Lesson 34: Sound Recall",
       "drillType": "correction",
-      "assignedText": "bad input must be fixed"
+      "assignedText": "the typing got louder"
     },
     {
       "id": "act5_not_a_lesson",
-      "displayTitle": "Statement 3:",
-      "playerLabel": "Lesson 35: Error Check",
+      "displayTitle": "Memory 3:",
+      "playerLabel": "Lesson 35: Stop Point",
       "drillType": "review",
-      "assignedText": "this is not a lesson",
+      "assignedText": "your fingers stopped",
       "revealDelayMs": 1500,
       "holdMs": 2500,
       "lingerResponse": true
     },
     {
       "id": "act5_emily_name",
-      "displayTitle": "Statement 4:",
-      "playerLabel": "Lesson 36: Name Accuracy",
+      "displayTitle": "Memory 4:",
+      "playerLabel": "Lesson 36: Name Recall",
       "drillType": "accuracy",
-      "assignedText": "my name is emily vale",
+      "assignedText": "he said your name",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true
     },
     {
       "id": "act5_kept_behind",
-      "displayTitle": "Statement 5:",
-      "playerLabel": "Lesson 37: Sentence Review",
+      "displayTitle": "Memory 5:",
+      "playerLabel": "Lesson 37: Restart Recall",
       "drillType": "review",
-      "assignedText": "i was kept behind"
+      "assignedText": "you started again"
     },
     {
       "id": "act5_locked_door",
-      "displayTitle": "Statement 6:",
-      "playerLabel": "Lesson 38: Sentence Review",
+      "displayTitle": "Memory 6:",
+      "playerLabel": "Lesson 38: Statement Fragment",
       "drillType": "review",
-      "assignedText": "mr calder locked the door",
+      "assignedText": "i did not give them your name",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true
     },
     {
       "id": "act5_do_not_correct_me",
-      "displayTitle": "Statement 7:",
-      "playerLabel": "Lesson 39: Correction Check",
+      "displayTitle": "Memory 7:",
+      "playerLabel": "Lesson 39: Witness Fragment",
       "drillType": "accuracy",
-      "assignedText": "please do not correct me",
+      "assignedText": "there was another child",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
     },
     {
       "id": "act5_record_what_happened",
-      "displayTitle": "Statement 8:",
-      "playerLabel": "Lesson 40: Record Practice",
+      "displayTitle": "Memory 8:",
+      "playerLabel": "Lesson 40: Final Recall",
       "drillType": "data_entry",
-      "assignedText": "please record what happened",
+      "assignedText": "they were my friend",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true

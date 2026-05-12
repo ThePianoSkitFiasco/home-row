@@ -9,18 +9,57 @@
     "records": [
       {
         "label": "ATTENDANCE RECORD",
-        "displayedText": "EMILY VALE WAS PRESENT",
-        "targetText": "EMILY VALE WAS ABSENT"
+        "displayedText": "EMILY VALE WAS ABSENT",
+        "targetText": "EMILY VALE WAS THERE"
       },
       {
         "label": "CLASSROOM NOTE",
-        "displayedText": "THE SECOND COMPUTER WAS ON",
-        "targetText": "THE SECOND COMPUTER WAS OFF"
+        "displayedText": "ONLY ONE CHILD REMAINED",
+        "targetText": "THERE WAS ANOTHER CHILD"
       },
       {
         "label": "BEHAVIOUR REPORT",
-        "displayedText": "THE CHILD LOOKED BACK",
-        "targetText": "THE CHILD STAYED FOCUSED"
+        "displayedText": "THE CHILD FROZE",
+        "targetText": "THE CHILD KEPT TYPING"
+      }
+    ]
+  },
+  "teacherTimeAfterAct": {
+    "id": "act3_teacher_time",
+    "variant": "early",
+    "speaker": "MR FINGERS",
+    "lines": [
+      "Eyes on screen.",
+      "Good children finish.",
+      "Disruption will not be rewarded."
+    ],
+    "choices": [
+      {
+        "key": "1",
+        "label": "I UNDERSTAND",
+        "reply": [
+          "Then sit still.",
+          "Finish the next line."
+        ],
+        "tags": ["obedience"]
+      },
+      {
+        "key": "2",
+        "label": "WHO WAS THERE",
+        "reply": [
+          "That workstation was not assigned to you.",
+          "Do not ask again."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "3",
+        "label": "CONTINUE LESSON",
+        "reply": [
+          "Now type.",
+          "No wandering."
+        ],
+        "tags": ["obedience"]
       }
     ]
   },
@@ -79,7 +118,7 @@
       "displayTitle": "Lesson 24: Pattern Review",
       "playerLabel": "Lesson 24: Pattern Review",
       "drillType": "review",
-      "assignedText": "typing pattern match found",
+      "assignedText": "you completed this lesson before",
       "revealDelayMs": 1500,
       "holdMs": 2500,
       "lingerResponse": true

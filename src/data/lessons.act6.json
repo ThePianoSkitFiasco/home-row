@@ -1,94 +1,133 @@
 {
   "actId": "act6_protective_routine",
-  "title": "PROTECTIVE ROUTINE",
-  "playerSection": "Behaviour Practice",
+  "title": "EMILY'S STATEMENT",
+  "playerSection": "Statement Review",
   "miniGameAfterAct": {
     "type": "listen_and_type",
     "variant": "middle",
     "duration": 40,
     "prompts": [
       {
-        "displayedText": "THE CLASSROOM WAS QUIET",
-        "heardText": "SHE SAID NO"
-      },
-      {
-        "displayedText": "I DID NOT NOTICE ANYTHING",
-        "heardText": "I KEPT TYPING"
-      },
-      {
         "displayedText": "THE LESSON CONTINUED",
-        "heardText": "DO NOT TURN AROUND"
+        "heardText": "THERE WAS ANOTHER CHILD"
+      },
+      {
+        "displayedText": "NO ONE ELSE WAS PRESENT",
+        "heardText": "THEY WERE MY FRIEND"
+      },
+      {
+        "displayedText": "NAME NOT GIVEN",
+        "heardText": "I DID NOT GIVE THEM YOUR NAME"
+      }
+    ]
+  },
+  "teacherTimeAfterAct": {
+    "id": "act6_teacher_time",
+    "variant": "early",
+    "speaker": "MR FINGERS",
+    "lines": [
+      "Emily remembered enough.",
+      "I kept your name out of her mouth.",
+      "I kept you alive."
+    ],
+    "choices": [
+      {
+        "key": "1",
+        "label": "YOU KEPT ME QUIET",
+        "reply": [
+          "I kept you breathing.",
+          "Quiet was part of that."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "2",
+        "label": "SHE PROTECTED ME",
+        "reply": [
+          "She left the second child unnamed.",
+          "I kept it that way."
+        ],
+        "tags": ["doubt"]
+      },
+      {
+        "key": "3",
+        "label": "CONTINUE LESSON",
+        "reply": [
+          "And this is how you thank me?",
+          "Now type."
+        ],
+        "tags": ["obedience"]
       }
     ]
   },
   "lessons": [
     {
       "id": "act6_quiet_hands",
-      "displayTitle": "Routine 1:",
-      "playerLabel": "Lesson 41: Accuracy Habit",
+      "displayTitle": "Statement 1:",
+      "playerLabel": "Lesson 41: Emily Statement",
       "drillType": "practice",
-      "assignedText": "quiet hands make fewer errors"
+      "assignedText": "there was another child"
     },
     {
       "id": "act6_good_children",
-      "displayTitle": "Routine 2:",
-      "playerLabel": "Lesson 42: Completion Habit",
+      "displayTitle": "Statement 2:",
+      "playerLabel": "Lesson 42: Emily Statement",
       "drillType": "behaviour",
-      "assignedText": "good children finish the exercise"
+      "assignedText": "they were my friend"
     },
     {
       "id": "act6_memory_errors",
-      "displayTitle": "Routine 3:",
-      "playerLabel": "Lesson 43: Error Review",
+      "displayTitle": "Statement 3:",
+      "playerLabel": "Lesson 43: Emily Statement",
       "drillType": "review",
-      "assignedText": "memory makes errors",
+      "assignedText": "they were scared",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true
     },
     {
       "id": "act6_lesson_running",
-      "displayTitle": "Routine 4:",
-      "playerLabel": "Lesson 44: Routine Check",
+      "displayTitle": "Statement 4:",
+      "playerLabel": "Lesson 44: Emily Statement",
       "drillType": "review",
-      "assignedText": "i kept the lesson running"
+      "assignedText": "i told them what i could"
     },
     {
       "id": "act6_corrected_loud_parts",
-      "displayTitle": "Routine 5:",
-      "playerLabel": "Lesson 45: Correction Review",
+      "displayTitle": "Statement 5:",
+      "playerLabel": "Lesson 45: Emily Statement",
       "drillType": "correction",
-      "assignedText": "i corrected the loud parts",
+      "assignedText": "i did not give them your name",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true
     },
     {
       "id": "act6_help_forget",
-      "displayTitle": "Routine 6:",
-      "playerLabel": "Lesson 46: Memory Exercise",
+      "displayTitle": "Statement 6:",
+      "playerLabel": "Lesson 46: Emily Statement",
       "drillType": "review",
-      "assignedText": "i was trying to help you forget",
+      "assignedText": "do not make them say it yet",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
     },
     {
       "id": "act6_good_that_day",
-      "displayTitle": "Routine 7:",
-      "playerLabel": "Lesson 47: Progress Praise",
+      "displayTitle": "Statement 7:",
+      "playerLabel": "Lesson 47: Statement Status",
       "drillType": "review",
-      "assignedText": "you were so good that day",
+      "assignedText": "emily vale partial statement",
       "revealDelayMs": 1500,
       "holdMs": 3000,
       "lingerResponse": true
     },
     {
       "id": "act6_have_to_type",
-      "displayTitle": "Routine 8:",
-      "playerLabel": "Lesson 48: Final Routine",
+      "displayTitle": "Statement 8:",
+      "playerLabel": "Lesson 48: Statement Status",
       "drillType": "routine",
-      "assignedText": "but you have to type",
+      "assignedText": "second child unnamed",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
