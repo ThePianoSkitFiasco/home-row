@@ -1233,7 +1233,7 @@ export default class TypingScene extends Phaser.Scene {
     this.intentEngine.resetLessonCaps();
 
     const act = this.lessonManager.getCurrentAct();
-    const theme = this._getThemeForAct(act);
+    const theme = this._getThemeForLesson(act, lesson);
     let assignedText = lesson.assignedText;
 
     if (this.lessonManager.getLessonNumber() === 1) {
@@ -1460,7 +1460,24 @@ export default class TypingScene extends Phaser.Scene {
 
   _getThemeForAct(act) {
     if (!act) return DEFAULT_ACT_THEME;
+
+    // Keep normal progression on the friendly tutor skin. Dark/degraded themes
+    // stay available for explicit debug or future one-off scene use.
+    if (
+      act.actId === 'act4_dictation_mode' ||
+      act.actId === 'act5_unsanctioned_statement' ||
+      act.actId === 'act6_protective_routine' ||
+      act.actId === 'act7_correction_exam' ||
+      act.actId === 'final_statement'
+    ) {
+      return DEFAULT_ACT_THEME;
+    }
+
     return ACT_THEMES[act.actId] || DEFAULT_ACT_THEME;
+  }
+
+  _getThemeForLesson(act, lesson) {
+    return this._getThemeForAct(act);
   }
 
   _applyActTheme(theme) {
