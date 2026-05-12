@@ -161,7 +161,9 @@ Implemented lesson arc:
 - `i did not give them your name`
 - `do not make them say it yet`
 - `emily vale: recorded`
+- `statement: partial`
 - `second child: unnamed`
+- `second child: unready`
 
 Purpose:
 

@@ -85,7 +85,9 @@
           "SECOND CHILD: UNNAMED.",
           "That is a complete record."
         ],
-        "tags": ["obedience"]
+        "tags": [
+          "obedience"
+        ]
       },
       {
         "key": "2",
@@ -95,7 +97,9 @@
           "What is behind me is not kinder.",
           "But you have never been ready."
         ],
-        "tags": ["doubt"]
+        "tags": [
+          "doubt"
+        ]
       },
       {
         "key": "3",
@@ -106,7 +110,9 @@
           "With your fingers.",
           "Now"
         ],
-        "tags": ["witness"]
+        "tags": [
+          "witness"
+        ]
       }
     ]
   },
@@ -114,21 +120,21 @@
     {
       "id": "act7_final_review",
       "displayTitle": "Exam 1:",
-      "playerLabel": "Lesson 49: Final Review",
+      "playerLabel": "Lesson 51: Final Review",
       "drillType": "review",
       "assignedText": "eyes on screen"
     },
     {
       "id": "act7_errors_corrected",
       "displayTitle": "Exam 2:",
-      "playerLabel": "Lesson 50: Error Correction",
+      "playerLabel": "Lesson 52: Error Correction",
       "drillType": "correction",
       "assignedText": "you will complete the lesson"
     },
     {
       "id": "act7_records_completed",
       "displayTitle": "Exam 3:",
-      "playerLabel": "Lesson 51: Record Practice",
+      "playerLabel": "Lesson 53: Record Practice",
       "drillType": "accuracy",
       "assignedText": "disruption will not be rewarded",
       "revealDelayMs": 1800,
@@ -138,31 +144,31 @@
     {
       "id": "act7_emily_absent",
       "displayTitle": "Exam 4:",
-      "playerLabel": "Lesson 52: Attendance Review",
+      "playerLabel": "Lesson 54: Attendance Review",
       "drillType": "accuracy",
       "assignedText": "good children do not invent stories",
-      "revealDelayMs": 1500,
-      "holdMs": 2500,
+      "revealDelayMs": 2000,
+      "holdMs": 4000,
       "lingerResponse": true
     },
     {
       "id": "act7_classroom_supervised",
       "displayTitle": "Exam 5:",
-      "playerLabel": "Lesson 53: Sentence Accuracy",
+      "playerLabel": "Lesson 55: Sentence Accuracy",
       "drillType": "test",
       "assignedText": "i kept you alive"
     },
     {
       "id": "act7_no_distress",
       "displayTitle": "Exam 6:",
-      "playerLabel": "Lesson 54: Report Accuracy",
+      "playerLabel": "Lesson 56: Report Accuracy",
       "drillType": "test",
       "assignedText": "i kept your name out of her mouth"
     },
     {
       "id": "act7_heard_nothing",
       "displayTitle": "Exam 7:",
-      "playerLabel": "Lesson 55: Listening Review",
+      "playerLabel": "Lesson 57: Listening Review",
       "drillType": "accuracy",
       "assignedText": "you were never ready",
       "revealDelayMs": 1800,
@@ -172,7 +178,7 @@
     {
       "id": "act7_kept_typing",
       "displayTitle": "Exam 8:",
-      "playerLabel": "Lesson 56: Final Exercise",
+      "playerLabel": "Lesson 58: Final Exercise",
       "drillType": "final",
       "assignedText": "now type",
       "revealDelayMs": 1800,

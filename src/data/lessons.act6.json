@@ -38,7 +38,9 @@
           "I kept your name out of the record.",
           "Quiet was a side effect."
         ],
-        "tags": ["doubt"]
+        "tags": [
+          "doubt"
+        ]
       },
       {
         "key": "2",
@@ -48,7 +50,9 @@
           "That is not protection. That is a gap.",
           "I kept you in the gap."
         ],
-        "tags": ["doubt"]
+        "tags": [
+          "doubt"
+        ]
       },
       {
         "key": "3",
@@ -56,7 +60,9 @@
         "reply": [
           "Now type."
         ],
-        "tags": ["obedience"]
+        "tags": [
+          "obedience"
+        ]
       }
     ]
   },
@@ -123,11 +129,31 @@
       "lingerResponse": true
     },
     {
-      "id": "act6_have_to_type",
+      "id": "act6_statement_partial",
       "displayTitle": "Statement 8:",
       "playerLabel": "Lesson 48: Statement Status",
+      "drillType": "review",
+      "assignedText": "statement: partial",
+      "revealDelayMs": 1500,
+      "holdMs": 3000,
+      "lingerResponse": true
+    },
+    {
+      "id": "act6_have_to_type",
+      "displayTitle": "Statement 9:",
+      "playerLabel": "Lesson 49: Statement Status",
       "drillType": "routine",
       "assignedText": "second child: unnamed",
+      "revealDelayMs": 1800,
+      "holdMs": 3000,
+      "lingerResponse": true
+    },
+    {
+      "id": "act6_second_child_unready",
+      "displayTitle": "Statement 10:",
+      "playerLabel": "Lesson 50: Statement Status",
+      "drillType": "routine",
+      "assignedText": "second child: unready",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true

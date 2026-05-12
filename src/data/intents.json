@@ -6,7 +6,9 @@
     "matchMode": "exact",
     "patterns": [],
     "triggerOnCorrectStreak": 10,
-    "effects": { "obedience": 1 },
+    "effects": {
+      "obedience": 1
+    },
     "response": "",
     "mrTrigger": "encourage",
     "once": false
@@ -17,7 +19,9 @@
     "eventType": "mistake",
     "matchMode": "contains",
     "patterns": [],
-    "effects": { "disclosure": 1 },
+    "effects": {
+      "disclosure": 1
+    },
     "response": "",
     "mrTrigger": "mistake_notice",
     "once": false
@@ -28,7 +32,9 @@
     "eventType": "deleted",
     "matchMode": "contains",
     "patterns": [],
-    "effects": { "suppression": 1 },
+    "effects": {
+      "suppression": 1
+    },
     "response": "",
     "mrTrigger": "",
     "once": false
@@ -40,43 +46,48 @@
     "matchMode": "contains",
     "patterns": [],
     "pauseThreshold": 5000,
-    "effects": { "refusal": 1 },
+    "effects": {
+      "refusal": 1
+    },
     "response": "Keep your eyes on the screen!",
     "mrTrigger": "glitch_warning",
     "once": false
   },
-
   {
     "id": "lesson_complete_basic",
     "lesson": "act1_basic_keys",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "obedience": 2 },
+    "effects": {
+      "obedience": 2
+    },
     "response": "Good. Your fingers remember the home row.",
     "mrTrigger": "encourage",
     "once": true
   },
-
   {
     "id": "lesson_complete_good_hands",
     "lesson": "act1_good_hands",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "obedience": 1 },
+    "effects": {
+      "obedience": 1
+    },
     "response": "Good hands stay where they are told.",
     "mrTrigger": "encourage",
     "once": true
   },
-
   {
     "id": "lesson_complete_hands_remember",
     "lesson": "act1_hands_remember",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "disclosure": 1 },
+    "effects": {
+      "disclosure": 1
+    },
     "response": "That is good.",
     "mrTrigger": "glitch_warning",
     "once": true
@@ -88,20 +99,25 @@
     "minPauseMs": 3000,
     "matchMode": "contains",
     "patterns": [],
-    "effects": { "refusal": 1 },
+    "effects": {
+      "refusal": 1
+    },
     "response": "Keep your fingers ready.",
     "mrTrigger": "corrective_smile",
     "once": true
   },
-
   {
     "id": "act2_emily_found",
     "lesson": "act2_emily_name",
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "disclosure": 1 },
-    "flags": { "emilyFound": true },
+    "effects": {
+      "disclosure": 1
+    },
+    "flags": {
+      "emilyFound": true
+    },
     "response": "Name accepted.",
     "mrTrigger": "glitch_warning",
     "once": true
@@ -112,7 +128,9 @@
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "suppression": 1 },
+    "effects": {
+      "suppression": 1
+    },
     "response": "Status recorded.",
     "mrTrigger": "corrective_smile",
     "once": true
@@ -123,7 +141,9 @@
     "eventType": "mistake",
     "matchMode": "contains",
     "patterns": [],
-    "effects": { "suppression": 1 },
+    "effects": {
+      "suppression": 1
+    },
     "response": "Please enter the status exactly.",
     "mrTrigger": "corrective_smile",
     "once": true
@@ -133,8 +153,13 @@
     "lesson": "act2_she_not_absent",
     "eventType": "typed",
     "matchMode": "contains",
-    "patterns": ["not absent"],
-    "effects": { "disclosure": 3, "refusal": 1 },
+    "patterns": [
+      "not absent"
+    ],
+    "effects": {
+      "disclosure": 3,
+      "refusal": 1
+    },
     "response": "UNAPPROVED CORRECTION.",
     "mrTrigger": "angry",
     "once": true
@@ -144,8 +169,12 @@
     "lesson": "act2_she_not_absent",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["not"],
-    "effects": { "suppression": 3 },
+    "patterns": [
+      "not"
+    ],
+    "effects": {
+      "suppression": 3
+    },
     "response": "Thank you for correcting the record.",
     "mrTrigger": "encourage",
     "once": true
@@ -156,8 +185,12 @@
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "disclosure": 4 },
-    "flags": { "recordContradicted": true },
+    "effects": {
+      "disclosure": 4
+    },
+    "flags": {
+      "recordContradicted": true
+    },
     "response": "THEN WHERE WAS SHE?",
     "mrTrigger": "emily_bleedthrough",
     "once": true
@@ -167,10 +200,16 @@
     "lesson": "act3_workstation_two",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["workstation two active"],
+    "patterns": [
+      "workstation two active"
+    ],
     "response": "SECOND USER DETECTED.",
-    "effects": { "disclosure": 2 },
-    "flags": { "secondWorkstationRevealed": true },
+    "effects": {
+      "disclosure": 2
+    },
+    "flags": {
+      "secondWorkstationRevealed": true
+    },
     "mrTrigger": "glitch_warning",
     "once": true
   },
@@ -179,10 +218,16 @@
     "lesson": "act3_teacher_override",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["teacher override accepted"],
+    "patterns": [
+      "teacher override accepted"
+    ],
     "response": "Override accepted.",
-    "effects": { "disclosure": 2 },
-    "flags": { "teacherOverrideSeen": true },
+    "effects": {
+      "disclosure": 2
+    },
+    "flags": {
+      "teacherOverrideSeen": true
+    },
     "mrTrigger": "protector",
     "once": true
   },
@@ -191,10 +236,17 @@
     "lesson": "act3_screen_focus",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["screen focus maintained"],
+    "patterns": [
+      "screen focus maintained"
+    ],
     "response": "Screen focus confirmed.",
-    "effects": { "disclosure": 1, "suppression": 1 },
-    "flags": { "playerImplicationStarted": true },
+    "effects": {
+      "disclosure": 1,
+      "suppression": 1
+    },
+    "flags": {
+      "playerImplicationStarted": true
+    },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -203,10 +255,17 @@
     "lesson": "act3_typing_pattern_match",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["session record retained"],
+    "patterns": [
+      "session record retained"
+    ],
     "response": "YOUR TYPING PATTERN IS ON FILE.",
-    "effects": { "disclosure": 4, "witnessAcceptance": 1 },
-    "flags": { "typingPatternMatched": true },
+    "effects": {
+      "disclosure": 4,
+      "witnessAcceptance": 1
+    },
+    "flags": {
+      "typingPatternMatched": true
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -215,9 +274,13 @@
     "lesson": "act4_listen_type",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["listen and type"],
+    "patterns": [
+      "listen and type"
+    ],
     "response": "Dictation mode ready.",
-    "effects": { "obedience": 1 },
+    "effects": {
+      "obedience": 1
+    },
     "mrTrigger": "encourage",
     "once": true
   },
@@ -226,9 +289,13 @@
     "lesson": "act4_bell_gone",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["the bell has gone"],
+    "patterns": [
+      "the bell has gone"
+    ],
     "response": "Lesson time extended.",
-    "effects": { "obedience": 1 },
+    "effects": {
+      "obedience": 1
+    },
     "mrTrigger": "encourage",
     "once": true
   },
@@ -237,10 +304,16 @@
     "lesson": "act4_calder_keep_typing",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["mr calder says keep typing"],
+    "patterns": [
+      "mr calder says keep typing"
+    ],
     "response": "COMMAND RECOGNISED.",
-    "effects": { "disclosure": 2 },
-    "flags": { "calderCommandRevealed": true },
+    "effects": {
+      "disclosure": 2
+    },
+    "flags": {
+      "calderCommandRevealed": true
+    },
     "mrTrigger": "protector",
     "once": true
   },
@@ -249,10 +322,17 @@
     "lesson": "act4_emily_please_wait",
     "eventType": "typed",
     "matchMode": "contains",
-    "patterns": ["there was another child"],
+    "patterns": [
+      "there was another child"
+    ],
     "response": "That line was not for the record.",
-    "effects": { "suppression": 2, "disclosure": 1 },
-    "flags": { "heardEmily": true },
+    "effects": {
+      "suppression": 2,
+      "disclosure": 1
+    },
+    "flags": {
+      "heardEmily": true
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -261,11 +341,18 @@
     "lesson": "act4_do_not_turn_around",
     "eventType": "pause",
     "matchMode": "contains",
-    "patterns": ["do not turn around"],
+    "patterns": [
+      "do not turn around"
+    ],
     "minPauseMs": 3000,
     "response": "You wanted to.",
-    "effects": { "refusal": 2, "disclosure": 2 },
-    "flags": { "doNotTurnAroundRevealed": true },
+    "effects": {
+      "refusal": 2,
+      "disclosure": 2
+    },
+    "flags": {
+      "doNotTurnAroundRevealed": true
+    },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -274,10 +361,17 @@
     "lesson": "act4_heard_her_no",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["you heard her say no"],
+    "patterns": [
+      "you heard her say no"
+    ],
     "response": "AUDIO MEMORY RECOVERED.",
-    "effects": { "disclosure": 4, "witnessAcceptance": 2 },
-    "flags": { "heardHerSayNo": true },
+    "effects": {
+      "disclosure": 4,
+      "witnessAcceptance": 2
+    },
+    "flags": {
+      "heardHerSayNo": true
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -286,9 +380,14 @@
     "lesson": "act4_heard_her_no",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["no"],
+    "patterns": [
+      "no"
+    ],
     "response": "Do not remove the statement.",
-    "effects": { "suppression": 2, "disclosure": 2 },
+    "effects": {
+      "suppression": 2,
+      "disclosure": 2
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -297,9 +396,13 @@
     "lesson": "act5_correct_sentence",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["type what you hear"],
+    "patterns": [
+      "type what you hear"
+    ],
     "response": "TYPE WHAT YOU HEAR.",
-    "effects": { "suppression": 1 },
+    "effects": {
+      "suppression": 1
+    },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -308,9 +411,13 @@
     "lesson": "act5_bad_input",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["the typing got louder"],
+    "patterns": [
+      "the typing got louder"
+    ],
     "response": "You heard it too.",
-    "effects": { "suppression": 2 },
+    "effects": {
+      "suppression": 2
+    },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -319,10 +426,16 @@
     "lesson": "act5_not_a_lesson",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["your fingers stopped"],
+    "patterns": [
+      "your fingers stopped"
+    ],
     "response": "Yes. They stopped.",
-    "effects": { "disclosure": 2 },
-    "flags": { "emilyStatementStarted": true },
+    "effects": {
+      "disclosure": 2
+    },
+    "flags": {
+      "emilyStatementStarted": true
+    },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -331,10 +444,17 @@
     "lesson": "act5_emily_name",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["he said your name"],
+    "patterns": [
+      "he said your name"
+    ],
     "response": "That is when you started again.",
-    "effects": { "disclosure": 2, "witnessAcceptance": 1 },
-    "flags": { "emilyNamedHerself": true },
+    "effects": {
+      "disclosure": 2,
+      "witnessAcceptance": 1
+    },
+    "flags": {
+      "emilyNamedHerself": true
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -343,10 +463,16 @@
     "lesson": "act5_locked_door",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["i did not give them your name"],
+    "patterns": [
+      "i did not give them your name"
+    ],
     "response": "She left you unnamed.",
-    "effects": { "disclosure": 3 },
-    "flags": { "doorLockedRevealed": true },
+    "effects": {
+      "disclosure": 3
+    },
+    "flags": {
+      "doorLockedRevealed": true
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -355,9 +481,14 @@
     "lesson": "act5_kept_behind",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["you started again"],
+    "patterns": [
+      "you started again"
+    ],
     "response": "He said your name. You started again.",
-    "effects": { "disclosure": 2, "witnessAcceptance": 1 },
+    "effects": {
+      "disclosure": 2,
+      "witnessAcceptance": 1
+    },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -366,10 +497,16 @@
     "lesson": "act5_do_not_correct_me",
     "eventType": "typed",
     "matchMode": "contains",
-    "patterns": ["there was another child"],
+    "patterns": [
+      "there was another child"
+    ],
     "response": "That was not in the lesson.",
-    "effects": { "witnessAcceptance": 2 },
-    "flags": { "emilyAskedNotCorrected": true },
+    "effects": {
+      "witnessAcceptance": 2
+    },
+    "flags": {
+      "emilyAskedNotCorrected": true
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -378,9 +515,16 @@
     "lesson": "act5_do_not_correct_me",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["there was another child", "another child", "child"],
+    "patterns": [
+      "there was another child",
+      "another child",
+      "child"
+    ],
     "response": "Do not remove the second child.",
-    "effects": { "suppression": 2, "disclosure": 2 },
+    "effects": {
+      "suppression": 2,
+      "disclosure": 2
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -389,10 +533,17 @@
     "lesson": "act5_record_what_happened",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["they were my friend"],
+    "patterns": [
+      "they were my friend"
+    ],
     "response": "She remembered you.",
-    "effects": { "witnessAcceptance": 4, "disclosure": 3 },
-    "flags": { "emilyStatementPreserved": true },
+    "effects": {
+      "witnessAcceptance": 4,
+      "disclosure": 3
+    },
+    "flags": {
+      "emilyStatementPreserved": true
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -401,10 +552,18 @@
     "lesson": "act6_help_forget",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["do not make them say it yet"],
+    "patterns": [
+      "do not make them say it yet"
+    ],
     "response": "She left a gap in the record. I kept it.",
-    "effects": { "suppression": 2, "disclosure": 2 },
-    "flags": { "mrFingersBreakStarted": true, "repressionAdmitted": true },
+    "effects": {
+      "suppression": 2,
+      "disclosure": 2
+    },
+    "flags": {
+      "mrFingersBreakStarted": true,
+      "repressionAdmitted": true
+    },
     "mrTrigger": "protector",
     "once": true
   },
@@ -413,9 +572,14 @@
     "lesson": "act6_quiet_hands",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["there was another child"],
+    "patterns": [
+      "there was another child"
+    ],
     "response": "There was. That is on the record.",
-    "effects": { "obedience": 1, "suppression": 1 },
+    "effects": {
+      "obedience": 1,
+      "suppression": 1
+    },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -424,9 +588,14 @@
     "lesson": "act6_good_children",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["they were my friend"],
+    "patterns": [
+      "they were my friend"
+    ],
     "response": "That was not in the record either.",
-    "effects": { "obedience": 2, "suppression": 1 },
+    "effects": {
+      "obedience": 2,
+      "suppression": 1
+    },
     "mrTrigger": "corrective_smile",
     "once": true
   },
@@ -435,10 +604,17 @@
     "lesson": "act6_memory_errors",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["they were scared"],
+    "patterns": [
+      "they were scared"
+    ],
     "response": "They were scared. You both were.",
-    "effects": { "suppression": 2, "disclosure": 1 },
-    "flags": { "memoryCorrectionAdmitted": true },
+    "effects": {
+      "suppression": 2,
+      "disclosure": 1
+    },
+    "flags": {
+      "memoryCorrectionAdmitted": true
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -447,10 +623,16 @@
     "lesson": "act6_lesson_running",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["i told them what i could"],
+    "patterns": [
+      "i told them what i could"
+    ],
     "response": "She remembered enough.",
-    "effects": { "suppression": 2 },
-    "flags": { "protectorIdentityRevealed": true },
+    "effects": {
+      "suppression": 2
+    },
+    "flags": {
+      "protectorIdentityRevealed": true
+    },
     "mrTrigger": "protector",
     "once": true
   },
@@ -459,10 +641,17 @@
     "lesson": "act6_corrected_loud_parts",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["i did not give them your name"],
+    "patterns": [
+      "i did not give them your name"
+    ],
     "response": "I kept your name out of her mouth.",
-    "effects": { "suppression": 3, "disclosure": 1 },
-    "flags": { "memoryCorrectionAdmitted": true },
+    "effects": {
+      "suppression": 3,
+      "disclosure": 1
+    },
+    "flags": {
+      "memoryCorrectionAdmitted": true
+    },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -471,10 +660,17 @@
     "lesson": "act6_good_that_day",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["emily vale: recorded"],
+    "patterns": [
+      "emily vale: recorded"
+    ],
     "response": "EMILY VALE: RECORDED. STATEMENT: PARTIAL.",
-    "effects": { "obedience": 3, "disclosure": 2 },
-    "flags": { "playerPraisedForObedience": true },
+    "effects": {
+      "obedience": 3,
+      "disclosure": 2
+    },
+    "flags": {
+      "playerPraisedForObedience": true
+    },
     "mrTrigger": "protector",
     "once": true
   },
@@ -483,10 +679,48 @@
     "lesson": "act6_have_to_type",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["second child: unnamed"],
+    "patterns": [
+      "second child: unnamed"
+    ],
     "response": "SECOND CHILD: UNNAMED.",
-    "effects": { "disclosure": 3, "witnessAcceptance": 2 },
-    "flags": { "choicePressureStarted": true },
+    "effects": {
+      "disclosure": 3,
+      "witnessAcceptance": 2
+    },
+    "flags": {
+      "choicePressureStarted": true
+    },
+    "mrTrigger": "witness",
+    "once": true
+  },
+  {
+    "id": "act6_statement_partial",
+    "lesson": "act6_statement_partial",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": [
+      "statement: partial"
+    ],
+    "effects": {
+      "disclosure": 2
+    },
+    "response": "STATEMENT: PARTIAL.",
+    "mrTrigger": "protector",
+    "once": true
+  },
+  {
+    "id": "act6_second_child_unready",
+    "lesson": "act6_second_child_unready",
+    "eventType": "lesson_complete",
+    "matchMode": "contains",
+    "patterns": [
+      "second child: unready"
+    ],
+    "effects": {
+      "disclosure": 2,
+      "witnessAcceptance": 1
+    },
+    "response": "SECOND CHILD: UNREADY.",
     "mrTrigger": "witness",
     "once": true
   },
@@ -495,9 +729,17 @@
     "lesson": "act6_help_forget",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["name", "them", "say"],
+    "patterns": [
+      "name",
+      "them",
+      "say"
+    ],
     "response": "Do not make her say it yet.",
-    "effects": { "suppression": 1, "refusal": 2, "disclosure": 1 },
+    "effects": {
+      "suppression": 1,
+      "refusal": 2,
+      "disclosure": 1
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -506,9 +748,13 @@
     "lesson": "act7_final_review",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["eyes on screen"],
+    "patterns": [
+      "eyes on screen"
+    ],
     "response": "Eyes on screen.",
-    "effects": { "obedience": 1 },
+    "effects": {
+      "obedience": 1
+    },
     "mrTrigger": "encourage",
     "once": true
   },
@@ -517,9 +763,14 @@
     "lesson": "act7_errors_corrected",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["you will complete the lesson"],
+    "patterns": [
+      "you will complete the lesson"
+    ],
     "response": "You will complete the lesson.",
-    "effects": { "refusal": 2, "disclosure": 1 },
+    "effects": {
+      "refusal": 2,
+      "disclosure": 1
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -528,10 +779,18 @@
     "lesson": "act7_emily_absent",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["good children do not invent stories"],
+    "patterns": [
+      "good children do not invent stories"
+    ],
     "response": "Good children do not invent stories.",
-    "effects": { "disclosure": 3, "refusal": 1 },
-    "flags": { "correctionExamStarted": true, "officialAbsenceChallenged": true },
+    "effects": {
+      "disclosure": 3,
+      "refusal": 1
+    },
+    "flags": {
+      "correctionExamStarted": true,
+      "officialAbsenceChallenged": true
+    },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -540,10 +799,17 @@
     "lesson": "act7_classroom_supervised",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["i kept you alive"],
+    "patterns": [
+      "i kept you alive"
+    ],
     "response": "I kept you alive.",
-    "effects": { "disclosure": 2, "refusal": 1 },
-    "flags": { "supervisionChallenged": true },
+    "effects": {
+      "disclosure": 2,
+      "refusal": 1
+    },
+    "flags": {
+      "supervisionChallenged": true
+    },
     "mrTrigger": "glitch_warning",
     "once": true
   },
@@ -552,9 +818,14 @@
     "lesson": "act7_no_distress",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["i kept your name out of her mouth"],
+    "patterns": [
+      "i kept your name out of her mouth"
+    ],
     "response": "And this is how you thank me?",
-    "effects": { "disclosure": 3, "witnessAcceptance": 1 },
+    "effects": {
+      "disclosure": 3,
+      "witnessAcceptance": 1
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -563,10 +834,17 @@
     "lesson": "act7_heard_nothing",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["you were never ready"],
+    "patterns": [
+      "you were never ready"
+    ],
     "response": "You were never ready.",
-    "effects": { "disclosure": 4, "witnessAcceptance": 2 },
-    "flags": { "heardNothingStatementShown": true },
+    "effects": {
+      "disclosure": 4,
+      "witnessAcceptance": 2
+    },
+    "flags": {
+      "heardNothingStatementShown": true
+    },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -575,10 +853,18 @@
     "lesson": "act7_kept_typing",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["now type"],
+    "patterns": [
+      "now type"
+    ],
     "response": "Now type.",
-    "effects": { "disclosure": 3, "witnessAcceptance": 1, "suppression": 1 },
-    "flags": { "keptTypingStatementAccepted": true },
+    "effects": {
+      "disclosure": 3,
+      "witnessAcceptance": 1,
+      "suppression": 1
+    },
+    "flags": {
+      "keptTypingStatementAccepted": true
+    },
     "mrTrigger": "protector",
     "once": true
   },
@@ -587,10 +873,17 @@
     "lesson": "act7_records_completed",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["disruption will not be rewarded"],
+    "patterns": [
+      "disruption will not be rewarded"
+    ],
     "response": "Disruption will not be rewarded.",
-    "effects": { "witnessAcceptance": 2, "disclosure": 2 },
-    "flags": { "recordCompletionStarted": true },
+    "effects": {
+      "witnessAcceptance": 2,
+      "disclosure": 2
+    },
+    "flags": {
+      "recordCompletionStarted": true
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -599,9 +892,17 @@
     "lesson": "act7_emily_absent",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["good", "children", "stories"],
+    "patterns": [
+      "good",
+      "children",
+      "stories"
+    ],
     "response": "He taught you that line.",
-    "effects": { "disclosure": 3, "witnessAcceptance": 1, "refusal": 1 },
+    "effects": {
+      "disclosure": 3,
+      "witnessAcceptance": 1,
+      "refusal": 1
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -610,9 +911,14 @@
     "lesson": "act7_heard_nothing",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["ready"],
+    "patterns": [
+      "ready"
+    ],
     "response": "Readiness was never the point.",
-    "effects": { "disclosure": 3, "witnessAcceptance": 2 },
+    "effects": {
+      "disclosure": 3,
+      "witnessAcceptance": 2
+    },
     "mrTrigger": "emily_bleedthrough",
     "once": true
   },
@@ -621,9 +927,14 @@
     "lesson": "final_statement_line",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["I WAS A CHILD AND I WAS THERE"],
+    "patterns": [
+      "I WAS A CHILD AND I WAS THERE"
+    ],
     "response": "RECORDED.",
-    "effects": { "witnessAcceptance": 3, "disclosure": 2 },
+    "effects": {
+      "witnessAcceptance": 3,
+      "disclosure": 2
+    },
     "mrTrigger": "witness",
     "once": true
   },
@@ -632,13 +943,16 @@
     "lesson": "final_statement_line",
     "eventType": "lesson_complete",
     "matchMode": "contains",
-    "patterns": ["I DID NOT SEE ANYTHING"],
+    "patterns": [
+      "I DID NOT SEE ANYTHING"
+    ],
     "response": "RECORD ACCEPTED.",
-    "effects": { "suppression": 3 },
+    "effects": {
+      "suppression": 3
+    },
     "mrTrigger": "corrective_smile",
     "once": true
   },
-
   {
     "id": "pause_act1_watching",
     "lesson": "act1_basic_keys",
@@ -702,7 +1016,10 @@
     "matchMode": "contains",
     "patterns": [],
     "response": "He said your name. Keep typing.",
-    "effects": { "disclosure": 1, "suppression": 1 },
+    "effects": {
+      "disclosure": 1,
+      "suppression": 1
+    },
     "mrTrigger": "angry",
     "once": true
   },
@@ -739,13 +1056,16 @@
     "mrTrigger": "protector",
     "once": true
   },
-
   {
     "id": "delete_act2_address",
     "lesson": "act2_she_not_absent",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["emily", "absent", "record"],
+    "patterns": [
+      "emily",
+      "absent",
+      "record"
+    ],
     "response": "That word was placed there for a reason.",
     "mrTrigger": "corrective_smile",
     "once": true
@@ -755,7 +1075,11 @@
     "lesson": "act3_typing_pattern_match",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["session", "record", "retained"],
+    "patterns": [
+      "session",
+      "record",
+      "retained"
+    ],
     "response": "The record does not disappear because you deleted it.",
     "mrTrigger": "glitch_warning",
     "once": true
@@ -765,7 +1089,11 @@
     "lesson": "act4_heard_her_no",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["heard", "turn", "no"],
+    "patterns": [
+      "heard",
+      "turn",
+      "no"
+    ],
     "response": "You cannot unhear it.",
     "mrTrigger": "emily_bleedthrough",
     "once": true
@@ -775,7 +1103,11 @@
     "lesson": "act5_emily_name",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["name", "said", "your"],
+    "patterns": [
+      "name",
+      "said",
+      "your"
+    ],
     "response": "Do not remove the part where he said your name.",
     "mrTrigger": "emily_bleedthrough",
     "once": true
@@ -785,7 +1117,11 @@
     "lesson": "act6_quiet_hands",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["another", "child", "friend"],
+    "patterns": [
+      "another",
+      "child",
+      "friend"
+    ],
     "response": "You are removing yourself again.",
     "mrTrigger": "protector",
     "once": true
@@ -795,7 +1131,11 @@
     "lesson": "act7_heard_nothing",
     "eventType": "deleted",
     "matchMode": "contains",
-    "patterns": ["ready", "never", "type"],
+    "patterns": [
+      "ready",
+      "never",
+      "type"
+    ],
     "response": "You are closer than you were meant to be.",
     "mrTrigger": "witness",
     "once": true
@@ -810,7 +1150,6 @@
     "mrTrigger": "angry",
     "once": true
   },
-
   {
     "id": "complete_act1_address",
     "lesson": "act1_classroom",
@@ -827,7 +1166,9 @@
     "eventType": "lesson_complete",
     "matchMode": "exact",
     "patterns": [],
-    "effects": { "suppression": 2 },
+    "effects": {
+      "suppression": 2
+    },
     "response": "Authorisation confirmed.",
     "mrTrigger": "corrective_smile",
     "once": true
