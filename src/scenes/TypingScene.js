@@ -599,6 +599,12 @@ export default class TypingScene extends Phaser.Scene {
     }
   }
 
+  _isDevMode() {
+    if (typeof window === 'undefined' || !window.location) return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.get('dev') === '1';
+  }
+
   // --- UI CONSTRUCTION ---
 
   _createPanel(x, y, w, h, opts = {}) {
@@ -1242,7 +1248,13 @@ export default class TypingScene extends Phaser.Scene {
 
     if (act && act.actId === 'final_statement' && act.witnessStatement) {
       this.transitionedToFinalWitness = true;
-      this.scene.start('FinalWitnessScene', { witnessStatement: act.witnessStatement });
+      this.scene.start('FinalWitnessScene', {
+        witnessStatement: act.witnessStatement,
+        memorySnapshot: this.memory ? this.memory.getSnapshot() : null,
+        runEnding: this.memory ? getFinalStatement(this.memory) : null,
+        debugEnabled: this.debugVisible,
+        devMode: this._isDevMode()
+      });
       return;
     }
 

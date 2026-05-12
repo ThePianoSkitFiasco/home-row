@@ -1,3 +1,5 @@
+import { getFinalStatement } from '../systems/EndingLogic.js';
+
 const CRT = {
   bg: 0x020402,
   panel: 0x030703,
@@ -36,6 +38,10 @@ export default class FinalWitnessScene extends Phaser.Scene {
 
   init(data) {
     this.config = data.witnessStatement || {};
+    this.memorySnapshot = this._normalizeSnapshot(data.memorySnapshot);
+    this.runEnding = data.runEnding || this._evaluateRunEnding(this.memorySnapshot);
+    this.debugEnabled = !!data.debugEnabled;
+    this.devMode = !!data.devMode;
     this.records = Array.isArray(this.config.records) ? this.config.records : [];
     this.index = 0;
     this.mode = 'choice';
@@ -45,6 +51,7 @@ export default class FinalWitnessScene extends Phaser.Scene {
     this.inputLocked = false;
     this.selections = [];
     this.counts = { preserve: 0, correct: 0, delete: 0, refuse: 0 };
+    this.combinedEnding = null;
   }
 
   create() {
@@ -261,6 +268,7 @@ export default class FinalWitnessScene extends Phaser.Scene {
     this.inputLocked = true;
     this.subheaderText.setText('FINAL STATEMENT RECORDED');
     this.recordText.setFontSize('17px');
+    this.combinedEnding = this._resolveCombinedEnding();
 
     const statementLines = this.selections.map((entry) => {
       const line = entry.action === 'delete' ? '[LINE REMOVED]' : entry.line;
@@ -268,7 +276,14 @@ export default class FinalWitnessScene extends Phaser.Scene {
     });
 
     this.recordText.setText([
-      `=== ${this._outcome()} ===`,
+      `=== ${this.combinedEnding.title} ===`,
+      '',
+      this.combinedEnding.statement,
+      this.combinedEnding.response,
+      '',
+      this.combinedEnding.body,
+      '',
+      `LOCAL RECORD: ${this._getLocalOutcome().label}`,
       '',
       'FINAL STATEMENT',
       '',
@@ -309,7 +324,7 @@ export default class FinalWitnessScene extends Phaser.Scene {
     return record.choices[action] || '';
   }
 
-  _outcome() {
+  _getLocalOutcome() {
     const priority = ['refuse', 'correct', 'delete', 'preserve'];
     const labels = {
       preserve: 'GOLD STAR REPORT',
@@ -317,17 +332,173 @@ export default class FinalWitnessScene extends Phaser.Scene {
       delete: 'BACKSPACE REPORT',
       refuse: 'UNSANCTIONED TESTIMONY'
     };
+    const categories = {
+      preserve: 'obedience',
+      correct: 'witness',
+      delete: 'delete',
+      refuse: 'refusal'
+    };
     const max = Math.max(
       this.counts.preserve,
       this.counts.correct,
       this.counts.delete,
       this.counts.refuse
     );
-    if (max <= 0) return labels.preserve;
+    if (max <= 0) {
+      return {
+        action: 'preserve',
+        label: labels.preserve,
+        category: categories.preserve,
+        isMixed: false
+      };
+    }
+
+    const leaders = Object.keys(this.counts).filter((action) => this.counts[action] === max);
+    const isMixed = leaders.length > 1;
 
     for (const action of priority) {
-      if (this.counts[action] === max) return labels[action];
+      if (this.counts[action] === max) {
+        return {
+          action,
+          label: labels[action],
+          category: isMixed ? 'mixed' : categories[action],
+          isMixed
+        };
+      }
     }
-    return labels.preserve;
+    return {
+      action: 'preserve',
+      label: labels.preserve,
+      category: 'obedience',
+      isMixed: false
+    };
+  }
+
+  _resolveCombinedEnding() {
+    const localOutcome = this._getLocalOutcome();
+    const runEnding = this.runEnding || this._evaluateRunEnding(this.memorySnapshot);
+    const stats = this.memorySnapshot.stats;
+    const flags = this.memorySnapshot.flags;
+
+    const witnessSupported =
+      !!flags.typingPatternMatched &&
+      !!flags.heardHerSayNo &&
+      !!flags.emilyStatementPreserved &&
+      stats.witnessAcceptance >= 8 &&
+      stats.disclosure >= 20;
+
+    const destroySupported =
+      stats.refusal >= 6 &&
+      (stats.disclosure >= 18 || !!flags.doNotTurnAroundRevealed);
+
+    const obedienceSupported =
+      stats.obedience >= 10 ||
+      stats.suppression >= stats.disclosure ||
+      stats.witnessAcceptance < 5;
+
+    let combinedEnding;
+    if (localOutcome.category === 'witness' && witnessSupported) {
+      combinedEnding = runEnding.routeId === 'witness_statement'
+        ? runEnding
+        : this._evaluateRunEnding({
+          stats: {
+            ...stats,
+            witnessAcceptance: Math.max(stats.witnessAcceptance, 10),
+            disclosure: Math.max(stats.disclosure, 25)
+          },
+          flags: {
+            ...flags,
+            typingPatternMatched: true,
+            heardHerSayNo: true,
+            emilyStatementPreserved: true
+          }
+        });
+    } else if (
+      (localOutcome.category === 'refusal' || localOutcome.category === 'delete') &&
+      destroySupported &&
+      runEnding.routeId === 'sightline_error'
+    ) {
+      combinedEnding = runEnding;
+    } else if (localOutcome.category === 'obedience' && obedienceSupported) {
+      combinedEnding = (runEnding.routeId === 'completed_exercise' || runEnding.routeId === 'gold_star')
+        ? runEnding
+        : this._evaluateRunEnding({
+          stats: {
+            ...stats,
+            obedience: Math.max(stats.obedience, 12),
+            suppression: Math.max(stats.suppression, stats.disclosure)
+          },
+          flags: {
+            ...flags,
+            keptTypingStatementAccepted: true
+          }
+        });
+    } else {
+      combinedEnding = this._incompleteEnding();
+    }
+
+    if (this.debugEnabled || this.devMode) {
+      console.log('[FinalWitnessDebug]', {
+        runRoute: runEnding.routeId,
+        localOutcome,
+        combinedRoute: combinedEnding.routeId,
+        finalStats: stats,
+        finalFlags: flags,
+        finalWitnessCounts: { ...this.counts }
+      });
+    }
+
+    return combinedEnding;
+  }
+
+  _evaluateRunEnding(snapshot) {
+    return getFinalStatement({
+      getSnapshot: () => this._normalizeSnapshot(snapshot)
+    });
+  }
+
+  _normalizeSnapshot(snapshot) {
+    const empty = {
+      stats: {
+        obedience: 0,
+        disclosure: 0,
+        suppression: 0,
+        refusal: 0,
+        witnessAcceptance: 0
+      },
+      flags: {
+        typingPatternMatched: false,
+        heardHerSayNo: false,
+        emilyStatementPreserved: false,
+        keptTypingStatementAccepted: false,
+        doNotTurnAroundRevealed: false
+      }
+    };
+
+    return {
+      stats: {
+        ...empty.stats,
+        ...(snapshot && snapshot.stats ? snapshot.stats : {})
+      },
+      flags: {
+        ...empty.flags,
+        ...(snapshot && snapshot.flags ? snapshot.flags : {})
+      }
+    };
+  }
+
+  _incompleteEnding() {
+    return {
+      routeId: 'incomplete_statement',
+      statement: 'WE WERE CHILDREN',
+      title: 'STATEMENT: PARTIAL',
+      response: 'SECOND CHILD: UNREADY',
+      body: [
+        'The record does not close.',
+        'Some lines were preserved.',
+        'Some lines were refused.',
+        'The witness is still deciding what can be said.'
+      ].join('\n')
+    };
   }
 }
