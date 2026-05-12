@@ -4,6 +4,7 @@ import TypingScene from './scenes/TypingScene.js';
 import MiniGameScene from './scenes/MiniGameScene.js';
 import FinalWitnessScene from './scenes/FinalWitnessScene.js';
 import TeacherTimeScene from './scenes/TeacherTimeScene.js';
+import HostFoundScene from './scenes/HostFoundScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -11,7 +12,7 @@ const config = {
   height: 768,
   parent: 'game-container',
   backgroundColor: '#d8c7a1',
-  scene: [BootScene, TypingScene, MiniGameScene, TeacherTimeScene, FinalWitnessScene, TypingTutorScene],
+  scene: [BootScene, TypingScene, MiniGameScene, TeacherTimeScene, HostFoundScene, FinalWitnessScene, TypingTutorScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH

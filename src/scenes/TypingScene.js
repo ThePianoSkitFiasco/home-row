@@ -526,6 +526,7 @@ export default class TypingScene extends Phaser.Scene {
     this.pendingContinueHandler = null;
     this.continueEnabled = false;
     this.transitionedToFinalWitness = false;
+    this.hostFoundInterludeSeen = false;
     this.lastMiniGameResult = null;
     this.actStartStats = null;
     this.mrFingersAnimationTimer = null;
@@ -2600,11 +2601,41 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _advanceToNextAct() {
+    if (this._shouldLaunchHostFoundInterlude()) {
+      this._launchHostFoundInterlude();
+      return;
+    }
+
     this.lessonManager.advanceAct();
     this.actComplete = false;
     this.lastMiniGameResult = null;
     this._startLesson();
     this.mrFingers.setState('idle');
+  }
+
+  _shouldLaunchHostFoundInterlude() {
+    const act = this.lessonManager.getCurrentAct();
+    if (!act || this.hostFoundInterludeSeen) return false;
+    if (act.actId !== 'act6_protective_routine') return false;
+
+    const nextAct = this.lessonManager.acts[this.lessonManager.currentActIndex + 1];
+    return !!(nextAct && nextAct.actId === 'act7_correction_exam');
+  }
+
+  _launchHostFoundInterlude() {
+    this.hostFoundInterludeSeen = true;
+    this.events.once('host-found-complete', () => {
+      this.lessonManager.advanceAct();
+      this.actComplete = false;
+      this.lastMiniGameResult = null;
+      this._startLesson();
+      this.mrFingers.setState('idle');
+    });
+    this.scene.launch('HostFoundScene', {
+      returnScene: 'TypingScene',
+      nextActId: 'act7_correction_exam'
+    });
+    this.scene.sleep();
   }
 
   _getActPerformanceSnapshot() {
