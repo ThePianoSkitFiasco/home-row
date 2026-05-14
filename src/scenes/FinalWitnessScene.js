@@ -1,13 +1,14 @@
 import { getFinalStatement } from '../systems/EndingLogic.js';
 
 const CRT = {
-  bg: 0x020402,
-  panel: 0x030703,
-  panelSoft: 0x061006,
-  border: 0x3d7228,
-  phosphor: '#d5ffb8',
-  phosphorDim: '#6fbf45',
-  warning: '#ff7a45'
+  bg:         0x000000,
+  headerBg:   0x110000,
+  panel:      0x0d0000,
+  panelSoft:  0x080000,
+  border:     0x550000,
+  phosphor:   '#cc2200',
+  phosphorDim:'#661100',
+  warning:    '#ff3322'
 };
 
 const ACTIONS = {
@@ -93,66 +94,89 @@ export default class FinalWitnessScene extends Phaser.Scene {
   }
 
   _buildUi() {
-    this.add.rectangle(512, 384, 1024, 768, CRT.bg);
-    for (let x = 0; x <= 1024; x += 32) {
-      this.add.rectangle(x, 384, 1, 768, CRT.border).setAlpha(0.08);
-    }
-    for (let y = 0; y <= 768; y += 24) {
-      this.add.rectangle(512, y, 1024, 1, CRT.border).setAlpha(0.08);
+    const W = 1024, H = 768, PAD = 48, HEADER_H = 32, FOOTER_H = 50;
+
+    this.add.rectangle(512, 384, W, H, CRT.bg);
+
+    // header bar
+    this.add.rectangle(512, HEADER_H / 2, W, HEADER_H, CRT.headerBg);
+    this.add.text(PAD, HEADER_H / 2, 'HOME ROW  [FINAL RECORD]', {
+      fontFamily: 'Courier New, monospace', fontSize: '13px', color: '#aa1a00'
+    }).setOrigin(0, 0.5);
+    this.add.text(W - PAD, HEADER_H / 2, 'WORKSTATION 02  //  WRITE ACCESS', {
+      fontFamily: 'Courier New, monospace', fontSize: '13px', color: CRT.phosphorDim
+    }).setOrigin(1, 0.5);
+
+    // separator lines
+    this.add.rectangle(512, HEADER_H,     W, 1, CRT.border);
+    this.add.rectangle(512, H - FOOTER_H, W, 1, CRT.border);
+
+    // scanlines
+    for (let y = 0; y < H; y += 4) {
+      this.add.rectangle(512, y, W, 1, 0xff0000).setAlpha(0.022);
     }
 
-    this.add.rectangle(512, 384, 1024, 768, 0x000000).setAlpha(0.22);
-    this.headerText = this.add.text(512, 34, this.config.title || 'FINAL CORRECTION EXERCISE', {
+    // flicker overlay
+    this.flickerOverlay = this.add.rectangle(512, 384, W, H, 0xff0000).setAlpha(0.01);
+    this.time.addEvent({
+      delay: 160, loop: true,
+      callback: () => {
+        this.flickerOverlay.setAlpha(Phaser.Math.FloatBetween(0.005, 0.02));
+        this.cameras.main.setAlpha(Phaser.Math.FloatBetween(0.988, 1));
+      }
+    });
+
+    this.headerText = this.add.text(512, 46, this.config.title || 'FINAL CORRECTION EXERCISE', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '30px',
+      fontSize: '26px',
       color: CRT.phosphor,
       align: 'center'
     }).setOrigin(0.5, 0);
-    this.subheaderText = this.add.text(512, 76, 'CHOOSE WHAT THE RECORD WILL SAY', {
+    this.subheaderText = this.add.text(512, 82, 'CHOOSE WHAT THE RECORD WILL SAY', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '17px',
+      fontSize: '15px',
       color: CRT.phosphorDim,
       align: 'center'
     }).setOrigin(0.5, 0);
 
-    this.mainPanel = this.add.rectangle(410, 346, 660, 470, CRT.panel)
-      .setStrokeStyle(2, CRT.border, 0.9);
-    this.sidePanel = this.add.rectangle(810, 346, 260, 470, CRT.panelSoft)
+    this.mainPanel = this.add.rectangle(410, 360, 660, 460, CRT.panel)
+      .setStrokeStyle(1, CRT.border, 0.9);
+    this.sidePanel = this.add.rectangle(810, 360, 240, 460, CRT.panelSoft)
       .setStrokeStyle(1, CRT.border, 0.7);
-    this.add.text(810, 132, 'WITNESS CHANNEL', {
+    this.add.text(810, 145, 'WITNESS CHANNEL', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '16px',
+      fontSize: '14px',
       color: CRT.phosphorDim,
       align: 'center'
     }).setOrigin(0.5, 0);
-    this.sideText = this.add.text(810, 182, 'WORKSTATION 02\nFINAL INPUT\n\nNO TUTOR UI\nNO PRACTICE MODE', {
+    this.sideText = this.add.text(810, 190, 'WORKSTATION 02\nFINAL INPUT\n\nNO TUTOR UI\nNO PRACTICE MODE', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '15px',
+      fontSize: '14px',
       color: CRT.phosphor,
       align: 'center',
       lineSpacing: 8
     }).setOrigin(0.5, 0);
 
-    this.recordText = this.add.text(112, 132, '', {
+    this.recordText = this.add.text(100, 145, '', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '18px',
+      fontSize: '17px',
       color: CRT.phosphor,
       wordWrap: { width: 590 },
       lineSpacing: 5
     });
 
-    this.inputPanel = this.add.rectangle(410, 617, 660, 100, CRT.panel)
-      .setStrokeStyle(2, CRT.border, 0.9);
-    this.inputText = this.add.text(112, 580, '', {
+    this.inputPanel = this.add.rectangle(410, 625, 660, 90, CRT.panel)
+      .setStrokeStyle(1, CRT.border, 0.9);
+    this.inputText = this.add.text(100, 592, '', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '20px',
+      fontSize: '19px',
       color: CRT.phosphor,
       wordWrap: { width: 590 },
       lineSpacing: 4
     });
-    this.statusText = this.add.text(512, 704, '', {
+    this.statusText = this.add.text(512, H - FOOTER_H + 14, '', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '18px',
+      fontSize: '15px',
       color: CRT.warning,
       align: 'center'
     }).setOrigin(0.5, 0);
