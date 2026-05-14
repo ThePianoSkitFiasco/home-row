@@ -2,8 +2,8 @@
 
 > ## ⛔ STOP — DO NOT START NEW FEATURES
 >
-> **Last session completed:** systemErase, textMorphFlash, systemAutoType — active horror mechanics that make the horror felt through the hands.
-> **Repo is clean and pushed (`317b5ac`).**
+> **Last session completed:** SessionLogScene interlude — DOS terminal readout between Acts 3 and 4. The computer logged INPUT: REDUCED at 14:32:44 and flagged no incident.
+> **Repo is clean and pushed (`449f152`).**
 >
 > **Next step is PLAYTEST ONLY — Phase 4 (see below).**
 > Do not write new code until all ending routes have been manually tested and reported.

@@ -2,6 +2,37 @@
 
 ---
 
+## 2026-05-14 — SessionLogScene interlude
+
+> **STATUS: STOP. No new features until playtest.**
+> Next work should be Phase 4 route playtest only. See `HOME_ROW_REMAINING_TODO.md`.
+
+### What was built this session
+
+**`SessionLogScene` — DOS terminal interlude between Acts 3 and 4**
+- New Phaser scene, styled identically to HostFoundScene: black/red palette (`#000000` bg, `#cc2200` text, `#661100` dim), typewriter animation at 22ms/char, cursor blink, scanlines, flicker overlay.
+- Shows a session log (`SESSION.LOG`) from Room 14B, supervised by CALDER, J.
+- Event log includes `14:32:44    WS01    INPUT: REDUCED` — a direct timestamp of the moment the player stopped typing when something happened.
+- `NO INCIDENT FLAGGED.` prints with an extra-long pause. The computer logged everything and found nothing worth reporting.
+- Triggered after Act 3 completes, before Act 4 begins. Returns to TypingScene via `scene-log-complete` event + `scene.wake()`.
+- Header: `HOME ROW  [SESSION ARCHIVE]` / `READ-ONLY  //  LOG ACCESS`.
+
+### Files changed
+
+| File | What changed |
+|------|-------------|
+| `src/scenes/SessionLogScene.js` | New — DOS terminal session log interlude |
+| `src/main.js` | Import + register `SessionLogScene` in scene array |
+| `src/scenes/TypingScene.js` | `sessionLogInterludeSeen` flag, `_shouldLaunchSessionLogInterlude()`, `_launchSessionLogInterlude()`, check added to `_advanceToNextAct()` |
+
+### Checks run
+
+- `node --check` passed on `main.js`, `TypingScene.js`, `SessionLogScene.js`.
+- `grep -R "DEV TEST INPUT"` returned no matches.
+- Committed `449f152` and pushed to `origin/main`.
+
+---
+
 ## 2026-05-14 — Active horror mechanics session
 
 > **STATUS: STOP. No new features until playtest.**
