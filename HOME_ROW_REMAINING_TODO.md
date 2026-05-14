@@ -1,4 +1,15 @@
-# HOME ROW — Remaining To-Do Proposal
+# HOME ROW — Remaining To-Do
+
+> ## ⛔ STOP — DO NOT START NEW FEATURES
+>
+> **Last session completed:** No Signal interlude, Host Found terminal redesign, Calder animation, self-talk pass, boot dev-skip.
+> **Repo is clean and pushed.**
+>
+> **Next step is PLAYTEST ONLY — Phase 4 (see below).**
+> Do not write new code until all three ending routes have been manually tested and reported.
+> See `DEV_LOG.md` for full session summary.
+
+---
 
 ## 1. Current Canon Lock
 
