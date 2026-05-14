@@ -19,17 +19,17 @@ const ACTIONS = {
 };
 
 const LABELS = {
-  preserve: 'PRESERVE',
-  correct: 'CORRECT',
-  delete: 'DELETE',
-  refuse: 'REFUSE'
+  preserve: 'KEEP AS WRITTEN',
+  correct:  'CORRECT THE RECORD',
+  delete:   'REMOVE THIS LINE',
+  refuse:   'I WILL NOT TYPE THIS'
 };
 
 const STAMPS = {
-  preserve: 'PRESERVED',
-  correct: 'CORRECTED',
-  delete: 'DELETED',
-  refuse: 'UNSANCTIONED'
+  preserve: 'KEPT AS WRITTEN',
+  correct:  'RECORD CORRECTED',
+  delete:   'LINE REMOVED',
+  refuse:   'REFUSED'
 };
 
 export default class FinalWitnessScene extends Phaser.Scene {
@@ -201,16 +201,16 @@ export default class FinalWitnessScene extends Phaser.Scene {
       'OFFICIAL:',
       record.official,
       '',
-      '[1] PRESERVE',
+      `[1] ${LABELS.preserve}`,
       `    ${this._lineFor(record, 'preserve')}`,
       '',
-      '[2] CORRECT',
+      `[2] ${LABELS.correct}`,
       `    ${this._lineFor(record, 'correct')}`,
       '',
-      '[3] DELETE',
+      `[3] ${LABELS.delete}`,
       `    ${this._lineFor(record, 'delete') || '[LINE REMOVED]'}`,
       '',
-      '[4] REFUSE',
+      `[4] ${LABELS.refuse}`,
       `    ${this._lineFor(record, 'refuse')}`
     ].join('\n'));
     this.inputText.setAlpha(0.55);
@@ -331,40 +331,69 @@ export default class FinalWitnessScene extends Phaser.Scene {
     this.inputText.setAlpha(0);
     this.statusText.setText('');
 
+    this._updateSidePanelForEnding(this.combinedEnding.routeId);
+
     this.time.delayedCall(silenceMs, () => {
       if (!this.recordText || !this.recordText.active) return;
 
-      this.subheaderText.setText('FINAL STATEMENT RECORDED');
-      this.recordText.setFontSize('17px');
+      const mrLine = this._getMrFingersFinalLine(this.combinedEnding.routeId);
 
-      const statementLines = this.selections.map((entry) => {
-        const line = entry.action === 'delete' ? '[LINE REMOVED]' : entry.line;
-        return `${entry.label}: ${line}`;
-      });
+      if (mrLine) {
+        this.recordText.setAlpha(0);
+        this.recordText.setFontSize('20px');
+        this.recordText.setText(`MR FINGERS:\n\n"${mrLine}"`);
+        this.tweens.add({ targets: this.recordText, alpha: 1, duration: 700 });
 
-      this.recordText.setText([
-        `=== ${this.combinedEnding.title} ===`,
-        '',
-        this.combinedEnding.statement,
-        this.combinedEnding.response,
-        '',
-        this.combinedEnding.body,
-        '',
-        `LOCAL RECORD: ${this._getLocalOutcome().label}`,
-        '',
-        'FINAL STATEMENT',
-        '',
-        ...statementLines,
-        '',
-        `PRESERVED: ${this.counts.preserve}`,
-        `CORRECTED: ${this.counts.correct}`,
-        `DELETED: ${this.counts.delete}`,
-        `REFUSED: ${this.counts.refuse}`,
-        '',
-        'You may close this program.'
-      ].join('\n'));
-      this.statusText.setText('FINAL STATEMENT RECORDED');
+        this.time.delayedCall(2800, () => {
+          if (!this.recordText || !this.recordText.active) return;
+          this.tweens.add({
+            targets: this.recordText,
+            alpha: 0,
+            duration: 500,
+            onComplete: () => {
+              this.time.delayedCall(500, () => this._showFinalDocument());
+            }
+          });
+        });
+      } else {
+        this.time.delayedCall(1200, () => this._showFinalDocument());
+      }
     });
+  }
+
+  _showFinalDocument() {
+    if (!this.recordText || !this.recordText.active) return;
+
+    const ending = this.combinedEnding;
+    const closing = this._getClosingLine(ending.routeId);
+    const sep = '──────────────────────────────';
+
+    const statementLines = this.selections.map(entry =>
+      entry.action === 'delete' ? '[LINE REMOVED]' : entry.line
+    );
+
+    this.subheaderText.setText('STATEMENT OF RECORD');
+    this.recordText.setFontSize('15px');
+    this.recordText.setAlpha(0);
+    this.recordText.setText([
+      sep,
+      'DATE: [REDACTED]   ROOM: 14B   SUPERVISOR: CALDER, J.',
+      sep,
+      '',
+      ...statementLines,
+      '',
+      sep,
+      '',
+      ending.title,
+      ending.statement,
+      '',
+      ending.body,
+      '',
+      closing
+    ].join('\n'));
+
+    this.tweens.add({ targets: this.recordText, alpha: 1, duration: 800 });
+    this.statusText.setText('STATEMENT FILED');
   }
 
   _renderTyped() {
@@ -552,6 +581,45 @@ export default class FinalWitnessScene extends Phaser.Scene {
         ...(snapshot && snapshot.flags ? snapshot.flags : {})
       }
     };
+  }
+
+  _getMrFingersFinalLine(routeId) {
+    const lines = {
+      witness_statement:    'I did not expect you to say it.',
+      completed_exercise:   'That is a complete record.',
+      sightline_error:      null,
+      gold_star:            'Good. Eyes on screen.',
+      audio_memory:         'You heard it. That is enough.',
+      incomplete_statement: 'The record does not close. That is acceptable.'
+    };
+    return Object.prototype.hasOwnProperty.call(lines, routeId) ? lines[routeId] : null;
+  }
+
+  _getClosingLine(routeId) {
+    const lines = {
+      witness_statement:    'This program is no longer required.',
+      completed_exercise:   'Thank you for completing the course.',
+      sightline_error:      'This program has been terminated.',
+      gold_star:            'Your record is complete. Well done.',
+      audio_memory:         'The session has ended.',
+      incomplete_statement: 'The witness is still deciding.'
+    };
+    return lines[routeId] || 'You may close this program.';
+  }
+
+  _updateSidePanelForEnding(routeId) {
+    const updates = {
+      witness_statement:    'SECOND CHILD:\nNAMED\n\nEMILY VALE:\nRECORDED',
+      completed_exercise:   'SECOND CHILD:\nUNNAMED\n\nRECORD:\nCOMPLETE',
+      sightline_error:      'RECORD:\nPURGED\n\nSECOND CHILD:\nUNNAMED',
+      gold_star:            'SECOND CHILD:\nUNNAMED\n\nGOLD STAR:\nAWARDED',
+      audio_memory:         'SECOND CHILD:\nPARTIAL\n\nSTATEMENT:\nINCOMPLETE',
+      incomplete_statement: 'STATEMENT:\nPARTIAL\n\nSECOND CHILD:\nUNREADY'
+    };
+    const text = updates[routeId] || 'RECORD:\nFILED';
+    if (this.sideText && this.sideText.active) {
+      this.sideText.setText(text);
+    }
   }
 
   _incompleteEnding() {
