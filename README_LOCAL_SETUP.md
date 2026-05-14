@@ -34,16 +34,24 @@ Normal start:
 http://127.0.0.1:8123/index.html
 ```
 
+With `?dev=1` the boot screen is skipped automatically — no keypress needed.
+
+Jump to Act 6 (to test Host Found → Act 7 transition):
+
+```text
+http://127.0.0.1:8123/index.html?dev=1&act=act6_protective_routine
+```
+
+Jump to Act 7 directly (postHostFound will be false — Calder sprites won't appear):
+
+```text
+http://127.0.0.1:8123/index.html?dev=1&act=act7_correction_exam
+```
+
 Jump to the final witness statement:
 
 ```text
 http://127.0.0.1:8123/index.html?dev=1&act=final_statement
-```
-
-Jump to Act 7:
-
-```text
-http://127.0.0.1:8123/index.html?dev=1&act=act7
 ```
 
 Jump to a specific lesson by lesson id:

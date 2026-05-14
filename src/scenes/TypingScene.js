@@ -88,6 +88,26 @@ const MR_CALDER_SPRITES = {
   pointText: 'mr_calder_point_text-prepped-180x180',
   pointPov: 'mr_calder_point_pov-prepped-180x180'
 };
+const CALDER_CYCLES = {
+  neutral: [
+    { key: MR_CALDER_SPRITES.idle,      duration: 2500 },
+    { key: MR_CALDER_SPRITES.cry,       duration: 700  }
+  ],
+  corrective: [
+    { key: MR_CALDER_SPRITES.pointText, duration: 2000 },
+    { key: MR_CALDER_SPRITES.idle,      duration: 600  }
+  ],
+  hostile: [
+    { key: MR_CALDER_SPRITES.cry,       duration: 1800 },
+    { key: MR_CALDER_SPRITES.idle,      duration: 500  }
+  ],
+  witness: [
+    { key: MR_CALDER_SPRITES.pointPov,  duration: 1500 },
+    { key: MR_CALDER_SPRITES.idle,      duration: 800  },
+    { key: MR_CALDER_SPRITES.cry,       duration: 500  },
+    { key: MR_CALDER_SPRITES.idle,      duration: 1200 }
+  ]
+};
 const SHOW_DEV_TOUCH_CONTROLS = false;
 const TUTOR_PALETTE = {
   background: 0xf4e6bd,
@@ -489,6 +509,13 @@ export default class TypingScene extends Phaser.Scene {
       this.load.image(spriteKey, `${MR_CALDER_SPRITE_PATH}${spriteKey}.png`);
     }
 
+    if (!this.textures.exists('nosignal1')) {
+      this.load.image('nosignal1', 'assets/images/mrfingers_nosignal1.png');
+    }
+    if (!this.textures.exists('nosignal2')) {
+      this.load.image('nosignal2', 'assets/images/mrfingers_nosignal2.png');
+    }
+
     for (const [key, path] of Object.entries(AUDIO_ASSETS)) {
       this.load.audio(key, path);
     }
@@ -549,6 +576,10 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingersAnimationTimer = null;
     this.mrFingersAnimationActive = false;
     this.mrFingersAnimationState = null;
+    this.calderAnimationActive = false;
+    this.calderAnimationTimer = null;
+    this.calderAnimationMood = null;
+    this.calderPovTimer = null;
     this._stopPersistentHostFoundHum();
     this._setupAudio();
 
@@ -571,8 +602,8 @@ export default class TypingScene extends Phaser.Scene {
       ]
     };
 
-    this.events.once('shutdown', () => this.stopMrFingersAnimation());
-    this.events.once('destroy', () => this.stopMrFingersAnimation());
+    this.events.once('shutdown', () => { this.stopMrFingersAnimation(); this._stopCalderAnimation(); });
+    this.events.once('destroy',  () => { this.stopMrFingersAnimation(); this._stopCalderAnimation(); });
 
     this._buildUI();
     this._wireEvents();
@@ -1982,12 +2013,18 @@ export default class TypingScene extends Phaser.Scene {
       }
       this.mrFingersFallbackText.setVisible(false);
       if (shouldAnimateLegacyMrFingers) {
+        this._stopCalderAnimation();
         this.playMrFingersAnimation(animationKey);
+      } else if (this._shouldUseCalderLessonSprites()) {
+        this.stopMrFingersAnimation();
+        this._startCalderAnimation(this._getCalderMood(state, spriteKey, animationKey));
       } else {
         this.stopMrFingersAnimation();
+        this._stopCalderAnimation();
       }
     } else {
       this.stopMrFingersAnimation();
+      this._stopCalderAnimation();
       if (this.mrFingersSprite) {
         this.mrFingersSprite.setVisible(false);
       }
@@ -2135,6 +2172,78 @@ export default class TypingScene extends Phaser.Scene {
       this.mrFingersAnimationTimer.remove(false);
       this.mrFingersAnimationTimer = null;
     }
+  }
+
+  _getCalderMood(state, spriteKey, animationKey) {
+    if (state === 'witness' || spriteKey === 'mr_witness') return 'witness';
+    if (
+      state === 'angry' || state === 'glitch_warning' || state === 'emily_bleedthrough' ||
+      state === 'mistake_notice' || animationKey === 'incorrect' || animationKey === 'annoyed'
+    ) return 'hostile';
+    if (
+      state === 'corrective_smile' || state === 'encourage' || state === 'protector' ||
+      animationKey === 'correct'
+    ) return 'corrective';
+    return 'neutral';
+  }
+
+  _startCalderAnimation(mood) {
+    this._stopCalderAnimation();
+    if (!this._shouldUseCalderLessonSprites()) return;
+
+    const cycle = CALDER_CYCLES[mood] || CALDER_CYCLES.neutral;
+    const validCycle = cycle.filter(frame => this.textures.exists(frame.key));
+    if (!validCycle.length) return;
+
+    this.calderAnimationActive = true;
+    this.calderAnimationMood = mood;
+
+    const showFrame = (index) => {
+      if (!this.calderAnimationActive || this.calderAnimationMood !== mood) return;
+      const frame = validCycle[index];
+      this._setMrFingersSpriteFrame(frame.key);
+      const nextIndex = (index + 1) % validCycle.length;
+      this.calderAnimationTimer = this.time.delayedCall(frame.duration, () => showFrame(nextIndex));
+    };
+
+    showFrame(0);
+
+    if (mood === 'neutral' || mood === 'corrective') {
+      this._scheduleCalderPovInterject(mood);
+    }
+  }
+
+  _stopCalderAnimation() {
+    this.calderAnimationActive = false;
+    this.calderAnimationMood = null;
+    if (this.calderAnimationTimer) {
+      this.calderAnimationTimer.remove(false);
+      this.calderAnimationTimer = null;
+    }
+    if (this.calderPovTimer) {
+      this.calderPovTimer.remove(false);
+      this.calderPovTimer = null;
+    }
+  }
+
+  _scheduleCalderPovInterject(mood) {
+    if (this.calderPovTimer) {
+      this.calderPovTimer.remove(false);
+      this.calderPovTimer = null;
+    }
+    const delay = 10000 + Math.random() * 8000;
+    this.calderPovTimer = this.time.delayedCall(delay, () => {
+      this.calderPovTimer = null;
+      if (!this.calderAnimationActive || this.calderAnimationMood !== mood) return;
+      if (!this.textures.exists(MR_CALDER_SPRITES.pointPov)) return;
+      this._setMrFingersSpriteFrame(MR_CALDER_SPRITES.pointPov);
+      this.calderPovTimer = this.time.delayedCall(1200, () => {
+        this.calderPovTimer = null;
+        if (this.calderAnimationActive && (this.calderAnimationMood === 'neutral' || this.calderAnimationMood === 'corrective')) {
+          this._scheduleCalderPovInterject(this.calderAnimationMood);
+        }
+      });
+    });
   }
 
   startMrPointBlink() {
@@ -2739,7 +2848,7 @@ export default class TypingScene extends Phaser.Scene {
       this._startLesson();
       this.mrFingers.setState('idle');
     });
-    this.scene.launch('HostFoundScene', {
+    this.scene.launch('NoSignalScene', {
       returnScene: 'TypingScene',
       nextActId: 'act7_correction_exam'
     });

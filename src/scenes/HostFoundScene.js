@@ -38,22 +38,17 @@ const SCRIPT_LINES = [
 ];
 
 const COLORS = {
-  background: 0x071a8c,
-  backgroundDeep: 0x05115d,
-  border: 0x030a38,
-  vignette: 0x000000,
-  text: '#f0f0f0',
-  textDim: '#c8ccd8',
-  textHeader: '#d6dbe7',
-  prompt: '#e7ebf6'
+  bg:         0x000000,
+  headerBg:   0x110000,
+  separator:  0x550000,
+  text:       '#cc2200',
+  textBright: '#ff3322',
+  textDim:    '#661100',
+  textHeader: '#aa1a00',
+  prompt:     '#ff3322'
 };
 
 const HOST_FOUND_AUDIO = {
-  disconnection: {
-    key: 'host_found_disconnection',
-    path: 'assets/audio/disconnection_sound.wav',
-    volume: 0.55
-  },
   hum: {
     key: 'host_found_wrongified_hum',
     path: 'assets/audio/CRT Classroom Hum_wrongified.wav',
@@ -71,14 +66,11 @@ export default class HostFoundScene extends Phaser.Scene {
 
     this.load.on('loaderror', (file) => {
       if (!file) return;
-      if (file.key === HOST_FOUND_AUDIO.disconnection.key || file.key === HOST_FOUND_AUDIO.hum.key) {
+      if (file.key === HOST_FOUND_AUDIO.hum.key) {
         this.missingAudioKeys.add(file.key);
       }
     });
 
-    if (!this._audioExists(HOST_FOUND_AUDIO.disconnection.key)) {
-      this.load.audio(HOST_FOUND_AUDIO.disconnection.key, HOST_FOUND_AUDIO.disconnection.path);
-    }
     if (!this._audioExists(HOST_FOUND_AUDIO.hum.key)) {
       this.load.audio(HOST_FOUND_AUDIO.hum.key, HOST_FOUND_AUDIO.hum.path);
     }
@@ -102,75 +94,71 @@ export default class HostFoundScene extends Phaser.Scene {
     this.textBottom = 0;
     this.lineHeight = 24;
     this.maxVisibleLines = SCRIPT_LINES.length;
-    this.disconnectionSound = null;
   }
 
   create() {
-    this.cameras.main.setBackgroundColor(COLORS.background);
+    this.cameras.main.setBackgroundColor('#000000');
     this._buildUi();
     this._bindInput();
     this._startEffects();
-    this._startAudioSequence();
+    this._stopGlobalSoundByKey('mr_fingers_music');
+    this._startWrongifiedHum();
     this._showNextLine();
   }
 
   _buildUi() {
-    const width = this.scale.width;
-    const height = this.scale.height;
-    const textLeft = 56;
-    const textWidth = width - 112;
+    const W = this.scale.width;
+    const H = this.scale.height;
+    const PAD  = 48;
+    const HEADER_H = 32;
+    const FOOTER_H = 50;
 
-    this.add.rectangle(width / 2, height / 2, width, height, COLORS.background);
-    this.add.rectangle(width / 2, height / 2, width - 24, height - 24, COLORS.backgroundDeep)
-      .setStrokeStyle(2, COLORS.border, 0.9);
-    this.add.rectangle(width / 2, height / 2, width, height, COLORS.vignette).setAlpha(0.12);
+    // Black fill
+    this.add.rectangle(W / 2, H / 2, W, H, COLORS.bg);
 
-    this.add.text(38, 28, 'INTERLUDE: HOST FOUND', {
+    // Header bar
+    this.add.rectangle(W / 2, HEADER_H / 2, W, HEADER_H, COLORS.headerBg);
+    this.add.text(PAD, HEADER_H / 2, 'HOME ROW  [MEMORY RECOVERY]', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '22px',
+      fontSize: '13px',
       color: COLORS.textHeader
-    });
-
-    this.add.text(width - 40, 32, 'MEMORY CONTAINER / SAFE MODE', {
+    }).setOrigin(0, 0.5);
+    this.add.text(W - PAD, HEADER_H / 2, 'SAFE MODE  //  READ-ONLY', {
       fontFamily: 'Courier New, monospace',
-      fontSize: '14px',
+      fontSize: '13px',
       color: COLORS.textDim
-    }).setOrigin(1, 0);
+    }).setOrigin(1, 0.5);
 
-    this.textBottom = height - 96;
+    // Separator lines
+    this.add.rectangle(W / 2, HEADER_H,     W, 1, COLORS.separator);
+    this.add.rectangle(W / 2, H - FOOTER_H, W, 1, COLORS.separator);
+
+    // Layout metrics — override init() defaults
+    this.textTop    = HEADER_H + 16;
+    this.textBottom = H - FOOTER_H - 8;
+    this.lineHeight = 26;
     this.maxVisibleLines = Math.max(1, Math.floor((this.textBottom - this.textTop) / this.lineHeight));
 
-    this.textPanel = this.add.rectangle(
-      width / 2,
-      this.textTop + ((this.textBottom - this.textTop) / 2),
-      width - 72,
-      this.textBottom - this.textTop + 24,
-      0x080202
-    ).setStrokeStyle(1, 0x3c1010, 0.75);
-
-    this.bodyText = this.add.text(textLeft, this.textTop, '', {
-      fontFamily: 'Courier New, monospace',
-      fontSize: '22px',
-      color: COLORS.text,
-      lineSpacing: 2,
-      wordWrap: { width: textWidth }
-    });
-
-    this.promptText = this.add.text(textLeft, height - 48, '', {
+    this.bodyText = this.add.text(PAD, this.textTop, '', {
       fontFamily: 'Courier New, monospace',
       fontSize: '18px',
+      color: COLORS.text,
+      lineSpacing: 8,
+      wordWrap: { width: W - PAD * 2 }
+    });
+
+    this.promptText = this.add.text(PAD, H - FOOTER_H + 14, '', {
+      fontFamily: 'Courier New, monospace',
+      fontSize: '14px',
       color: COLORS.prompt
     });
 
-    for (let y = 0; y < height; y += 4) {
-      const line = this.add.rectangle(width / 2, y, width, 1, 0xffffff)
-        .setAlpha(y % 8 === 0 ? 0.045 : 0.022)
-        .setBlendMode(Phaser.BlendModes.MULTIPLY);
-      this.scanlines.push(line);
+    // Subtle CRT scanlines
+    for (let y = 0; y < H; y += 4) {
+      this.add.rectangle(W / 2, y, W, 1, 0xff0000).setAlpha(0.025);
     }
 
-    this.flickerOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0xffffff)
-      .setAlpha(0.02);
+    this.flickerOverlay = this.add.rectangle(W / 2, H / 2, W, H, 0xff0000).setAlpha(0.01);
   }
 
   _bindInput() {
@@ -201,12 +189,11 @@ export default class HostFoundScene extends Phaser.Scene {
     });
 
     this.flickerTimer = this.time.addEvent({
-      delay: 140,
+      delay: 160,
       loop: true,
       callback: () => {
-        const pulse = Phaser.Math.FloatBetween(0.01, 0.035);
-        this.flickerOverlay.setAlpha(pulse);
-        this.cameras.main.setAlpha(Phaser.Math.FloatBetween(0.985, 1));
+        this.flickerOverlay.setAlpha(Phaser.Math.FloatBetween(0.005, 0.02));
+        this.cameras.main.setAlpha(Phaser.Math.FloatBetween(0.988, 1));
       }
     });
   }
@@ -300,41 +287,6 @@ export default class HostFoundScene extends Phaser.Scene {
     });
   }
 
-  _startAudioSequence() {
-    this._stopGlobalSoundByKey('mr_fingers_music');
-
-    if (this._audioExists(HOST_FOUND_AUDIO.disconnection.key)) {
-      try {
-        this.disconnectionSound = this.sound.add(HOST_FOUND_AUDIO.disconnection.key, {
-          volume: HOST_FOUND_AUDIO.disconnection.volume
-        });
-        this.disconnectionSound.once('complete', () => {
-          this._destroyTransientDisconnection();
-          this._startWrongifiedHum();
-        });
-        this.disconnectionSound.play();
-        return;
-      } catch (error) {
-        console.warn('[HostFoundScene] Could not play disconnection sound:', error);
-        this._destroyTransientDisconnection();
-      }
-    } else {
-      console.warn('[HostFoundScene] Missing disconnection sound; continuing without it.');
-    }
-
-    this.time.delayedCall(120, () => this._startWrongifiedHum());
-  }
-
-  _destroyTransientDisconnection() {
-    if (!this.disconnectionSound) return;
-    try {
-      this.disconnectionSound.destroy();
-    } catch (error) {
-      // Ignore already-destroyed audio handles.
-    }
-    this.disconnectionSound = null;
-  }
-
   _startWrongifiedHum() {
     if (!this._audioExists(HOST_FOUND_AUDIO.hum.key)) {
       console.warn('[HostFoundScene] Missing wrongified classroom hum; continuing silently.');
@@ -411,7 +363,6 @@ export default class HostFoundScene extends Phaser.Scene {
       this.promptBlinkTimer.remove(false);
       this.promptBlinkTimer = null;
     }
-    this._destroyTransientDisconnection();
     this.cameras.main.setAlpha(1);
   }
 }

@@ -76,5 +76,12 @@ export default class BootScene extends Phaser.Scene {
 
     this.input.keyboard.once('keydown', startGame);
     this.input.once('pointerdown', startGame);
+
+    if (typeof window !== 'undefined' && window.location) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('dev') === '1') {
+        this.time.delayedCall(50, startGame);
+      }
+    }
   }
 }
