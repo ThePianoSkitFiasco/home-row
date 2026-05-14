@@ -63,6 +63,7 @@ const MR_STATE_COLORS = {
 
 const GLITCH_COLORS = ['#ff0044', '#ff3300', '#cc00ff', '#ffffff', '#ffff00'];
 const MR_FINGERS_SPRITE_PATH = 'assets/sprites/mr_fingers/';
+const MR_CALDER_SPRITE_PATH = 'assets/sprites/mr_calder/';
 const AUDIO_ASSETS = {
   typing_click: 'assets/audio/Computer  Keyboard Clicking Sound.wav',
   section_clear: 'assets/audio/Level Clear.wav',
@@ -81,6 +82,12 @@ const MR_FINGERS_ANIMATION_KEYS = [
   'mr_annoyed_000',
   'mr_annoyed_001'
 ];
+const MR_CALDER_SPRITES = {
+  idle: 'mr_calder_idle1-prepped-180x180',
+  cry: 'mr_calder_idle_cry-prepped-180x180',
+  pointText: 'mr_calder_point_text-prepped-180x180',
+  pointPov: 'mr_calder_point_pov-prepped-180x180'
+};
 const SHOW_DEV_TOUCH_CONTROLS = false;
 const TUTOR_PALETTE = {
   background: 0xf4e6bd,
@@ -454,9 +461,11 @@ export default class TypingScene extends Phaser.Scene {
 
   preload() {
     this.missingMrFingersSprites = new Set();
+    this.missingMrCalderSprites = new Set();
     const mrFingersForPreload = new MrFingersController();
     const spriteKeys = new Set(mrFingersForPreload.getStates().map(state => state.spriteKey));
     MR_FINGERS_ANIMATION_KEYS.forEach(key => spriteKeys.add(key));
+    const calderSpriteKeys = Object.values(MR_CALDER_SPRITES);
 
     this.missingAudioKeys = new Set();
     const audioKeys = new Set(Object.keys(AUDIO_ASSETS));
@@ -465,6 +474,9 @@ export default class TypingScene extends Phaser.Scene {
       if (file && spriteKeys.has(file.key)) {
         this.missingMrFingersSprites.add(file.key);
       }
+      if (file && calderSpriteKeys.includes(file.key)) {
+        this.missingMrCalderSprites.add(file.key);
+      }
       if (file && audioKeys.has(file.key)) {
         this.missingAudioKeys.add(file.key);
       }
@@ -472,6 +484,9 @@ export default class TypingScene extends Phaser.Scene {
 
     for (const spriteKey of spriteKeys) {
       this.load.image(spriteKey, `${MR_FINGERS_SPRITE_PATH}${spriteKey}.png`);
+    }
+    for (const spriteKey of calderSpriteKeys) {
+      this.load.image(spriteKey, `${MR_CALDER_SPRITE_PATH}${spriteKey}.png`);
     }
 
     for (const [key, path] of Object.entries(AUDIO_ASSETS)) {
@@ -492,6 +507,8 @@ export default class TypingScene extends Phaser.Scene {
   create() {
     this.cameras.main.setBackgroundColor(COLORS.bg);
     this.memory = new MemoryState();
+    this.registry.set('postHostFound', false);
+    this.registry.set('hostFoundHumActive', false);
     this.mrFingers = new MrFingersController();
     this.typingEngine = new TypingEngine();
     this.intentEngine = new IntentEngine(this.memory, this.mrFingers);
@@ -532,6 +549,7 @@ export default class TypingScene extends Phaser.Scene {
     this.mrFingersAnimationTimer = null;
     this.mrFingersAnimationActive = false;
     this.mrFingersAnimationState = null;
+    this._stopPersistentHostFoundHum();
     this._setupAudio();
 
     this.mrFingersAnimations = {
@@ -863,8 +881,6 @@ export default class TypingScene extends Phaser.Scene {
     });
     this.mrPortraitCenterX = mascotX + mascotW / 2;
     this.mrPortraitCenterY = topY + 146;
-    this.mrFingersPortraitFrame = this.add.rectangle(this.mrPortraitCenterX, this.mrPortraitCenterY, 120, 116, 0xf6dfb4)
-      .setStrokeStyle(2, 0x7f765f);
     this.mrFingersSprite = null;
     this.mrFingersFallbackText = this.add.text(this.mrPortraitCenterX, this.mrPortraitCenterY - 18, 'MR', {
       fontFamily: 'Courier New, monospace',
@@ -1189,6 +1205,7 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _startBackgroundMusicOnce() {
+    if (this._isPostHostFound()) return;
     if (this.bgMusicStarted || !this._audioExists('mr_fingers_music')) return;
     try {
       this.bgMusic = this.sound.add('mr_fingers_music', {
@@ -1227,7 +1244,49 @@ export default class TypingScene extends Phaser.Scene {
       }
       this.bgMusic = null;
     }
+    this._stopPersistentHostFoundHum();
     this.bgMusicStarted = false;
+  }
+
+  _getActiveSoundsByKey(key) {
+    if (!this.sound || typeof this.sound.getAll !== 'function') return [];
+    return this.sound.getAll().filter((sound) => sound && sound.key === key);
+  }
+
+  _stopPersistentHostFoundHum() {
+    this._getActiveSoundsByKey('host_found_wrongified_hum').forEach((sound) => {
+      try {
+        sound.stop();
+        sound.destroy();
+      } catch (error) {
+        // Ignore cleanup failures during scene transitions.
+      }
+    });
+    this.registry.set('hostFoundHumActive', false);
+  }
+
+  _stopBackgroundMusic() {
+    if (!this.bgMusic) return;
+    try {
+      this.bgMusic.stop();
+      this.bgMusic.destroy();
+    } catch (error) {
+      // Ignore cleanup failures during scene transitions.
+    }
+    this.bgMusic = null;
+    this.bgMusicStarted = false;
+  }
+
+  _setPostHostFoundState(value) {
+    const enabled = !!value;
+    if (this.memory) {
+      this.memory.setFlag('postHostFound', enabled);
+    }
+    this.registry.set('postHostFound', enabled);
+  }
+
+  _isPostHostFound() {
+    return !!(this.memory && this.memory.getFlag('postHostFound'));
   }
 
   // --- LESSON MANAGEMENT ---
@@ -1581,8 +1640,6 @@ export default class TypingScene extends Phaser.Scene {
 
     this.mrFingersText.setColor(theme.mrColor || COLORS.mrFingers);
     this.mrFingersFallbackText.setColor(theme.mrColor || COLORS.mrFingers);
-    this.mrFingersPortraitFrame.setFillStyle(theme.light ? 0xf6dfb4 : panelBg);
-    this.mrFingersPortraitFrame.setStrokeStyle(2, panelBorder);
 
     if (isLegacyTerminal) {
       this._applyTerminalTextSkin(theme);
@@ -1763,17 +1820,6 @@ export default class TypingScene extends Phaser.Scene {
       this.time.delayedCall(40 + Math.random() * 100, () => bar.setAlpha(0));
     }
 
-    // Mr. Fingers portrait frame occasional red pulse
-    if (this.mrFingersPortraitFrame && Math.random() > 0.92) {
-      this.mrFingersPortraitFrame.setStrokeStyle(2, isDegraded ? 0x7f2118 : 0xb83224, 0.9);
-      this.time.delayedCall(80 + Math.random() * 160, () => {
-        if (this.currentTheme && (this.currentTheme.terminal || this.currentTheme.degraded)) {
-          const border = hexToNumber(this.currentTheme.panelBorder || '#2f7a25');
-          this.mrFingersPortraitFrame.setStrokeStyle(1, border, 0.7);
-        }
-      });
-    }
-
     // Subtle full-screen phosphor flicker
     if (Math.random() > 0.91) {
       this.terminalFlickerOverlay
@@ -1911,21 +1957,20 @@ export default class TypingScene extends Phaser.Scene {
     this.statusText.setText(label);
     this.mrFingersText.setColor(color);
     this.mrFingersFallbackText.setColor(color);
-    this.mrFingersPortraitFrame.setStrokeStyle(1, Phaser.Display.Color.HexStringToColor(color).color);
 
     const spriteKey = config && config.spriteKey;
     const animationKey = this._getMrFingersAnimationKey(state, spriteKey, config);
     const fallbackSpriteKey = this._getMrFingersStillKey(animationKey, spriteKey);
-    const hasSprite = fallbackSpriteKey &&
-      !this.missingMrFingersSprites.has(fallbackSpriteKey) &&
-      this.textures.exists(fallbackSpriteKey);
+    const resolvedSpriteKey = this._getLessonCornerSpriteKey(state, spriteKey, animationKey, fallbackSpriteKey, config);
+    const hasSprite = this._hasLessonCornerSprite(resolvedSpriteKey);
+    const shouldAnimateLegacyMrFingers = !this._shouldUseCalderLessonSprites() && !!animationKey;
 
     if (hasSprite) {
       if (!this.mrFingersSprite) {
-        this.mrFingersSprite = this.add.image(this.mrPortraitCenterX, this.mrPortraitCenterY, fallbackSpriteKey)
+        this.mrFingersSprite = this.add.image(this.mrPortraitCenterX, this.mrPortraitCenterY, resolvedSpriteKey)
           .setOrigin(0.5, 0.5);
       }
-      this._setMrFingersSpriteFrame(fallbackSpriteKey);
+      this._setMrFingersSpriteFrame(resolvedSpriteKey);
       if (this.mrFingersSprite) {
         if (theme.degraded) {
           this.mrFingersSprite.setTint(hexToNumber(state === 'angry' || state === 'glitch_warning' ? '#9f3124' : '#6a4742'));
@@ -1936,7 +1981,7 @@ export default class TypingScene extends Phaser.Scene {
         }
       }
       this.mrFingersFallbackText.setVisible(false);
-      if (animationKey) {
+      if (shouldAnimateLegacyMrFingers) {
         this.playMrFingersAnimation(animationKey);
       } else {
         this.stopMrFingersAnimation();
@@ -1974,6 +2019,67 @@ export default class TypingScene extends Phaser.Scene {
       annoyed: 'mr_glitch_warning'
     };
     return stills[animationKey] || spriteKey;
+  }
+
+  _shouldUseCalderLessonSprites() {
+    return !!(this._isPostHostFound() || this.registry.get('postHostFound') === true);
+  }
+
+  _getCalderLessonSpriteKey(state, spriteKey, animationKey, config) {
+    if (!this._shouldUseCalderLessonSprites()) return null;
+
+    if (state === 'witness' || spriteKey === 'mr_witness' || (config && config.calm)) {
+      return MR_CALDER_SPRITES.pointPov;
+    }
+
+    if (
+      state === 'glitch_warning' ||
+      state === 'angry' ||
+      state === 'emily_bleedthrough' ||
+      state === 'mistake_notice' ||
+      animationKey === 'incorrect' ||
+      animationKey === 'annoyed' ||
+      spriteKey === 'mr_mistake_notice' ||
+      spriteKey === 'mr_angry' ||
+      spriteKey === 'mr_glitch_warning' ||
+      spriteKey === 'mr_emily_bleedthrough'
+    ) {
+      return MR_CALDER_SPRITES.cry;
+    }
+
+    if (
+      state === 'corrective_smile' ||
+      state === 'encourage' ||
+      state === 'protector' ||
+      animationKey === 'correct' ||
+      spriteKey === 'mr_encourage' ||
+      spriteKey === 'mr_corrective_smile' ||
+      spriteKey === 'mr_protector'
+    ) {
+      return MR_CALDER_SPRITES.pointText;
+    }
+
+    return MR_CALDER_SPRITES.idle;
+  }
+
+  _getLessonCornerSpriteKey(state, spriteKey, animationKey, fallbackSpriteKey, config) {
+    const calderSpriteKey = this._getCalderLessonSpriteKey(state, spriteKey, animationKey, config);
+    if (calderSpriteKey && this._hasLessonCornerSprite(calderSpriteKey)) {
+      return calderSpriteKey;
+    }
+    return fallbackSpriteKey;
+  }
+
+  _hasLessonCornerSprite(spriteKey) {
+    if (!spriteKey) return false;
+    if (Object.values(MR_CALDER_SPRITES).includes(spriteKey)) {
+      if (this.missingMrCalderSprites.has(spriteKey)) {
+        console.warn(`[TypingScene] Missing Calder lesson sprite (${spriteKey}); falling back to Mr Fingers.`);
+        return false;
+      }
+      return this.textures.exists(spriteKey);
+    }
+    return !this.missingMrFingersSprites.has(spriteKey) && this.textures.exists(spriteKey);
   }
 
   _canPlayMrFingersAnimation(stateKey) {
@@ -2051,7 +2157,7 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _playMrFingersReaction(state, config) {
-    const targets = [this.mrFingersSprite, this.mrFingersFallbackText, this.mrFingersPortraitFrame]
+    const targets = [this.mrFingersSprite, this.mrFingersFallbackText]
       .filter(target => target && target.visible !== false);
 
     this.tweens.killTweensOf(targets);
@@ -2624,7 +2730,9 @@ export default class TypingScene extends Phaser.Scene {
 
   _launchHostFoundInterlude() {
     this.hostFoundInterludeSeen = true;
+    this._stopBackgroundMusic();
     this.events.once('host-found-complete', () => {
+      this._setPostHostFoundState(true);
       this.lessonManager.advanceAct();
       this.actComplete = false;
       this.lastMiniGameResult = null;
@@ -2689,7 +2797,8 @@ export default class TypingScene extends Phaser.Scene {
       teacherTime: config,
       returnScene: 'TypingScene',
       performance: this._getActPerformanceSnapshot(),
-      miniGameResult: this.lastMiniGameResult || null
+      miniGameResult: this.lastMiniGameResult || null,
+      postHostFound: this._isPostHostFound()
     });
     this.scene.sleep();
   }

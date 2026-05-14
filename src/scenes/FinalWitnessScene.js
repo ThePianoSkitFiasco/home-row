@@ -38,8 +38,6 @@ export default class FinalWitnessScene extends Phaser.Scene {
 
   init(data) {
     this.config = data.witnessStatement || {};
-    this.memorySnapshot = this._normalizeSnapshot(data.memorySnapshot);
-    this.runEnding = data.runEnding || this._evaluateRunEnding(this.memorySnapshot);
     this.debugEnabled = !!data.debugEnabled;
     this.devMode = !!data.devMode;
     this.records = Array.isArray(this.config.records) ? this.config.records : [];
@@ -52,6 +50,39 @@ export default class FinalWitnessScene extends Phaser.Scene {
     this.selections = [];
     this.counts = { preserve: 0, correct: 0, delete: 0, refuse: 0 };
     this.combinedEnding = null;
+    const rawSnapshot = this._normalizeSnapshot(data.memorySnapshot);
+    this.memorySnapshot = this._applyDebugSnapshot(rawSnapshot);
+    this.runEnding = this._evaluateRunEnding(this.memorySnapshot);
+  }
+
+  _applyDebugSnapshot(rawSnapshot) {
+    if (typeof window === 'undefined' || !window.location) return rawSnapshot;
+    const params = new URLSearchParams(window.location.search);
+    const route = params.get('route');
+    if (!route) return rawSnapshot;
+    const debug = this._buildDebugSnapshot(route);
+    if (!debug) return rawSnapshot;
+    return this._normalizeSnapshot(debug);
+  }
+
+  _buildDebugSnapshot(route) {
+    const base = { stats: { obedience: 5, disclosure: 25, suppression: 0, refusal: 0, witnessAcceptance: 10 }, flags: { typingPatternMatched: true, heardHerSayNo: true, emilyStatementPreserved: true, keptTypingStatementAccepted: true, doNotTurnAroundRevealed: true } };
+    switch (route) {
+      case 'witness':
+        return { stats: { obedience: 5, disclosure: 25, suppression: 5, refusal: 2, witnessAcceptance: 10 }, flags: { typingPatternMatched: true, heardHerSayNo: true, emilyStatementPreserved: true, keptTypingStatementAccepted: true, doNotTurnAroundRevealed: true } };
+      case 'audio_memory':
+        return { stats: { obedience: 5, disclosure: 20, suppression: 5, refusal: 2, witnessAcceptance: 6 }, flags: { typingPatternMatched: false, heardHerSayNo: true, emilyStatementPreserved: false, keptTypingStatementAccepted: false, doNotTurnAroundRevealed: false } };
+      case 'completed_exercise':
+        return { stats: { obedience: 13, disclosure: 8, suppression: 8, refusal: 0, witnessAcceptance: 4 }, flags: { typingPatternMatched: false, heardHerSayNo: false, emilyStatementPreserved: false, keptTypingStatementAccepted: true, doNotTurnAroundRevealed: false } };
+      case 'sightline_error':
+        return { stats: { obedience: 3, disclosure: 18, suppression: 4, refusal: 7, witnessAcceptance: 3 }, flags: { typingPatternMatched: false, heardHerSayNo: false, emilyStatementPreserved: false, keptTypingStatementAccepted: false, doNotTurnAroundRevealed: true } };
+      case 'gold_star':
+        return { stats: { obedience: 8, disclosure: 10, suppression: 16, refusal: 1, witnessAcceptance: 3 }, flags: { typingPatternMatched: false, heardHerSayNo: false, emilyStatementPreserved: false, keptTypingStatementAccepted: false, doNotTurnAroundRevealed: false } };
+      case 'incomplete':
+        return { stats: { obedience: 5, disclosure: 12, suppression: 8, refusal: 3, witnessAcceptance: 4 }, flags: { typingPatternMatched: false, heardHerSayNo: false, emilyStatementPreserved: false, keptTypingStatementAccepted: false, doNotTurnAroundRevealed: false } };
+      default:
+        return null;
+    }
   }
 
   create() {

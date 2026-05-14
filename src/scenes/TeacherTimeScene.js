@@ -40,6 +40,14 @@ const MR_SPEAKING_FRAMES = [
     path: 'assets/sprites/mr_fingers/mrfingers_speaks3.png'
   }
 ];
+const CALDER_SPEAKING_ANIM_KEY = 'teacher_calder_speaks_loop';
+const CALDER_VOICE_AUDIO = {
+  key: 'teacher_calder_voice',
+  path: 'assets/audio/mr_calder_voice.wav',
+  volume: 0.26
+};
+const CALDER_FRAME_KEYS = Array.from({ length: 36 }, (_, index) => `teacher_calder_body_${index + 1}`);
+const CALDER_FRAME_PATH = (index) => `assets/sprites/mr_calder/calder_body${index}.png`;
 
 export default class TeacherTimeScene extends Phaser.Scene {
   constructor() {
@@ -61,19 +69,40 @@ export default class TeacherTimeScene extends Phaser.Scene {
     this.speakingFrameSequence = [1, 2, 1, 3];
     this.speakingFrameIndex = 0;
     this.speakingTimer = null;
+    this.lastCalderVoiceAt = -Infinity;
+    this.postHostFound = data.postHostFound === true || this.registry.get('postHostFound') === true;
+    this.missingAssetKeys = new Set();
+    this.useCalderHybrid = false;
+    this.calderFramesReady = false;
   }
 
   preload() {
+    this.load.on('loaderror', (file) => {
+      if (file && file.key) {
+        this.missingAssetKeys.add(file.key);
+      }
+    });
+
     MR_SPEAKING_FRAMES.forEach((frame) => {
       if (!this.textures.exists(frame.key)) {
         this.load.image(frame.key, frame.path);
       }
     });
+    CALDER_FRAME_KEYS.forEach((key, index) => {
+      if (!this.textures.exists(key)) {
+        this.load.image(key, CALDER_FRAME_PATH(index + 1));
+      }
+    });
+    if (!this._audioExists(CALDER_VOICE_AUDIO.key)) {
+      this.load.audio(CALDER_VOICE_AUDIO.key, CALDER_VOICE_AUDIO.path);
+    }
   }
 
   create() {
     this.theme = this._getTheme();
+    this.useCalderHybrid = this._shouldUseCalderHybrid();
     this.cameras.main.setBackgroundColor(this.theme.bg);
+    this._ensureCalderAnimation();
     this._buildUi();
     this.input.keyboard.on('keydown', (event) => this._handleKey(event));
     this.input.on('pointerdown', () => this._advance());
@@ -103,7 +132,10 @@ export default class TeacherTimeScene extends Phaser.Scene {
       align: 'center'
     }).setOrigin(0.5, 0);
 
-    this.mrSprite = this.add.image(512, 330, 'teacher_mr_speak_1')
+    const initialTexture = this.useCalderHybrid && this.calderFramesReady
+      ? CALDER_FRAME_KEYS[0]
+      : 'teacher_mr_speak_1';
+    this.mrSprite = this.add.sprite(512, 330, initialTexture)
       .setOrigin(0.5)
       .setScale(0.42);
 
@@ -159,6 +191,36 @@ export default class TeacherTimeScene extends Phaser.Scene {
     return Array.isArray(this.teacherTime.lines) ? this.teacherTime.lines : [];
   }
 
+  _audioExists(key) {
+    if (!key || !this.sound || !this.cache || !this.cache.audio) return false;
+    if (this.missingAssetKeys && this.missingAssetKeys.has(key)) return false;
+    if (this.cache.audio.exists) return this.cache.audio.exists(key);
+    if (this.cache.audio.has) return this.cache.audio.has(key);
+    return false;
+  }
+
+  _shouldUseCalderHybrid() {
+    if (!this.postHostFound) return false;
+    const missingFrame = CALDER_FRAME_KEYS.find((key) => !this.textures.exists(key));
+    if (missingFrame) {
+      console.warn(`[TeacherTimeScene] Missing Calder hybrid frame (${missingFrame}); falling back to normal Mr Fingers.`);
+      this.calderFramesReady = false;
+      return false;
+    }
+    this.calderFramesReady = true;
+    return true;
+  }
+
+  _ensureCalderAnimation() {
+    if (!this.useCalderHybrid || this.anims.exists(CALDER_SPEAKING_ANIM_KEY)) return;
+    this.anims.create({
+      key: CALDER_SPEAKING_ANIM_KEY,
+      frames: CALDER_FRAME_KEYS.map((key) => ({ key })),
+      frameRate: 20,
+      repeat: -1
+    });
+  }
+
   _handleKey(event) {
     if (this.done) return;
 
@@ -200,6 +262,7 @@ export default class TeacherTimeScene extends Phaser.Scene {
     this.lineText.setText(`"${line}"`);
     this.footerText.setText('PRESS SPACE TO CONTINUE');
     this._startSpeakingAnimation();
+    this._playCalderVoiceSting();
   }
 
   _showChoices() {
@@ -268,6 +331,13 @@ export default class TeacherTimeScene extends Phaser.Scene {
   }
 
   _startSpeakingAnimation() {
+    if (this.useCalderHybrid) {
+      if (this.mrSprite && this.mrSprite.anims) {
+        this.mrSprite.play(CALDER_SPEAKING_ANIM_KEY, true);
+      }
+      return;
+    }
+
     if (this.speakingTimer) return;
 
     this.speakingFrameIndex = 0;
@@ -283,6 +353,14 @@ export default class TeacherTimeScene extends Phaser.Scene {
   }
 
   _stopSpeakingAnimation() {
+    if (this.useCalderHybrid) {
+      if (this.mrSprite && this.mrSprite.anims) {
+        this.mrSprite.stop();
+        this.mrSprite.setTexture(CALDER_FRAME_KEYS[0]);
+      }
+      return;
+    }
+
     if (this.speakingTimer) {
       this.speakingTimer.remove(false);
       this.speakingTimer = null;
@@ -295,6 +373,20 @@ export default class TeacherTimeScene extends Phaser.Scene {
     const key = `teacher_mr_speak_${frameNumber}`;
     if (this.textures.exists(key)) {
       this.mrSprite.setTexture(key);
+    }
+  }
+
+  _playCalderVoiceSting() {
+    if (!this.useCalderHybrid || !this._audioExists(CALDER_VOICE_AUDIO.key)) return;
+
+    const now = this.time ? this.time.now : Date.now();
+    if (now - this.lastCalderVoiceAt < 400) return;
+    this.lastCalderVoiceAt = now;
+
+    try {
+      this.sound.play(CALDER_VOICE_AUDIO.key, { volume: CALDER_VOICE_AUDIO.volume });
+    } catch (error) {
+      console.warn('[TeacherTimeScene] Could not play Calder voice sting:', error);
     }
   }
 }

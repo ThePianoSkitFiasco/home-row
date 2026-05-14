@@ -90,7 +90,7 @@ export function getFinalStatement(memoryState) {
     };
   }
 
-  if (suppression >= disclosure || witnessAcceptance < 5) {
+  if (suppression >= 15 || witnessAcceptance < 3) {
     return {
       routeId: 'gold_star',
       statement: 'I DID NOT SEE ANYTHING',

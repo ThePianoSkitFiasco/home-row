@@ -48,9 +48,40 @@ const COLORS = {
   prompt: '#e7ebf6'
 };
 
+const HOST_FOUND_AUDIO = {
+  disconnection: {
+    key: 'host_found_disconnection',
+    path: 'assets/audio/disconnection_sound.wav',
+    volume: 0.55
+  },
+  hum: {
+    key: 'host_found_wrongified_hum',
+    path: 'assets/audio/CRT Classroom Hum_wrongified.wav',
+    volume: 0.22
+  }
+};
+
 export default class HostFoundScene extends Phaser.Scene {
   constructor() {
     super({ key: 'HostFoundScene' });
+  }
+
+  preload() {
+    this.missingAudioKeys = new Set();
+
+    this.load.on('loaderror', (file) => {
+      if (!file) return;
+      if (file.key === HOST_FOUND_AUDIO.disconnection.key || file.key === HOST_FOUND_AUDIO.hum.key) {
+        this.missingAudioKeys.add(file.key);
+      }
+    });
+
+    if (!this._audioExists(HOST_FOUND_AUDIO.disconnection.key)) {
+      this.load.audio(HOST_FOUND_AUDIO.disconnection.key, HOST_FOUND_AUDIO.disconnection.path);
+    }
+    if (!this._audioExists(HOST_FOUND_AUDIO.hum.key)) {
+      this.load.audio(HOST_FOUND_AUDIO.hum.key, HOST_FOUND_AUDIO.hum.path);
+    }
   }
 
   init(data) {
@@ -71,6 +102,7 @@ export default class HostFoundScene extends Phaser.Scene {
     this.textBottom = 0;
     this.lineHeight = 24;
     this.maxVisibleLines = SCRIPT_LINES.length;
+    this.disconnectionSound = null;
   }
 
   create() {
@@ -78,6 +110,7 @@ export default class HostFoundScene extends Phaser.Scene {
     this._buildUi();
     this._bindInput();
     this._startEffects();
+    this._startAudioSequence();
     this._showNextLine();
   }
 
@@ -243,6 +276,90 @@ export default class HostFoundScene extends Phaser.Scene {
     this.promptText.setText(`PRESS ENTER / SPACE / CLICK TO CONTINUE${cursor}`);
   }
 
+  _audioExists(key) {
+    if (!key || !this.sound || !this.cache || !this.cache.audio) return false;
+    if (this.missingAudioKeys && this.missingAudioKeys.has(key)) return false;
+    if (this.cache.audio.exists) return this.cache.audio.exists(key);
+    if (this.cache.audio.has) return this.cache.audio.has(key);
+    return false;
+  }
+
+  _getActiveSoundsByKey(key) {
+    if (!this.sound || typeof this.sound.getAll !== 'function') return [];
+    return this.sound.getAll().filter((sound) => sound && sound.key === key);
+  }
+
+  _stopGlobalSoundByKey(key) {
+    this._getActiveSoundsByKey(key).forEach((sound) => {
+      try {
+        sound.stop();
+        sound.destroy();
+      } catch (error) {
+        // Ignore shutdown-time audio cleanup issues.
+      }
+    });
+  }
+
+  _startAudioSequence() {
+    this._stopGlobalSoundByKey('mr_fingers_music');
+
+    if (this._audioExists(HOST_FOUND_AUDIO.disconnection.key)) {
+      try {
+        this.disconnectionSound = this.sound.add(HOST_FOUND_AUDIO.disconnection.key, {
+          volume: HOST_FOUND_AUDIO.disconnection.volume
+        });
+        this.disconnectionSound.once('complete', () => {
+          this._destroyTransientDisconnection();
+          this._startWrongifiedHum();
+        });
+        this.disconnectionSound.play();
+        return;
+      } catch (error) {
+        console.warn('[HostFoundScene] Could not play disconnection sound:', error);
+        this._destroyTransientDisconnection();
+      }
+    } else {
+      console.warn('[HostFoundScene] Missing disconnection sound; continuing without it.');
+    }
+
+    this.time.delayedCall(120, () => this._startWrongifiedHum());
+  }
+
+  _destroyTransientDisconnection() {
+    if (!this.disconnectionSound) return;
+    try {
+      this.disconnectionSound.destroy();
+    } catch (error) {
+      // Ignore already-destroyed audio handles.
+    }
+    this.disconnectionSound = null;
+  }
+
+  _startWrongifiedHum() {
+    if (!this._audioExists(HOST_FOUND_AUDIO.hum.key)) {
+      console.warn('[HostFoundScene] Missing wrongified classroom hum; continuing silently.');
+      return;
+    }
+
+    const existingHum = this._getActiveSoundsByKey(HOST_FOUND_AUDIO.hum.key)
+      .find((sound) => sound && sound.isPlaying);
+    if (existingHum) {
+      this.registry.set('hostFoundHumActive', true);
+      return;
+    }
+
+    try {
+      const hum = this.sound.add(HOST_FOUND_AUDIO.hum.key, {
+        loop: true,
+        volume: HOST_FOUND_AUDIO.hum.volume
+      });
+      hum.play();
+      this.registry.set('hostFoundHumActive', true);
+    } catch (error) {
+      console.warn('[HostFoundScene] Could not start wrongified classroom hum:', error);
+    }
+  }
+
   _playTerminalTick() {
     if (!this.sound || !this.cache || !this.cache.audio) return;
     const exists = this.cache.audio.exists
@@ -294,6 +411,7 @@ export default class HostFoundScene extends Phaser.Scene {
       this.promptBlinkTimer.remove(false);
       this.promptBlinkTimer = null;
     }
+    this._destroyTransientDisconnection();
     this.cameras.main.setAlpha(1);
   }
 }

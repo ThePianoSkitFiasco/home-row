@@ -30,6 +30,7 @@ export default class MemoryState {
       protectorIdentityRevealed: false,
       repressionAdmitted: false,
       memoryCorrectionAdmitted: false,
+      postHostFound: false,
       playerPraisedForObedience: false,
       choicePressureStarted: false,
       correctionExamStarted: false,
