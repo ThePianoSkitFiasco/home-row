@@ -145,6 +145,11 @@
       "playerLabel": "Lesson 49: Statement Status",
       "drillType": "routine",
       "assignedText": "second child: unnamed",
+      "nameField": true,
+      "nameFieldLabel": "SECOND CHILD: ____",
+      "nameFieldHoldMs": 8000,
+      "nameFieldInvalidResponse": "INVALID INPUT.",
+      "nameFieldEndResponse": "The field remains blank. That is acceptable.",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true

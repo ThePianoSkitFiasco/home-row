@@ -297,38 +297,50 @@ export default class FinalWitnessScene extends Phaser.Scene {
   _showSummary() {
     this.mode = 'summary';
     this.inputLocked = true;
-    this.subheaderText.setText('FINAL STATEMENT RECORDED');
-    this.recordText.setFontSize('17px');
     this.combinedEnding = this._resolveCombinedEnding();
 
-    const statementLines = this.selections.map((entry) => {
-      const line = entry.action === 'delete' ? '[LINE REMOVED]' : entry.line;
-      return `${entry.label}: ${line}`;
-    });
+    const isWitness = this.combinedEnding.routeId === 'witness_statement';
+    const silenceMs = isWitness ? 4500 : 1800;
 
-    this.recordText.setText([
-      `=== ${this.combinedEnding.title} ===`,
-      '',
-      this.combinedEnding.statement,
-      this.combinedEnding.response,
-      '',
-      this.combinedEnding.body,
-      '',
-      `LOCAL RECORD: ${this._getLocalOutcome().label}`,
-      '',
-      'FINAL STATEMENT',
-      '',
-      ...statementLines,
-      '',
-      `PRESERVED: ${this.counts.preserve}`,
-      `CORRECTED: ${this.counts.correct}`,
-      `DELETED: ${this.counts.delete}`,
-      `REFUSED: ${this.counts.refuse}`,
-      '',
-      'You may close this program.'
-    ].join('\n'));
+    this.subheaderText.setText('');
+    this.recordText.setText('');
     this.inputText.setAlpha(0);
-    this.statusText.setText('FINAL STATEMENT RECORDED');
+    this.statusText.setText('');
+
+    this.time.delayedCall(silenceMs, () => {
+      if (!this.recordText || !this.recordText.active) return;
+
+      this.subheaderText.setText('FINAL STATEMENT RECORDED');
+      this.recordText.setFontSize('17px');
+
+      const statementLines = this.selections.map((entry) => {
+        const line = entry.action === 'delete' ? '[LINE REMOVED]' : entry.line;
+        return `${entry.label}: ${line}`;
+      });
+
+      this.recordText.setText([
+        `=== ${this.combinedEnding.title} ===`,
+        '',
+        this.combinedEnding.statement,
+        this.combinedEnding.response,
+        '',
+        this.combinedEnding.body,
+        '',
+        `LOCAL RECORD: ${this._getLocalOutcome().label}`,
+        '',
+        'FINAL STATEMENT',
+        '',
+        ...statementLines,
+        '',
+        `PRESERVED: ${this.counts.preserve}`,
+        `CORRECTED: ${this.counts.correct}`,
+        `DELETED: ${this.counts.delete}`,
+        `REFUSED: ${this.counts.refuse}`,
+        '',
+        'You may close this program.'
+      ].join('\n'));
+      this.statusText.setText('FINAL STATEMENT RECORDED');
+    });
   }
 
   _renderTyped() {

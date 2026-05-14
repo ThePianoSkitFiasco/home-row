@@ -18,9 +18,9 @@
     "variant": "early",
     "speaker": "MR FINGERS",
     "lines": [
-      "Listening was not required.",
-      "You heard things that were not part of the lesson.",
-      "That is how children get hurt."
+      "That was not a lesson.",
+      "I do not know where that came from.",
+      "Let us return to the lesson."
     ],
     "choices": [
       {
@@ -51,7 +51,8 @@
         "label": "CONTINUE LESSON",
         "reply": [
           "Now type.",
-          "Do not listen past the screen."
+          "Do not listen past the screen.",
+          "The lesson is on the screen."
         ],
         "tags": [
           "obedience"
@@ -80,6 +81,8 @@
       "playerLabel": "Lesson 35: Stop Point",
       "drillType": "review",
       "assignedText": "your fingers stopped",
+      "stutterFlash": "your hands remember",
+      "stutterFlashMs": 320,
       "revealDelayMs": 1500,
       "holdMs": 2500,
       "lingerResponse": true

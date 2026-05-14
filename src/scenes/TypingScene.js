@@ -1375,7 +1375,25 @@ export default class TypingScene extends Phaser.Scene {
     this._updateStats();
     this._updateDebug();
 
-    if (lesson.revealDelayMs) {
+    if (lesson.nameField) {
+      this._doNameFieldMechanic(lesson, assignedText);
+    } else if (lesson.stutterFlash) {
+      this.inputLocked = true;
+      this.assignedText.setText(lesson.stutterFlash);
+      this.time.delayedCall(lesson.stutterFlashMs || 280, () => {
+        if (lesson.revealDelayMs) {
+          this.assignedText.setText('...');
+          this.time.delayedCall(lesson.revealDelayMs, () => {
+            this.assignedText.setText(assignedText);
+            this._flickerOnReveal();
+            this.inputLocked = false;
+          });
+        } else {
+          this.assignedText.setText(assignedText);
+          this.inputLocked = false;
+        }
+      });
+    } else if (lesson.revealDelayMs) {
       this.inputLocked = true;
       this.assignedText.setText('...');
       this.time.delayedCall(lesson.revealDelayMs, () => {
@@ -2620,6 +2638,69 @@ export default class TypingScene extends Phaser.Scene {
     this.assignedText.setColor(glitchColor);
     this.time.delayedCall(120, () => {
       this.assignedText.setColor(theme.assignedColor || theme.accent);
+    });
+  }
+
+  _doNameFieldMechanic(lesson, assignedText) {
+    this.inputLocked = true;
+    const label = lesson.nameFieldLabel || '____';
+    const holdMs = lesson.nameFieldHoldMs || 8000;
+    const invalidMsg = lesson.nameFieldInvalidResponse || 'INVALID INPUT.';
+    const endMsg = lesson.nameFieldEndResponse || 'The field remains blank.';
+
+    this.assignedText.setText(label);
+
+    let invalidCooldown = false;
+    const onInvalidKey = (event) => {
+      if (this.actComplete) return;
+      const k = event.key;
+      if (k === '`' || k === 'F9') return;
+      if (invalidCooldown) return;
+      invalidCooldown = true;
+      if (this.responseTimer) {
+        this.responseTimer.remove(false);
+        this.responseTimer = null;
+      }
+      this.tweens.killTweensOf(this.responseText);
+      this.responseText.setText(invalidMsg);
+      this.responsePanel.setAlpha(1);
+      this.responseText.setAlpha(1);
+      this.time.delayedCall(1600, () => { invalidCooldown = false; });
+    };
+    this.input.keyboard.on('keydown', onInvalidKey);
+
+    this.time.delayedCall(holdMs, () => {
+      this.input.keyboard.off('keydown', onInvalidKey);
+      if (this.responseTimer) {
+        this.responseTimer.remove(false);
+        this.responseTimer = null;
+      }
+      this.tweens.killTweensOf(this.responseText);
+      this.responseText.setText(endMsg);
+      this.responsePanel.setAlpha(1);
+      this.responseText.setAlpha(1);
+
+      this.time.delayedCall(2500, () => {
+        this.tweens.add({
+          targets: this.responseText,
+          alpha: 0,
+          duration: 600,
+          onComplete: () => {
+            this._updateResponsePanelVisibility();
+          }
+        });
+        if (lesson.revealDelayMs) {
+          this.assignedText.setText('...');
+          this.time.delayedCall(lesson.revealDelayMs, () => {
+            this.assignedText.setText(assignedText);
+            this._flickerOnReveal();
+            this.inputLocked = false;
+          });
+        } else {
+          this.assignedText.setText(assignedText);
+          this.inputLocked = false;
+        }
+      });
     });
   }
 

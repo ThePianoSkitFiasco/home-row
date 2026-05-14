@@ -15,7 +15,8 @@
     "lines": [
       "Good data entry practice today.",
       "Names are just letters.",
-      "Keep the record clean."
+      "Keep the record clean.",
+      "Eyes on your own screen."
     ],
     "choices": [
       {
@@ -32,7 +33,8 @@
         "label": "THAT NAME WAS REAL",
         "reply": [
           "All names are real.",
-          "That is not relevant to data entry."
+          "That is not relevant to data entry.",
+          "Move on."
         ],
         "tags": ["doubt"]
       },

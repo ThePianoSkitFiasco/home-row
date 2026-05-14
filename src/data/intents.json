@@ -217,7 +217,7 @@
     "patterns": [
       "workstation two active"
     ],
-    "response": "SECOND USER DETECTED.",
+    "response": "SECOND USER DETECTED. SESSION: RETAINED.",
     "effects": {
       "disclosure": 2
     },
@@ -235,7 +235,7 @@
     "patterns": [
       "teacher override accepted"
     ],
-    "response": "Override accepted.",
+    "response": "TEACHER OVERRIDE: LOGGED.",
     "effects": {
       "disclosure": 2
     },
