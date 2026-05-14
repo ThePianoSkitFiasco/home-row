@@ -88,7 +88,7 @@
     "effects": {
       "disclosure": 1
     },
-    "response": "That is good.",
+    "response": "That is good. Your hands remember before you do.",
     "mrTrigger": "glitch_warning",
     "once": true
   },
@@ -180,6 +180,20 @@
     "once": true
   },
   {
+    "id": "pause_act2_she_not_absent",
+    "lesson": "act2_she_not_absent",
+    "eventType": "pause",
+    "minPauseMs": 4000,
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": {
+      "disclosure": 1
+    },
+    "response": "I remember the room wrong.",
+    "mrTrigger": "",
+    "once": true
+  },
+  {
     "id": "act2_then_where",
     "lesson": "act2_she_not_absent",
     "eventType": "lesson_complete",
@@ -258,7 +272,7 @@
     "patterns": [
       "session record retained"
     ],
-    "response": "YOUR TYPING PATTERN IS ON FILE.",
+    "response": "YOUR TYPING PATTERN IS ON FILE. My fingers knew before I did.",
     "effects": {
       "disclosure": 4,
       "witnessAcceptance": 1
@@ -345,7 +359,7 @@
       "do not turn around"
     ],
     "minPauseMs": 3000,
-    "response": "You wanted to.",
+    "response": "You wanted to. Your body knew before you did.",
     "effects": {
       "refusal": 2,
       "disclosure": 2
@@ -354,6 +368,19 @@
       "doNotTurnAroundRevealed": true
     },
     "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
+    "id": "complete_act4_do_not_turn_around",
+    "lesson": "act4_do_not_turn_around",
+    "eventType": "lesson_complete",
+    "matchMode": "exact",
+    "patterns": [],
+    "effects": {
+      "obedience": 1
+    },
+    "response": "Something in you keeps asking to be marked correct.",
+    "mrTrigger": "corrective_smile",
     "once": true
   },
   {
@@ -447,7 +474,7 @@
     "patterns": [
       "he said your name"
     ],
-    "response": "That is when you started again.",
+    "response": "That is when you started again. The sentence arrived before the memory.",
     "effects": {
       "disclosure": 2,
       "witnessAcceptance": 1
@@ -1009,6 +1036,21 @@
     "once": true
   },
   {
+    "id": "pause_act5_do_not_correct",
+    "lesson": "act5_do_not_correct_me",
+    "eventType": "pause",
+    "minPauseMs": 4000,
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": {
+      "refusal": 1,
+      "disclosure": 1
+    },
+    "response": "I am typing around something.",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
     "id": "pause_act5_emily_name",
     "lesson": "act5_emily_name",
     "eventType": "pause",
@@ -1024,6 +1066,21 @@
     "once": true
   },
   {
+    "id": "pause_act6_memory_errors",
+    "lesson": "act6_memory_errors",
+    "eventType": "pause",
+    "minPauseMs": 4000,
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": {
+      "disclosure": 2,
+      "witnessAcceptance": 1
+    },
+    "response": "Emily remembered. I rehearsed forgetting.",
+    "mrTrigger": "emily_bleedthrough",
+    "once": true
+  },
+  {
     "id": "pause_act6_watching",
     "lesson": "act6_help_forget",
     "eventType": "pause",
@@ -1032,6 +1089,20 @@
     "patterns": [],
     "response": "She left you unnamed. I kept it that way.",
     "mrTrigger": "protector",
+    "once": true
+  },
+  {
+    "id": "pause_act7_kept_typing",
+    "lesson": "act7_kept_typing",
+    "eventType": "pause",
+    "minPauseMs": 3000,
+    "matchMode": "contains",
+    "patterns": [],
+    "effects": {
+      "witnessAcceptance": 1
+    },
+    "response": "This is not a confession. Not yet.",
+    "mrTrigger": "witness",
     "once": true
   },
   {

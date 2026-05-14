@@ -27,7 +27,8 @@
         "label": "I HEARD HER",
         "reply": [
           "You heard.",
-          "Then you started again."
+          "Then you started again.",
+          "The sound returned before the rest of the room."
         ],
         "tags": ["doubt"]
       },
