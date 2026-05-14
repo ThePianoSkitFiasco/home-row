@@ -2,8 +2,8 @@
 
 > ## ⛔ STOP — DO NOT START NEW FEATURES
 >
-> **Last session completed:** SessionLogScene interlude — DOS terminal readout between Acts 3 and 4. The computer logged INPUT: REDUCED at 14:32:44 and flagged no incident.
-> **Repo is clean and pushed (`449f152`).**
+> **Last session completed:** Immediate error feedback — shake, flash, text glitch, streak interjections, backspace-to-empty response, lesson reset at 15 errors.
+> **Repo is clean and pushed (`d358687`).**
 >
 > **Next step is PLAYTEST ONLY — Phase 4 (see below).**
 > Do not write new code until all ending routes have been manually tested and reported.

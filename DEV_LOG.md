@@ -2,6 +2,53 @@
 
 ---
 
+## 2026-05-14 — Immediate error feedback mechanics
+
+> **STATUS: STOP. No new features until playtest.**
+> Next work should be Phase 4 route playtest only. See `HOME_ROW_REMAINING_TODO.md`.
+
+### What was built this session
+
+Six new mechanics that respond to player error in real time — not as ending flags, but as immediate atmospheric feedback felt in the moment of playing.
+
+**Camera shake + red flash on every mistake**
+Every incorrect keypress triggers a small camera shake (`55ms, 0.0018 intensity`) and a 60ms dark red screen flash. Tactile and immediate — the game flinches when you do.
+
+**Assigned text character glitch (act 4+)**
+In act 4 and later, each mistake randomly swaps two characters in the displayed lesson text for 80ms, then restores it. The text briefly looks wrong. Not readable as anything — just wrong for a moment.
+
+**Mr Fingers streak interjections**
+Three cold inline responses triggered by consecutive errors (no backspace between them):
+- Streak 3: `"Again."` / `"You know this."` / `"That is not the lesson."`
+- Streak 5: `"That is not a word."` / `"That is not anything."` / `"Your hands know better than this."`
+- Streak 8: `"I am watching your progress."` / `"You will complete the lesson."`
+
+Each threshold fires once per streak. Streak resets to 0 on any correct key or backspace.
+
+**Backspace-to-empty response**
+If the player backspaces their entire progress back to an empty field, Mr Fingers responds once per lesson:
+`"You cannot erase what you already typed."` / `"The record does not go back."` / `"Backspace does not reach that far."`
+
+**Lesson reset at 15 errors**
+If the player accumulates 15 mistakes in a single lesson (nonsense typing, repeated failures, deliberate non-compliance), the lesson hard-resets:
+- Response panel: `"Let us begin again."`
+- 2.2s pause, then `typingEngine.loadLine()` restarts the lesson from scratch.
+- Only fires once per lesson. Error counters reset but `_lessonResetDone` stays true.
+
+### Files changed
+
+| File | What changed |
+|------|-------------|
+| `src/scenes/TypingScene.js` | State vars `_errorStreak`, `_lessonErrorCount`, `_lessonResetDone`, `_deletionEmptyFired`; onEvent branches for mistake/typed/deleted; new methods `_onMistake()`, `_maybeGlitchAssignedText()`, `_onDeletedToEmpty()`, `_doLessonReset()` |
+
+### Checks run
+
+- `node --check` passed on `TypingScene.js`.
+- `grep -R "DEV TEST INPUT"` returned no matches.
+- Committed `d358687` and pushed to `origin/main`.
+
+---
+
 ## 2026-05-14 — SessionLogScene interlude
 
 > **STATUS: STOP. No new features until playtest.**
