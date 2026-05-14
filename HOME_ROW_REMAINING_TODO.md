@@ -2,11 +2,11 @@
 
 > ## ⛔ STOP — DO NOT START NEW FEATURES
 >
-> **Last session completed:** No Signal interlude, Host Found terminal redesign, Calder animation, self-talk pass, boot dev-skip.
-> **Repo is clean and pushed.**
+> **Last session completed:** systemErase, textMorphFlash, systemAutoType — active horror mechanics that make the horror felt through the hands.
+> **Repo is clean and pushed (`317b5ac`).**
 >
 > **Next step is PLAYTEST ONLY — Phase 4 (see below).**
-> Do not write new code until all three ending routes have been manually tested and reported.
+> Do not write new code until all ending routes have been manually tested and reported.
 > See `DEV_LOG.md` for full session summary.
 
 ---
