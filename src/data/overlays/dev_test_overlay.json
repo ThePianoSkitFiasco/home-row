@@ -1,0 +1,80 @@
+{
+  "_comment": "Export from The Marking Room — dev test overlay (1280×720 canvas)",
+  "name": "dev_test_overlay",
+  "version": "1.0",
+  "canvas": { "width": 1280, "height": 720 },
+  "elements": [
+    {
+      "id": "background_panel",
+      "type": "rect",
+      "x": 40,
+      "y": 40,
+      "width": 1200,
+      "height": 640,
+      "depth": 0,
+      "style": {
+        "fill": "#0a0a1a",
+        "border": "#334455",
+        "borderWidth": 2,
+        "alpha": 0.92
+      }
+    },
+    {
+      "id": "prompt_area",
+      "type": "text_zone",
+      "x": 80,
+      "y": 80,
+      "width": 1120,
+      "height": 200,
+      "depth": 10,
+      "style": {
+        "fill": "#081008",
+        "fontFamily": "monospace",
+        "fontSize": 22,
+        "color": "#9dff63"
+      }
+    },
+    {
+      "id": "input_area",
+      "type": "text_zone",
+      "x": 80,
+      "y": 310,
+      "width": 1120,
+      "height": 120,
+      "depth": 10,
+      "style": {
+        "fill": "#050805",
+        "fontFamily": "monospace",
+        "fontSize": 22,
+        "color": "#00ff88"
+      }
+    },
+    {
+      "id": "stats_bar",
+      "type": "text_zone",
+      "x": 80,
+      "y": 460,
+      "width": 1120,
+      "height": 60,
+      "depth": 10,
+      "style": {
+        "fontFamily": "monospace",
+        "fontSize": 14,
+        "color": "#668877"
+      }
+    },
+    {
+      "id": "label_overlay",
+      "type": "text",
+      "x": 88,
+      "y": 52,
+      "depth": 20,
+      "text": "[ DEV TEST OVERLAY ]",
+      "style": {
+        "fontFamily": "monospace",
+        "fontSize": 11,
+        "color": "#334455"
+      }
+    }
+  ]
+}
