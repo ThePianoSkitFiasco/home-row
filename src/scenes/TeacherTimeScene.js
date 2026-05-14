@@ -46,6 +46,10 @@ const CALDER_VOICE_AUDIO = {
   path: 'assets/audio/mr_calder_voice.wav',
   volume: 0.26
 };
+const MR_FINGERS_CHIRP_AUDIO = {
+  key: 'mr_fingers_chirp',
+  path: 'assets/audio/mrfingers_chirp.wav'
+};
 const CALDER_FRAME_KEYS = Array.from({ length: 36 }, (_, index) => `teacher_calder_body_${index + 1}`);
 const CALDER_FRAME_PATH = (index) => `assets/sprites/mr_calder/calder_body${index}.png`;
 
@@ -72,6 +76,8 @@ export default class TeacherTimeScene extends Phaser.Scene {
     this.lastCalderVoiceAt = -Infinity;
     this.postHostFound = data.postHostFound === true || this.registry.get('postHostFound') === true;
     this.missingAssetKeys = new Set();
+    this._chirpActive = false;
+    this._chirpTimer = null;
     this.useCalderHybrid = false;
     this.calderFramesReady = false;
   }
@@ -95,6 +101,9 @@ export default class TeacherTimeScene extends Phaser.Scene {
     });
     if (!this._audioExists(CALDER_VOICE_AUDIO.key)) {
       this.load.audio(CALDER_VOICE_AUDIO.key, CALDER_VOICE_AUDIO.path);
+    }
+    if (!this._audioExists(MR_FINGERS_CHIRP_AUDIO.key)) {
+      this.load.audio(MR_FINGERS_CHIRP_AUDIO.key, MR_FINGERS_CHIRP_AUDIO.path);
     }
   }
 
@@ -309,6 +318,7 @@ export default class TeacherTimeScene extends Phaser.Scene {
     if (this.done) return;
     this.done = true;
     this._stopSpeakingAnimation();
+    this._stopMrFingersChirp();
 
     // TODO: add performance-aware lines based on accuracy/deletions/pauses.
     // TODO: integrate Mr Fingers portrait/state changes.
@@ -350,6 +360,8 @@ export default class TeacherTimeScene extends Phaser.Scene {
         this._setSpeakingFrame(this.speakingFrameSequence[this.speakingFrameIndex]);
       }
     });
+
+    this._startMrFingersChirp();
   }
 
   _stopSpeakingAnimation() {
@@ -366,6 +378,42 @@ export default class TeacherTimeScene extends Phaser.Scene {
       this.speakingTimer = null;
     }
     this._setSpeakingFrame(1);
+    this._stopMrFingersChirp();
+  }
+
+  _startMrFingersChirp() {
+    if (this._chirpActive) return;
+    this._chirpActive = true;
+    this._scheduleNextChirp();
+  }
+
+  _stopMrFingersChirp() {
+    this._chirpActive = false;
+    if (this._chirpTimer) {
+      this._chirpTimer.remove(false);
+      this._chirpTimer = null;
+    }
+  }
+
+  _scheduleNextChirp() {
+    if (!this._chirpActive) return;
+    const delay = Phaser.Math.Between(110, 280);
+    this._chirpTimer = this.time.delayedCall(delay, () => {
+      if (!this._chirpActive) return;
+      this._playMrFingersChirp();
+      this._scheduleNextChirp();
+    });
+  }
+
+  _playMrFingersChirp() {
+    if (!this._audioExists(MR_FINGERS_CHIRP_AUDIO.key)) return;
+    const detune = Phaser.Math.Between(-200, 180);
+    const volume = 0.13 + Math.random() * 0.09;
+    try {
+      this.sound.play(MR_FINGERS_CHIRP_AUDIO.key, { volume, detune });
+    } catch (error) {
+      // ignore locked/missing audio
+    }
   }
 
   _setSpeakingFrame(frameNumber) {
