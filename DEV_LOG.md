@@ -2,6 +2,61 @@
 
 ---
 
+## 2026-05-14 — Ending scene improvements
+
+> **STATUS: STOP. No new features until playtest.**
+> Next work should be Phase 4 route playtest only. See `HOME_ROW_REMAINING_TODO.md`.
+
+### What was built this session
+
+**FinalWitnessScene restyled to red/black terminal**
+- Replaced green phosphor CRT palette with the same black/red used in HostFoundScene and SessionLogScene.
+- Added header bar (`HOME ROW  [FINAL RECORD]`), separator lines, scanlines, and flicker overlay.
+- Layout and all game logic unchanged.
+
+**Choice labels rewritten in Mr Fingers' voice**
+- `[1] KEEP AS WRITTEN` / `[2] CORRECT THE RECORD` / `[3] REMOVE THIS LINE` / `[4] I WILL NOT TYPE THIS`
+- Stamps updated to match: `KEPT AS WRITTEN`, `RECORD CORRECTED`, `LINE REMOVED`, `REFUSED`
+
+**Mr Fingers' final line (route-specific)**
+After the silence beat, Mr Fingers gets one last word before the document appears:
+- Witness: *"I did not expect you to say it."*
+- Obedience: *"That is a complete record."*
+- Gold Star: *"Good. Eyes on screen."* (Calder's phrase, in his mouth)
+- Audio Memory: *"You heard it. That is enough."*
+- Incomplete: *"The record does not close. That is acceptable."*
+- Destroy: nothing. He is gone.
+
+**Summary replaced with statement document**
+Stats table (`PRESERVED: 2 / CORRECTED: 1 / ...`) replaced with a formatted filed record:
+separator line, date/room/supervisor header, then the actual lines the player typed, then the route title and body, then the route-specific closing line.
+
+**Route-specific closing lines**
+- Witness: *"This program is no longer required."*
+- Obedience: *"Thank you for completing the course."*
+- Destroy: *"This program has been terminated."*
+- Gold Star: *"Your record is complete. Well done."*
+- Audio Memory: *"The session has ended."*
+- Incomplete: *"The witness is still deciding."*
+
+**Side panel reflects outcome**
+`SECOND CHILD: NAMED/UNNAMED`, `EMILY VALE: RECORDED`, `RECORD: PURGED`, `GOLD STAR: AWARDED`, etc. — updates when the summary appears.
+
+### Files changed
+
+| File | What changed |
+|------|-------------|
+| `src/scenes/FinalWitnessScene.js` | Red/black palette, new `LABELS`/`STAMPS`, `_showRecord()` labels, `_showSummary()` resequenced, new `_showFinalDocument()`, `_getMrFingersFinalLine()`, `_getClosingLine()`, `_updateSidePanelForEnding()` |
+
+### Checks run
+
+- `node --check` passed on `FinalWitnessScene.js`, `TeacherTimeScene.js`.
+- `grep -R "DEV TEST INPUT"` returned no matches.
+- Committed `9abdb8e` (restyle) + `e4369ac` (improvements) and pushed to `origin/main`.
+- Main folder pulled and in sync.
+
+---
+
 ## 2026-05-14 — Mr Fingers chirp audio
 
 > **STATUS: STOP. No new features until playtest.**

@@ -2,8 +2,8 @@
 
 > ## ⛔ STOP — DO NOT START NEW FEATURES
 >
-> **Last session completed:** Mr Fingers chirp audio during Teacher Time — variable pitch and timing, stops cleanly on scene exit.
-> **Repo is clean and pushed (`c3abde0`).**
+> **Last session completed:** FinalWitnessScene — red/black terminal restyle, Mr Fingers final line per route, statement document replaces stats table, route-specific closing lines, side panel reflects outcome.
+> **Repo is clean and pushed (`e4369ac`).**
 >
 > **Next step is PLAYTEST ONLY — Phase 4 (see below).**
 > Do not write new code until all ending routes have been manually tested and reported.
