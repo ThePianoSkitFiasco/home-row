@@ -575,6 +575,10 @@ export default class TypingScene extends Phaser.Scene {
     this._morphTimer = null;
     this.hostFoundInterludeSeen = false;
     this.sessionLogInterludeSeen = false;
+    this._errorStreak = 0;
+    this._lessonErrorCount = 0;
+    this._lessonResetDone = false;
+    this._deletionEmptyFired = false;
     this.lastMiniGameResult = null;
     this.actStartStats = null;
     this.mrFingersAnimationTimer = null;
@@ -1171,6 +1175,19 @@ export default class TypingScene extends Phaser.Scene {
 
       const firedIntents = this.intentEngine.processEvent(eventType, data, lesson.id);
 
+      if (eventType === 'typed') {
+        this._errorStreak = 0;
+      } else if (eventType === 'mistake') {
+        this._errorStreak++;
+        this._lessonErrorCount++;
+        this._onMistake();
+      } else if (eventType === 'deleted') {
+        this._errorStreak = 0;
+        if (this.typingEngine.typedChars.length === 0 && !this._deletionEmptyFired) {
+          this._onDeletedToEmpty();
+        }
+      }
+
       let completionIntents = [];
       if (eventType === 'line_complete') {
         completionIntents = this.intentEngine.processEvent('lesson_complete', data, lesson.id);
@@ -1332,6 +1349,11 @@ export default class TypingScene extends Phaser.Scene {
     this._clearContinueHandler();
     this._cancelAutoType();
     if (this._morphTimer) { this._morphTimer.remove(false); this._morphTimer = null; }
+
+    this._errorStreak = 0;
+    this._lessonErrorCount = 0;
+    this._lessonResetDone = false;
+    this._deletionEmptyFired = false;
 
     this.intentEngine.resetLessonCaps();
 
@@ -2969,6 +2991,75 @@ export default class TypingScene extends Phaser.Scene {
         this.cameras.main.shake(150 + t * 15, intensity);
       }
     }
+  }
+
+  _onMistake() {
+    this.cameras.main.shake(55, 0.0018);
+    this.cameras.main.flash(60, 80, 0, 0, false);
+    this._maybeGlitchAssignedText();
+
+    if (this._errorStreak === 3) {
+      this.responseQueue.push(Phaser.Utils.Array.GetRandom([
+        'Again.', 'You know this.', 'That is not the lesson.'
+      ]));
+      this._showNextResponse();
+    } else if (this._errorStreak === 5) {
+      this.responseQueue.push(Phaser.Utils.Array.GetRandom([
+        'That is not a word.', 'That is not anything.', 'Your hands know better than this.'
+      ]));
+      this._showNextResponse();
+    } else if (this._errorStreak === 8) {
+      this.responseQueue.push(Phaser.Utils.Array.GetRandom([
+        'I am watching your progress.', 'You will complete the lesson.'
+      ]));
+      this._showNextResponse();
+    }
+
+    if (this._lessonErrorCount >= 15 && !this._lessonResetDone) {
+      this._lessonResetDone = true;
+      this._doLessonReset();
+    }
+  }
+
+  _maybeGlitchAssignedText() {
+    if (this.lessonManager.currentActIndex < 3) return;
+    if (this.inputLocked || this.actComplete) return;
+    const currentText = this.assignedText.text;
+    if (!currentText || currentText.length < 2) return;
+    const arr = currentText.split('');
+    const i = Math.floor(Math.random() * arr.length);
+    const j = (i + 1 + Math.floor(Math.random() * (arr.length - 1))) % arr.length;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    this.assignedText.setText(arr.join(''));
+    this.time.delayedCall(80, () => {
+      if (!this.actComplete) this.assignedText.setText(currentText);
+    });
+  }
+
+  _onDeletedToEmpty() {
+    this._deletionEmptyFired = true;
+    this.responseQueue.push(Phaser.Utils.Array.GetRandom([
+      'You cannot erase what you already typed.',
+      'The record does not go back.',
+      'Backspace does not reach that far.'
+    ]));
+    this._showNextResponse();
+  }
+
+  _doLessonReset() {
+    this.inputLocked = true;
+    this.responseQueue = [];
+    this.responseQueue.push('Let us begin again.');
+    this._showNextResponse();
+    this.time.delayedCall(2200, () => {
+      const lesson = this.lessonManager.getCurrentLesson();
+      if (!lesson || this.actComplete) return;
+      this.typingEngine.loadLine(lesson.assignedText);
+      this._errorStreak = 0;
+      this._lessonErrorCount = 0;
+      this._renderTypedText();
+      this.inputLocked = false;
+    });
   }
 
   _advanceToNextAct() {
