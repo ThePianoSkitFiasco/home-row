@@ -2,8 +2,8 @@
 
 > ## ⛔ STOP — DO NOT START NEW FEATURES
 >
-> **Last session completed:** Immediate error feedback — shake, flash, text glitch, streak interjections, backspace-to-empty response, lesson reset at 15 errors.
-> **Repo is clean and pushed (`d358687`).**
+> **Last session completed:** Mr Fingers chirp audio during Teacher Time — variable pitch and timing, stops cleanly on scene exit.
+> **Repo is clean and pushed (`c3abde0`).**
 >
 > **Next step is PLAYTEST ONLY — Phase 4 (see below).**
 > Do not write new code until all ending routes have been manually tested and reported.

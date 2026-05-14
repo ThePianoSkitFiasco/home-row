@@ -2,6 +2,33 @@
 
 ---
 
+## 2026-05-14 — Mr Fingers chirp audio
+
+> **STATUS: STOP. No new features until playtest.**
+> Next work should be Phase 4 route playtest only. See `HOME_ROW_REMAINING_TODO.md`.
+
+### What was built this session
+
+**Mr Fingers chirp sound during Teacher Time**
+- `mrfingers_chirp.wav` loaded in `TeacherTimeScene.preload()`.
+- Plays as a recursive `delayedCall` loop while Mr Fingers' speaking animation is active.
+- Each chirp fires at a random interval (110–280ms), with random pitch detune (−200 to +180 cents) and random volume (0.13–0.22). No two hits are the same.
+- Loop starts with `_startSpeakingAnimation()` and stops cleanly via `_stopMrFingersChirp()` when: choices appear, reply ends, or scene finishes.
+- Calder is unaffected — he already has his own voice sting and the chirp never starts for him.
+
+### Files changed
+
+| File | What changed |
+|------|-------------|
+| `src/scenes/TeacherTimeScene.js` | `MR_FINGERS_CHIRP_AUDIO` constant, preload, `_chirpActive`/`_chirpTimer` state, `_startMrFingersChirp()`, `_stopMrFingersChirp()`, `_scheduleNextChirp()`, `_playMrFingersChirp()` |
+
+### Checks run
+
+- `node --check` passed on `TeacherTimeScene.js`.
+- Committed `c3abde0` and pushed to `origin/main`.
+
+---
+
 ## 2026-05-14 — Immediate error feedback mechanics
 
 > **STATUS: STOP. No new features until playtest.**
