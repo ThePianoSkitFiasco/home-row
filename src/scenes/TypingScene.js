@@ -574,6 +574,7 @@ export default class TypingScene extends Phaser.Scene {
     this._autoTypeCancelled = false;
     this._morphTimer = null;
     this.hostFoundInterludeSeen = false;
+    this.sessionLogInterludeSeen = false;
     this.lastMiniGameResult = null;
     this.actStartStats = null;
     this.mrFingersAnimationTimer = null;
@@ -2971,6 +2972,11 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _advanceToNextAct() {
+    if (this._shouldLaunchSessionLogInterlude()) {
+      this._launchSessionLogInterlude();
+      return;
+    }
+
     if (this._shouldLaunchHostFoundInterlude()) {
       this._launchHostFoundInterlude();
       return;
@@ -2981,6 +2987,27 @@ export default class TypingScene extends Phaser.Scene {
     this.lastMiniGameResult = null;
     this._startLesson();
     this.mrFingers.setState('idle');
+  }
+
+  _shouldLaunchSessionLogInterlude() {
+    const act = this.lessonManager.getCurrentAct();
+    if (!act || this.sessionLogInterludeSeen) return false;
+    if (act.actId !== 'act3_system_log') return false;
+    const nextAct = this.lessonManager.acts[this.lessonManager.currentActIndex + 1];
+    return !!(nextAct && nextAct.actId === 'act4_dictation_mode');
+  }
+
+  _launchSessionLogInterlude() {
+    this.sessionLogInterludeSeen = true;
+    this.events.once('session-log-complete', () => {
+      this.lessonManager.advanceAct();
+      this.actComplete = false;
+      this.lastMiniGameResult = null;
+      this._startLesson();
+      this.mrFingers.setState('idle');
+    });
+    this.scene.launch('SessionLogScene', { returnScene: 'TypingScene' });
+    this.scene.sleep();
   }
 
   _shouldLaunchHostFoundInterlude() {
