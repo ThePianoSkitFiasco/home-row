@@ -570,6 +570,9 @@ export default class TypingScene extends Phaser.Scene {
     this.pendingContinueHandler = null;
     this.continueEnabled = false;
     this.transitionedToFinalWitness = false;
+    this._autoTypeTimer = null;
+    this._autoTypeCancelled = false;
+    this._morphTimer = null;
     this.hostFoundInterludeSeen = false;
     this.lastMiniGameResult = null;
     this.actStartStats = null;
@@ -1326,6 +1329,8 @@ export default class TypingScene extends Phaser.Scene {
     const lesson = this.lessonManager.getCurrentLesson();
     if (!lesson) return;
     this._clearContinueHandler();
+    this._cancelAutoType();
+    if (this._morphTimer) { this._morphTimer.remove(false); this._morphTimer = null; }
 
     this.intentEngine.resetLessonCaps();
 
@@ -1404,6 +1409,28 @@ export default class TypingScene extends Phaser.Scene {
     } else {
       this.assignedText.setText(assignedText);
     }
+
+    if (lesson.textMorphFlash) {
+      const morphDelay = lesson.textMorphDelayMs || 700;
+      const morphDuration = lesson.textMorphDurationMs || 200;
+      this._morphTimer = this.time.delayedCall(morphDelay, () => {
+        if (this.inputLocked || this.actComplete) return;
+        this.assignedText.setText(lesson.textMorphFlash);
+        this._morphTimer = this.time.delayedCall(morphDuration, () => {
+          if (!this.actComplete) this.assignedText.setText(assignedText);
+          this._morphTimer = null;
+        });
+      });
+    }
+
+    if (lesson.systemAutoType) {
+      const pauseMs = lesson.systemTypePauseMs || 8000;
+      this._autoTypeCancelled = false;
+      this._autoTypeTimer = this.time.delayedCall(pauseMs, () => {
+        if (this._autoTypeCancelled || this.inputLocked || this.actComplete || this.typingEngine.isComplete) return;
+        this._doSystemAutoType(assignedText);
+      });
+    }
   }
 
   _onLineComplete() {
@@ -1412,6 +1439,21 @@ export default class TypingScene extends Phaser.Scene {
 
     this.inputLocked = true;
     this._playSectionClearSound();
+
+    if (lesson && lesson.systemErase) {
+      const eraseDelay = lesson.systemEraseDelayMs || 600;
+      const charCount = this.typingEngine.typedChars.length;
+      const budget = Math.max(holdMs * 0.7 - eraseDelay, 200);
+      const eraseMs = charCount > 0 ? Math.floor(budget / charCount) : 80;
+      for (let i = 0; i < charCount; i++) {
+        this.time.delayedCall(eraseDelay + i * eraseMs, () => {
+          if (this.typingEngine.typedChars.length > 0) {
+            this.typingEngine.typedChars.pop();
+            this._renderTypedText();
+          }
+        });
+      }
+    }
 
     if (lesson && lesson.lingerResponse) {
       if (this.responseTimer) {
@@ -2414,6 +2456,10 @@ export default class TypingScene extends Phaser.Scene {
       return;
     }
 
+    if (event.key.length === 1 || event.key === 'Backspace') {
+      this._cancelAutoType();
+    }
+
     if (this.actComplete || this.inputLocked) return;
     const shouldPlayTypingClick = event.key === 'Backspace' || event.key.length === 1;
     this.typingEngine.handleKey(event);
@@ -2702,6 +2748,34 @@ export default class TypingScene extends Phaser.Scene {
         }
       });
     });
+  }
+
+  _cancelAutoType() {
+    this._autoTypeCancelled = true;
+    if (this._autoTypeTimer) {
+      this._autoTypeTimer.remove(false);
+      this._autoTypeTimer = null;
+    }
+  }
+
+  _doSystemAutoType(assignedText) {
+    const startIndex = this.typingEngine.typedChars.length;
+    const remaining = assignedText.slice(startIndex);
+    if (!remaining) return;
+
+    let i = 0;
+    const typeNext = () => {
+      if (this._autoTypeCancelled || this.actComplete || this.typingEngine.isComplete) return;
+      const char = remaining[i];
+      if (!char) return;
+      this.typingEngine.handleKey({ key: char });
+      this._renderTypedText();
+      i++;
+      if (!this.typingEngine.isComplete) {
+        this._autoTypeTimer = this.time.delayedCall(85, typeNext);
+      }
+    };
+    typeNext();
   }
 
   // --- ATMOSPHERE ESCALATION ---

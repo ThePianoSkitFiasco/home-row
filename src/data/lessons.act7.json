@@ -130,7 +130,9 @@
       "displayTitle": "Exam 2:",
       "playerLabel": "Lesson 52: Error Correction",
       "drillType": "correction",
-      "assignedText": "you will complete the lesson"
+      "assignedText": "you will complete the lesson",
+      "systemAutoType": true,
+      "systemTypePauseMs": 8000
     },
     {
       "id": "act7_records_completed",
@@ -150,7 +152,10 @@
       "assignedText": "good children do not invent stories",
       "revealDelayMs": 2000,
       "holdMs": 4000,
-      "lingerResponse": true
+      "lingerResponse": true,
+      "textMorphFlash": "good children do not forget",
+      "textMorphDelayMs": 600,
+      "textMorphDurationMs": 180
     },
     {
       "id": "act7_classroom_supervised",

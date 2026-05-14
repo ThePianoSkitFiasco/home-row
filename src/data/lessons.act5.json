@@ -95,7 +95,10 @@
       "assignedText": "he said your name",
       "revealDelayMs": 1200,
       "holdMs": 2500,
-      "lingerResponse": true
+      "lingerResponse": true,
+      "textMorphFlash": "he said your name out loud",
+      "textMorphDelayMs": 700,
+      "textMorphDurationMs": 200
     },
     {
       "id": "act5_kept_behind",

@@ -115,8 +115,10 @@
       "drillType": "dictation",
       "assignedText": "you heard her say no",
       "revealDelayMs": 1800,
-      "holdMs": 3000,
-      "lingerResponse": true
+      "holdMs": 3500,
+      "lingerResponse": true,
+      "systemErase": true,
+      "systemEraseDelayMs": 700
     }
   ]
 }

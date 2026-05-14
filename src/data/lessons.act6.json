@@ -106,8 +106,10 @@
       "drillType": "correction",
       "assignedText": "i did not give them your name",
       "revealDelayMs": 1200,
-      "holdMs": 2500,
-      "lingerResponse": true
+      "holdMs": 3000,
+      "lingerResponse": true,
+      "systemErase": true,
+      "systemEraseDelayMs": 800
     },
     {
       "id": "act6_help_forget",
