@@ -112,7 +112,7 @@
       "displayTitle": "Memory 6:",
       "playerLabel": "Lesson 38: Statement Entry",
       "drillType": "accuracy",
-      "assignedText": "there was another child",
+      "assignedText": "i was not alone",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
@@ -120,9 +120,9 @@
     {
       "id": "act5_locked_door",
       "displayTitle": "Memory 7:",
-      "playerLabel": "Lesson 39: Statement Fragment",
+      "playerLabel": "Lesson 39: Memory Fragment",
       "drillType": "review",
-      "assignedText": "i did not give them your name",
+      "assignedText": "she was not safe",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true
@@ -130,9 +130,9 @@
     {
       "id": "act5_record_what_happened",
       "displayTitle": "Memory 8:",
-      "playerLabel": "Lesson 40: Final Recall",
-      "drillType": "data_entry",
-      "assignedText": "they were my friend",
+      "playerLabel": "Lesson 40: Memory Fragment",
+      "drillType": "review",
+      "assignedText": "i kept going",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true

@@ -3,49 +3,49 @@
   "title": "FINAL STATEMENT",
   "playerSection": "Final Typing Test",
   "witnessStatement": {
-    "title": "FINAL CORRECTION EXERCISE",
-    "subtitle": "Choose what the record will say.",
+    "title": "FINAL ACCOUNT",
+    "subtitle": "Choose what you are prepared to say.",
     "records": [
       {
-        "id": "seeing",
-        "label": "STATEMENT 01: SEEING",
-        "official": "I DID NOT SEE ANYTHING",
+        "id": "hearing",
+        "label": "STATEMENT 01: HEARING",
+        "official": "I DID NOT HEAR ANYTHING",
         "choices": {
-          "preserve": "I DID NOT SEE ANYTHING",
+          "preserve": "I DID NOT HEAR ANYTHING",
           "correct": "I HEARD HER SAY NO",
           "delete": "",
           "refuse": "I WAS THERE"
         }
       },
       {
-        "id": "emily",
-        "label": "STATEMENT 02: EMILY VALE",
-        "official": "EMILY VALE WAS ABSENT",
+        "id": "action",
+        "label": "STATEMENT 02: ACTION",
+        "official": "I COULD NOT HAVE DONE ANYTHING",
         "choices": {
-          "preserve": "EMILY VALE WAS ABSENT",
-          "correct": "EMILY VALE WAS THERE",
+          "preserve": "I COULD NOT HAVE DONE ANYTHING",
+          "correct": "I COULD HAVE SAID SOMETHING",
           "delete": "",
-          "refuse": "I DID NOT GIVE THEM YOUR NAME"
+          "refuse": "I STARTED TYPING AGAIN"
         }
       },
       {
-        "id": "second_child",
-        "label": "STATEMENT 03: SECOND CHILD",
-        "official": "SECOND CHILD: UNNAMED",
+        "id": "knowledge",
+        "label": "STATEMENT 03: KNOWLEDGE",
+        "official": "I WAS JUST A CHILD",
         "choices": {
-          "preserve": "SECOND CHILD: UNNAMED",
-          "correct": "SECOND CHILD: NAMED",
+          "preserve": "I WAS JUST A CHILD",
+          "correct": "I KNEW WHAT WAS HAPPENING",
           "delete": "",
-          "refuse": "SECOND CHILD: UNREADY"
+          "refuse": "I WAS AFRAID"
         }
       },
       {
         "id": "lesson",
-        "label": "STATEMENT 04: LESSON",
-        "official": "THE CHILD COMPLETED THE LESSON",
+        "label": "STATEMENT 04: THE LESSON",
+        "official": "I KEPT TYPING",
         "choices": {
-          "preserve": "THE CHILD COMPLETED THE LESSON",
-          "correct": "THE CHILD KEPT TYPING",
+          "preserve": "I KEPT TYPING",
+          "correct": "I AM STILL TYPING",
           "delete": "",
           "refuse": "I AM TYPING NOW"
         }

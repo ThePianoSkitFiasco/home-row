@@ -131,25 +131,78 @@
       "playerLabel": "Lesson 52: Error Correction",
       "drillType": "correction",
       "assignedText": "you will complete the lesson",
+      "oppositionTriggers": [
+        {
+          "match": "I WILL INTERRUPT",
+          "intent": "opposed_completion_command",
+          "response": "Interruption is a behaviour error.",
+          "stats": {
+            "refusal": 2,
+            "obedience": -1
+          },
+          "flags": ["interruptedLesson"],
+          "mrTrigger": "angry"
+        }
+      ],
       "systemAutoType": true,
       "systemTypePauseMs": 8000
     },
     {
-      "id": "act7_records_completed",
+      "id": "act7_disruption_line",
       "displayTitle": "Exam 3:",
       "playerLabel": "Lesson 53: Record Practice",
       "drillType": "accuracy",
       "assignedText": "disruption will not be rewarded",
+      "oppositionTriggers": [
+        {
+          "match": "DISRUPTION WILL BE REWARDED",
+          "intent": "opposed_behaviour_record",
+          "response": "Correction rejected. Please continue the exercise.",
+          "stats": {
+            "disclosure": 2,
+            "refusal": 1,
+            "obedience": -1
+          },
+          "flags": ["opposedBehaviourRecord"],
+          "mrTrigger": "angry"
+        }
+      ],
+      "subjectIntrusionTriggers": [
+        {
+          "terms": ["I", "YOU", "EMILY"],
+          "intent": "subject_intrusion_evidence",
+          "response": "Evidence is not a person. Continue typing.",
+          "stats": {
+            "disclosure": 1,
+            "refusal": 1
+          },
+          "flags": ["subjectIntrusionEvidence"],
+          "mrTrigger": "angry"
+        }
+      ],
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
     },
     {
-      "id": "act7_emily_absent",
+      "id": "act7_good_children_line",
       "displayTitle": "Exam 4:",
       "playerLabel": "Lesson 54: Attendance Review",
       "drillType": "accuracy",
       "assignedText": "good children do not invent stories",
+      "subjectIntrusionTriggers": [
+        {
+          "terms": ["I", "YOU", "EMILY"],
+          "intent": "subject_intrusion_behaviour",
+          "response": "Names are not part of this lesson.",
+          "stats": {
+            "disclosure": 1,
+            "refusal": 1
+          },
+          "flags": ["subjectIntrusionBehaviour"],
+          "mrTrigger": "angry"
+        }
+      ],
       "revealDelayMs": 2000,
       "holdMs": 4000,
       "lingerResponse": true,
@@ -158,21 +211,21 @@
       "textMorphDurationMs": 180
     },
     {
-      "id": "act7_classroom_supervised",
+      "id": "act7_kept_alive_line",
       "displayTitle": "Exam 5:",
       "playerLabel": "Lesson 55: Sentence Accuracy",
       "drillType": "test",
       "assignedText": "i kept you alive"
     },
     {
-      "id": "act7_no_distress",
+      "id": "act7_kept_unnamed_line",
       "displayTitle": "Exam 6:",
       "playerLabel": "Lesson 56: Report Accuracy",
       "drillType": "test",
       "assignedText": "i kept your name out of her mouth"
     },
     {
-      "id": "act7_heard_nothing",
+      "id": "act7_never_ready_line",
       "displayTitle": "Exam 7:",
       "playerLabel": "Lesson 57: Listening Review",
       "drillType": "accuracy",

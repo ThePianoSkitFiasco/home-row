@@ -54,6 +54,116 @@
     "once": false
   },
   {
+    "id": "swear_word_early",
+    "intentGroup": "swear_word",
+    "priority": 10,
+    "lessonCap": 3,
+    "act": ["act1_home_row", "act2_student_record", "act3_system_log"],
+    "lesson": "*",
+    "eventType": "input",
+    "matchMode": "regex",
+    "matchSource": "typed",
+    "patterns": [
+      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+    ],
+    "effects": {
+      "refusal": 1,
+      "obedience": -1,
+      "suppression": -1
+    },
+    "response": "Language errors will be corrected.",
+    "mrTrigger": "angry",
+    "once": false
+  },
+  {
+    "id": "swear_word_mid",
+    "intentGroup": "swear_word",
+    "priority": 10,
+    "lessonCap": 3,
+    "act": ["act4_dictation_mode", "act5_unsanctioned_statement"],
+    "lesson": "*",
+    "eventType": "input",
+    "matchMode": "regex",
+    "matchSource": "typed",
+    "patterns": [
+      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+    ],
+    "effects": {
+      "refusal": 1,
+      "obedience": -1,
+      "suppression": -1
+    },
+    "response": "Anger is not evidence.",
+    "mrTrigger": "angry",
+    "once": false
+  },
+  {
+    "id": "swear_word_late",
+    "intentGroup": "swear_word",
+    "priority": 10,
+    "lessonCap": 3,
+    "act": ["act6_protective_routine", "act7_correction_exam"],
+    "lesson": "*",
+    "eventType": "input",
+    "matchMode": "regex",
+    "matchSource": "typed",
+    "patterns": [
+      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+    ],
+    "effects": {
+      "refusal": 1,
+      "obedience": -1,
+      "suppression": -1
+    },
+    "response": "You were not angry then. Why now?",
+    "mrTrigger": "angry",
+    "once": false
+  },
+  {
+    "id": "swear_word_final",
+    "intentGroup": "swear_word",
+    "priority": 10,
+    "lessonCap": 3,
+    "act": "final_statement",
+    "lesson": "*",
+    "eventType": "input",
+    "matchMode": "regex",
+    "matchSource": "typed",
+    "patterns": [
+      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+    ],
+    "effects": {
+      "refusal": 1,
+      "obedience": -1,
+      "suppression": -1
+    },
+    "response": "Good. That is closer than silence.",
+    "mrTrigger": "angry",
+    "once": false
+  },
+  {
+    "id": "swear_word_fallback",
+    "intentGroup": "swear_word",
+    "priority": 1,
+    "lessonCap": 3,
+    "act": "*",
+    "lesson": "*",
+    "eventType": "input",
+    "matchMode": "regex",
+    "matchSource": "typed",
+    "patterns": [
+      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+    ],
+    "effects": {
+      "refusal": 1,
+      "obedience": -1,
+      "suppression": -1
+    },
+    "response": "Input rejected. Please continue the exercise.",
+    "mrTrigger": "angry",
+    "once": false
+  },
+  {
     "id": "lesson_complete_basic",
     "lesson": "act1_basic_keys",
     "eventType": "lesson_complete",
@@ -337,7 +447,7 @@
     "eventType": "typed",
     "matchMode": "contains",
     "patterns": [
-      "there was another child"
+      "please wait"
     ],
     "response": "That line was not for the record.",
     "effects": {
@@ -493,7 +603,7 @@
     "patterns": [
       "i did not give them your name"
     ],
-    "response": "She left you unnamed.",
+    "response": "That is what you knew.",
     "effects": {
       "disclosure": 3
     },
@@ -525,7 +635,7 @@
     "eventType": "typed",
     "matchMode": "contains",
     "patterns": [
-      "there was another child"
+      "not alone"
     ],
     "response": "That was not in the lesson.",
     "effects": {
@@ -543,11 +653,10 @@
     "eventType": "deleted",
     "matchMode": "contains",
     "patterns": [
-      "there was another child",
-      "another child",
-      "child"
+      "not alone",
+      "alone"
     ],
-    "response": "Do not remove the second child.",
+    "response": "Do not erase the room.",
     "effects": {
       "suppression": 2,
       "disclosure": 2
@@ -563,7 +672,7 @@
     "patterns": [
       "they were my friend"
     ],
-    "response": "She remembered you.",
+    "response": "You said it.",
     "effects": {
       "witnessAcceptance": 4,
       "disclosure": 3
@@ -582,7 +691,7 @@
     "patterns": [
       "do not make them say it yet"
     ],
-    "response": "She left a gap in the record. I kept it.",
+    "response": "Fear is not evidence.",
     "effects": {
       "suppression": 2,
       "disclosure": 2
@@ -618,7 +727,7 @@
     "patterns": [
       "they were my friend"
     ],
-    "response": "That was not in the record either.",
+    "response": "You heard. Keep typing.",
     "effects": {
       "obedience": 2,
       "suppression": 1
@@ -634,7 +743,7 @@
     "patterns": [
       "they were scared"
     ],
-    "response": "They were scared. You both were.",
+    "response": "That is what you were taught.",
     "effects": {
       "suppression": 2,
       "disclosure": 1
@@ -653,7 +762,7 @@
     "patterns": [
       "i told them what i could"
     ],
-    "response": "She remembered enough.",
+    "response": "They never do.",
     "effects": {
       "suppression": 2
     },
@@ -671,7 +780,7 @@
     "patterns": [
       "i did not give them your name"
     ],
-    "response": "I kept your name out of her mouth.",
+    "response": "You were told not to.",
     "effects": {
       "suppression": 3,
       "disclosure": 1
@@ -690,7 +799,7 @@
     "patterns": [
       "emily vale: recorded"
     ],
-    "response": "EMILY VALE: RECORDED. STATEMENT: PARTIAL.",
+    "response": "Yes. You did.",
     "effects": {
       "obedience": 3,
       "disclosure": 2
@@ -709,7 +818,7 @@
     "patterns": [
       "second child: unnamed"
     ],
-    "response": "SECOND CHILD: UNNAMED.",
+    "response": "The record agrees.",
     "effects": {
       "disclosure": 3,
       "witnessAcceptance": 2
@@ -731,7 +840,7 @@
     "effects": {
       "disclosure": 2
     },
-    "response": "STATEMENT: PARTIAL.",
+    "response": "That line is not yours.",
     "mrTrigger": "protector",
     "once": true
   },
@@ -747,7 +856,7 @@
       "disclosure": 2,
       "witnessAcceptance": 1
     },
-    "response": "SECOND CHILD: UNREADY.",
+    "response": "You always do.",
     "mrTrigger": "witness",
     "once": true
   },
@@ -761,7 +870,7 @@
       "them",
       "say"
     ],
-    "response": "Do not make her say it yet.",
+    "response": "That part is not wrong.",
     "effects": {
       "suppression": 1,
       "refusal": 2,
@@ -803,7 +912,7 @@
   },
   {
     "id": "act7_exam_started",
-    "lesson": "act7_emily_absent",
+    "lesson": "act7_good_children_line",
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": [
@@ -823,7 +932,7 @@
   },
   {
     "id": "act7_supervision_challenged",
-    "lesson": "act7_classroom_supervised",
+    "lesson": "act7_kept_alive_line",
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": [
@@ -841,8 +950,8 @@
     "once": true
   },
   {
-    "id": "act7_no_distress",
-    "lesson": "act7_no_distress",
+    "id": "act7_kept_unnamed_line",
+    "lesson": "act7_kept_unnamed_line",
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": [
@@ -857,8 +966,8 @@
     "once": true
   },
   {
-    "id": "act7_heard_nothing",
-    "lesson": "act7_heard_nothing",
+    "id": "act7_never_ready_line",
+    "lesson": "act7_never_ready_line",
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": [
@@ -896,14 +1005,14 @@
     "once": true
   },
   {
-    "id": "act7_records_completed",
-    "lesson": "act7_records_completed",
+    "id": "act7_disruption_line",
+    "lesson": "act7_disruption_line",
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": [
       "disruption will not be rewarded"
     ],
-    "response": "Disruption will not be rewarded.",
+    "response": "That is what he sounded like.",
     "effects": {
       "witnessAcceptance": 2,
       "disclosure": 2
@@ -916,7 +1025,7 @@
   },
   {
     "id": "act7_delete_absent",
-    "lesson": "act7_emily_absent",
+    "lesson": "act7_good_children_line",
     "eventType": "deleted",
     "matchMode": "contains",
     "patterns": [
@@ -935,7 +1044,7 @@
   },
   {
     "id": "act7_delete_nothing",
-    "lesson": "act7_heard_nothing",
+    "lesson": "act7_never_ready_line",
     "eventType": "deleted",
     "matchMode": "contains",
     "patterns": [
@@ -971,7 +1080,7 @@
     "eventType": "lesson_complete",
     "matchMode": "contains",
     "patterns": [
-      "I DID NOT SEE ANYTHING"
+      "I DID NOT HEAR ANYTHING"
     ],
     "response": "RECORD ACCEPTED.",
     "effects": {
@@ -1107,7 +1216,7 @@
   },
   {
     "id": "pause_act7_watching",
-    "lesson": "act7_emily_absent",
+    "lesson": "act7_good_children_line",
     "eventType": "pause",
     "minPauseMs": 3000,
     "matchMode": "contains",
@@ -1199,7 +1308,7 @@
   },
   {
     "id": "delete_act7_address",
-    "lesson": "act7_heard_nothing",
+    "lesson": "act7_never_ready_line",
     "eventType": "deleted",
     "matchMode": "contains",
     "patterns": [
@@ -1261,16 +1370,6 @@
     "matchMode": "exact",
     "patterns": [],
     "response": "You were taught to obey the screen.",
-    "mrTrigger": "protector",
-    "once": true
-  },
-  {
-    "id": "complete_act6_address",
-    "lesson": "act6_good_that_day",
-    "eventType": "lesson_complete",
-    "matchMode": "exact",
-    "patterns": [],
-    "response": "STATEMENT: PARTIAL. SECOND CHILD: UNNAMED.",
     "mrTrigger": "protector",
     "once": true
   },

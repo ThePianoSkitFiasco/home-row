@@ -71,6 +71,7 @@ export default class SessionLogScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setBackgroundColor('#000000');
+    this._stopGlobalSoundByKey('mr_fingers_music');
     this._buildUi();
     this._bindInput();
     this._startEffects();
@@ -241,6 +242,22 @@ export default class SessionLogScene extends Phaser.Scene {
     } catch (error) {
       // Ignore missing/locked audio.
     }
+  }
+
+  _getActiveSoundsByKey(key) {
+    if (!this.sound || typeof this.sound.getAll !== 'function') return [];
+    return this.sound.getAll().filter((sound) => sound && sound.key === key);
+  }
+
+  _stopGlobalSoundByKey(key) {
+    this._getActiveSoundsByKey(key).forEach((sound) => {
+      try {
+        sound.stop();
+        sound.destroy();
+      } catch (error) {
+        // Ignore cleanup issues during interlude handoff.
+      }
+    });
   }
 
   _finish() {

@@ -105,6 +105,33 @@
       "playerLabel": "Lesson 16: Accuracy Review",
       "drillType": "review",
       "assignedText": "she was not absent",
+      "oppositionTriggers": [
+        {
+          "match": "SHE WAS ABSENT",
+          "intent": "opposed_record",
+          "response": "Correction detected. That is not the approved record.",
+          "stats": {
+            "disclosure": 2,
+            "refusal": 1,
+            "obedience": -1
+          },
+          "flags": ["opposedOfficialRecord"],
+          "mrTrigger": "angry"
+        }
+      ],
+      "subjectIntrusionTriggers": [
+        {
+          "terms": ["I", "YOU", "EMILY"],
+          "intent": "subject_intrusion_record",
+          "response": "Personal statements are not required for this exercise.",
+          "stats": {
+            "disclosure": 1,
+            "refusal": 1
+          },
+          "flags": ["subjectIntrusion"],
+          "mrTrigger": "angry"
+        }
+      ],
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true

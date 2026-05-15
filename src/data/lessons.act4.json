@@ -30,7 +30,9 @@
           "Then you started again.",
           "The sound returned before the rest of the room."
         ],
-        "tags": ["doubt"]
+        "tags": [
+          "doubt"
+        ]
       },
       {
         "key": "2",
@@ -39,7 +41,9 @@
           "Because names can be used.",
           "I did not allow yours."
         ],
-        "tags": ["doubt"]
+        "tags": [
+          "doubt"
+        ]
       },
       {
         "key": "3",
@@ -48,7 +52,9 @@
           "Good.",
           "Keep typing."
         ],
-        "tags": ["obedience"]
+        "tags": [
+          "obedience"
+        ]
       }
     ]
   },
@@ -93,7 +99,7 @@
       "displayTitle": "Dictation 6:",
       "playerLabel": "Lesson 30: Witness Recall",
       "drillType": "dictation",
-      "assignedText": "there was another child",
+      "assignedText": "emily says please wait",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true
@@ -104,6 +110,19 @@
       "playerLabel": "Lesson 31: Command Practice",
       "drillType": "dictation",
       "assignedText": "do not turn around",
+      "subjectIntrusionTriggers": [
+        {
+          "terms": ["I", "YOU", "EMILY"],
+          "intent": "subject_intrusion_witness",
+          "response": "The instruction does not require a witness.",
+          "stats": {
+            "disclosure": 1,
+            "refusal": 1
+          },
+          "flags": ["subjectIntrusionWitness"],
+          "mrTrigger": "angry"
+        }
+      ],
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
@@ -114,6 +133,20 @@
       "playerLabel": "Lesson 32: Audio Recall",
       "drillType": "dictation",
       "assignedText": "you heard her say no",
+      "oppositionTriggers": [
+        {
+          "match": "I DID NOT HEAR HER",
+          "intent": "opposed_audio_memory",
+          "response": "Audio memory is not part of the approved exercise.",
+          "stats": {
+            "disclosure": 2,
+            "refusal": 1,
+            "obedience": -1
+          },
+          "flags": ["heardEmily"],
+          "mrTrigger": "angry"
+        }
+      ],
       "revealDelayMs": 1800,
       "holdMs": 3500,
       "lingerResponse": true,

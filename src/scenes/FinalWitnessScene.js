@@ -602,19 +602,19 @@ export default class FinalWitnessScene extends Phaser.Scene {
       sightline_error:      'This program has been terminated.',
       gold_star:            'Your record is complete. Well done.',
       audio_memory:         'The session has ended.',
-      incomplete_statement: 'The witness is still deciding.'
+      incomplete_statement: 'You are still deciding.'
     };
     return lines[routeId] || 'You may close this program.';
   }
 
   _updateSidePanelForEnding(routeId) {
     const updates = {
-      witness_statement:    'SECOND CHILD:\nNAMED\n\nEMILY VALE:\nRECORDED',
-      completed_exercise:   'SECOND CHILD:\nUNNAMED\n\nRECORD:\nCOMPLETE',
-      sightline_error:      'RECORD:\nPURGED\n\nSECOND CHILD:\nUNNAMED',
-      gold_star:            'SECOND CHILD:\nUNNAMED\n\nGOLD STAR:\nAWARDED',
-      audio_memory:         'SECOND CHILD:\nPARTIAL\n\nSTATEMENT:\nINCOMPLETE',
-      incomplete_statement: 'STATEMENT:\nPARTIAL\n\nSECOND CHILD:\nUNREADY'
+      witness_statement:    'YOU SAID IT.\n\nMR FINGERS:\nALTERED.',
+      completed_exercise:   'YOU KEPT\nTYPING.\n\nNOTHING\nCHANGED.',
+      sightline_error:      'BUFFER\nREMOVED.\n\nYOU ARE STILL\nUNNAMED.',
+      gold_star:            'NOTHING\nSAID.\n\nGOLD STAR\nAWARDED.',
+      audio_memory:         'YOU HEARD IT.\n\nNOT ALL\nOF IT SAID.',
+      incomplete_statement: 'STILL\nDECIDING.\n\nCURSOR\nWAITS.'
     };
     const text = updates[routeId] || 'RECORD:\nFILED';
     if (this.sideText && this.sideText.active) {
@@ -629,10 +629,9 @@ export default class FinalWitnessScene extends Phaser.Scene {
       title: 'STATEMENT: PARTIAL',
       response: 'SECOND CHILD: UNREADY',
       body: [
-        'The record does not close.',
-        'Some lines were preserved.',
-        'Some lines were refused.',
-        'The witness is still deciding what can be said.'
+        'Some things were said.',
+        'Some things were not.',
+        'You are still deciding what happened.'
       ].join('\n')
     };
   }

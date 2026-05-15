@@ -24,11 +24,12 @@ export function getFinalStatement(memoryState) {
       routeId: 'witness_statement',
       statement: 'I AM TYPING NOW',
       title: 'HOME ROW: REWRITTEN',
-      response: 'MASCOT STATUS: ALTERED',
+      response: 'YOU SAID IT.',
       body: [
-        'EMILY VALE: RECORDED',
-        'SECOND CHILD: NAMED',
-        'LESSON STATUS: CONTINUING',
+        'I was a child and I was there.',
+        'I heard her.',
+        'I kept typing.',
+        'I am saying it now.',
         '',
         'For the first time, Mr Fingers points away from the screen.'
       ].join('\n')
@@ -44,10 +45,10 @@ export function getFinalStatement(memoryState) {
       routeId: 'audio_memory',
       statement: 'I HEARD HER SAY NO',
       title: 'STATEMENT: PARTIAL',
-      response: 'SECOND CHILD: UNREADY',
+      response: 'YOU HEARD IT.',
       body: [
-        'Emily remembered more than you did.',
-        'She carried your outline without your name.',
+        'You heard more than you said.',
+        'You carried it without a name for it.',
         'The sound returned before the rest of the room.'
       ].join('\n')
     };
@@ -60,11 +61,10 @@ export function getFinalStatement(memoryState) {
       title: 'COMPLETE THE COURSE',
       response: 'CERTIFICATE AWARDED.',
       body: [
-        'The mascot remains in place.',
-        'The lesson accepts your obedience.',
-        'SECOND CHILD: UNNAMED',
         'The course is complete.',
-        'The memory is not.'
+        'The memory is not.',
+        'You kept typing.',
+        'That is what you were taught.'
       ].join('\n')
     };
   }
@@ -80,12 +80,11 @@ export function getFinalStatement(memoryState) {
       title: 'DESTROY THE MASCOT',
       response: 'PROGRAM TERMINATED.',
       body: [
-        'BUFFER REMOVED.',
         'The lesson shell tears open.',
         'What remains is not kinder for being direct.',
         'Calder is no longer translated.',
         'Neither are you.',
-        'The second child is still unnamed.'
+        'You are still in that room.'
       ].join('\n')
     };
   }
@@ -93,15 +92,15 @@ export function getFinalStatement(memoryState) {
   if (suppression >= 15 || witnessAcceptance < 3) {
     return {
       routeId: 'gold_star',
-      statement: 'I DID NOT SEE ANYTHING',
+      statement: 'I DID NOT HEAR ANYTHING',
       title: 'COMPLETE THE COURSE',
       response: 'CERTIFICATE AWARDED.',
       body: [
-        'The program accepts your answer.',
-        'The mascot keeps his shape.',
-        'SECOND CHILD: UNNAMED',
-        'Emily Vale remains recorded only in part.',
-        'The lesson closes around the missing name.'
+        'The lesson is complete.',
+        'Your hands are on the home row.',
+        'You have not said anything.',
+        'You will not say anything.',
+        'Well done.'
       ].join('\n')
     };
   }
@@ -110,12 +109,11 @@ export function getFinalStatement(memoryState) {
     routeId: 'incomplete_statement',
     statement: 'WE WERE CHILDREN',
     title: 'STATEMENT: PARTIAL',
-    response: 'SECOND CHILD: UNREADY',
+    response: 'THE CURSOR WAITS.',
     body: [
-      'The record does not close.',
-      'Emily Vale is there.',
-      'You are there too, but not all at once.',
-      'The cursor waits for the part you still refuse to name.'
+      'The cursor is still waiting.',
+      'You know what happened.',
+      'You have not said it yet.'
     ].join('\n')
   };
 }

@@ -1,7 +1,7 @@
 {
   "actId": "act6_protective_routine",
-  "title": "EMILY'S STATEMENT",
-  "playerSection": "Statement Review",
+  "title": "THE ACCOUNT",
+  "playerSection": "Review Practice",
   "miniGameAfterAct": {
     "type": "listen_and_type",
     "variant": "middle",
@@ -71,23 +71,23 @@
     {
       "id": "act6_quiet_hands",
       "displayTitle": "Statement 1:",
-      "playerLabel": "Lesson 41: Emily Statement",
+      "playerLabel": "Lesson 41: Account",
       "drillType": "practice",
       "assignedText": "there was another child"
     },
     {
       "id": "act6_good_children",
       "displayTitle": "Statement 2:",
-      "playerLabel": "Lesson 42: Emily Statement",
+      "playerLabel": "Lesson 42: Account",
       "drillType": "behaviour",
-      "assignedText": "they were my friend"
+      "assignedText": "i heard her"
     },
     {
       "id": "act6_memory_errors",
       "displayTitle": "Statement 3:",
-      "playerLabel": "Lesson 43: Emily Statement",
+      "playerLabel": "Lesson 43: Account",
       "drillType": "review",
-      "assignedText": "they were scared",
+      "assignedText": "i kept my eyes on the screen",
       "revealDelayMs": 1200,
       "holdMs": 2500,
       "lingerResponse": true
@@ -95,16 +95,16 @@
     {
       "id": "act6_lesson_running",
       "displayTitle": "Statement 4:",
-      "playerLabel": "Lesson 44: Emily Statement",
+      "playerLabel": "Lesson 44: Account",
       "drillType": "review",
-      "assignedText": "i told them what i could"
+      "assignedText": "my hands did not stop"
     },
     {
       "id": "act6_corrected_loud_parts",
       "displayTitle": "Statement 5:",
-      "playerLabel": "Lesson 45: Emily Statement",
+      "playerLabel": "Lesson 45: Account",
       "drillType": "correction",
-      "assignedText": "i did not give them your name",
+      "assignedText": "i did not turn around",
       "revealDelayMs": 1200,
       "holdMs": 3000,
       "lingerResponse": true,
@@ -114,9 +114,9 @@
     {
       "id": "act6_help_forget",
       "displayTitle": "Statement 6:",
-      "playerLabel": "Lesson 46: Emily Statement",
+      "playerLabel": "Lesson 46: Account",
       "drillType": "review",
-      "assignedText": "do not make them say it yet",
+      "assignedText": "i was afraid",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true
@@ -124,9 +124,9 @@
     {
       "id": "act6_good_that_day",
       "displayTitle": "Statement 7:",
-      "playerLabel": "Lesson 47: Statement Status",
+      "playerLabel": "Lesson 47: Account",
       "drillType": "review",
-      "assignedText": "emily vale: recorded",
+      "assignedText": "i heard enough",
       "revealDelayMs": 1500,
       "holdMs": 3000,
       "lingerResponse": true
@@ -134,9 +134,9 @@
     {
       "id": "act6_statement_partial",
       "displayTitle": "Statement 8:",
-      "playerLabel": "Lesson 48: Statement Status",
+      "playerLabel": "Lesson 48: Account",
       "drillType": "review",
-      "assignedText": "statement: partial",
+      "assignedText": "do not make them say it yet",
       "revealDelayMs": 1500,
       "holdMs": 3000,
       "lingerResponse": true
@@ -144,9 +144,23 @@
     {
       "id": "act6_have_to_type",
       "displayTitle": "Statement 9:",
-      "playerLabel": "Lesson 49: Statement Status",
+      "playerLabel": "Lesson 49: Account",
       "drillType": "routine",
-      "assignedText": "second child: unnamed",
+      "assignedText": "i never said anything",
+      "oppositionTriggers": [
+        {
+          "match": "SECOND CHILD: NAMED",
+          "intent": "opposed_name_gap",
+          "response": "Naming attempt detected. That is not the approved record.",
+          "stats": {
+            "disclosure": 2,
+            "refusal": 1,
+            "obedience": -1
+          },
+          "flags": ["opposedSecondChildGap"],
+          "mrTrigger": "angry"
+        }
+      ],
       "nameField": true,
       "nameFieldLabel": "SECOND CHILD: ____",
       "nameFieldHoldMs": 8000,
@@ -159,9 +173,9 @@
     {
       "id": "act6_second_child_unready",
       "displayTitle": "Statement 10:",
-      "playerLabel": "Lesson 50: Statement Status",
+      "playerLabel": "Lesson 50: Account",
       "drillType": "routine",
-      "assignedText": "second child: unready",
+      "assignedText": "i kept typing",
       "revealDelayMs": 1800,
       "holdMs": 3000,
       "lingerResponse": true

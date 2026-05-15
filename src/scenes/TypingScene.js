@@ -67,6 +67,8 @@ const MR_CALDER_SPRITE_PATH = 'assets/sprites/mr_calder/';
 const AUDIO_ASSETS = {
   typing_click: 'assets/audio/Computer  Keyboard Clicking Sound.wav',
   section_clear: 'assets/audio/Level Clear.wav',
+  incorrect: 'assets/audio/incorrect.wav',
+  swear: 'assets/audio/swear.wav',
   mr_fingers_music: 'assets/audio/Mr fingers.mp3'
 };
 const MR_FINGERS_DISPLAY_SIZE = 180;
@@ -108,6 +110,9 @@ const CALDER_CYCLES = {
     { key: MR_CALDER_SPRITES.idle,      duration: 1200 }
   ]
 };
+const MR_PORTRAIT_PANEL_FILL = 0xfff4d8;
+const MR_PORTRAIT_PANEL_ERROR_FILL = 0xffc4c4;
+const MR_PORTRAIT_PANEL_ERROR_STROKE = 0xb94a3b;
 const SHOW_DEV_TOUCH_CONTROLS = false;
 const TUTOR_PALETTE = {
   background: 0xf4e6bd,
@@ -528,7 +533,7 @@ export default class TypingScene extends Phaser.Scene {
     this.load.json('lessons_act6', 'src/data/lessons.act6.json');
     this.load.json('lessons_act7', 'src/data/lessons.act7.json');
     this.load.json('lessons_final', 'src/data/lessons.final.json');
-    this.load.json('intents', 'src/data/intents.json');
+    this.load.json('intents', 'src/data/intents.json?v=swear-refresh-3');
   }
 
   create() {
@@ -579,6 +584,7 @@ export default class TypingScene extends Phaser.Scene {
     this._lessonErrorCount = 0;
     this._lessonResetDone = false;
     this._deletionEmptyFired = false;
+    this._lessonRecognitionFired = new Set();
     this.lastMiniGameResult = null;
     this.actStartStats = null;
     this.mrFingersAnimationTimer = null;
@@ -913,8 +919,8 @@ export default class TypingScene extends Phaser.Scene {
       color: '#ffffff'
     }).setOrigin(0.5, 0);
 
-    this._createPanel(mascotX + 16, topY + 50, mascotW - 32, 192, {
-      fill: 0xfff4d8,
+    this.mrPortraitPanel = this._createPanel(mascotX + 16, topY + 50, mascotW - 32, 192, {
+      fill: MR_PORTRAIT_PANEL_FILL,
       shadow: false,
       lineWidth: 1
     });
@@ -1171,16 +1177,23 @@ export default class TypingScene extends Phaser.Scene {
   _wireEvents() {
     this.typingEngine.onEvent = (eventType, data) => {
       const lesson = this.lessonManager.getCurrentLesson();
+      const act = this.lessonManager.getCurrentAct();
       if (!lesson) return;
 
-      const firedIntents = this.intentEngine.processEvent(eventType, data, lesson.id);
+      let firedIntents = this.intentEngine.processEvent(eventType, data, lesson.id, act ? act.actId : null);
 
       if (eventType === 'typed') {
         this._errorStreak = 0;
+        firedIntents = firedIntents.concat(
+          this.intentEngine.processEvent('input', data, lesson.id, act ? act.actId : null)
+        );
       } else if (eventType === 'mistake') {
         this._errorStreak++;
         this._lessonErrorCount++;
         this._onMistake();
+        firedIntents = firedIntents.concat(
+          this.intentEngine.processEvent('input', data, lesson.id, act ? act.actId : null)
+        );
       } else if (eventType === 'deleted') {
         this._errorStreak = 0;
         if (this.typingEngine.typedChars.length === 0 && !this._deletionEmptyFired) {
@@ -1188,9 +1201,14 @@ export default class TypingScene extends Phaser.Scene {
         }
       }
 
+      const lessonRecognitionResult = this._checkLessonRecognitionTrigger(eventType, data, lesson, act);
+      if (lessonRecognitionResult) {
+        firedIntents.push(lessonRecognitionResult);
+      }
+
       let completionIntents = [];
       if (eventType === 'line_complete') {
-        completionIntents = this.intentEngine.processEvent('lesson_complete', data, lesson.id);
+        completionIntents = this.intentEngine.processEvent('lesson_complete', data, lesson.id, act ? act.actId : null);
       }
 
       if (eventType === 'line_complete') {
@@ -1214,8 +1232,11 @@ export default class TypingScene extends Phaser.Scene {
       this._updateMrFingersVisual(state, label, config);
     };
 
-    this.intentEngine.onResponse = (text, trigger) => {
+    this.intentEngine.onResponse = (text, trigger, intent) => {
       if (!text) return;
+      if (intent && intent.intentGroup === 'swear_word') {
+        this._onRecognizedSwearWord();
+      }
       this.responseQueue.push(text);
       this._showNextResponse();
     };
@@ -1284,6 +1305,17 @@ export default class TypingScene extends Phaser.Scene {
     if (now < this.sectionClearCooldownUntil) return;
     this.sectionClearCooldownUntil = now + 500;
     this._safePlaySound('section_clear', { volume: 0.5 });
+  }
+
+  _playIncorrectLessonSound() {
+    const now = this.time ? this.time.now : Date.now();
+    if (now < this.sectionClearCooldownUntil) return;
+    this.sectionClearCooldownUntil = now + 500;
+    this._safePlaySound('incorrect', { volume: 0.55 });
+  }
+
+  _playSwearSound() {
+    this._safePlaySound('swear', { volume: 0.55 });
   }
 
   _destroyAudio() {
@@ -1459,9 +1491,18 @@ export default class TypingScene extends Phaser.Scene {
   _onLineComplete() {
     const lesson = this.lessonManager.getCurrentLesson();
     const holdMs = (lesson && lesson.holdMs) || 1500;
+    const completionMrState = this._getLessonCompletionMrState();
 
     this.inputLocked = true;
-    this._playSectionClearSound();
+    if (this._lessonErrorCount >= 3) {
+      this._playIncorrectLessonSound();
+    } else {
+      this._playSectionClearSound();
+    }
+
+    if (completionMrState) {
+      this.mrFingers.setState(completionMrState);
+    }
 
     if (lesson && lesson.systemErase) {
       const eraseDelay = lesson.systemEraseDelayMs || 600;
@@ -1511,6 +1552,12 @@ export default class TypingScene extends Phaser.Scene {
         this._showActComplete();
       }
     });
+  }
+
+  _getLessonCompletionMrState() {
+    if (this._lessonErrorCount >= 6) return 'angry';
+    if (this._lessonErrorCount >= 3) return 'mistake_notice';
+    return null;
   }
 
   _showActComplete() {
@@ -2994,11 +3041,11 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _onMistake() {
-    this.cameras.main.shake(55, 0.0018);
-    this.cameras.main.flash(60, 80, 0, 0, false);
+    this._flashMrPortraitPanelError();
     this._maybeGlitchAssignedText();
 
     if (this._errorStreak === 3) {
+      this.cameras.main.shake(85, 0.002);
       this.responseQueue.push(Phaser.Utils.Array.GetRandom([
         'Again.', 'You know this.', 'That is not the lesson.'
       ]));
@@ -3019,6 +3066,197 @@ export default class TypingScene extends Phaser.Scene {
       this._lessonResetDone = true;
       this._doLessonReset();
     }
+  }
+
+  _flashMrPortraitPanelError() {
+    if (!this.mrPortraitPanel) return;
+
+    if (this.mrPortraitFlashTimer) {
+      this.mrPortraitFlashTimer.remove(false);
+      this.mrPortraitFlashTimer = null;
+    }
+
+    this.mrPortraitPanel
+      .setFillStyle(MR_PORTRAIT_PANEL_ERROR_FILL)
+      .setStrokeStyle(1, MR_PORTRAIT_PANEL_ERROR_STROKE, 1);
+
+    this.mrPortraitFlashTimer = this.time.delayedCall(95, () => {
+      this.mrPortraitFlashTimer = null;
+      if (!this.mrPortraitPanel) return;
+      this.mrPortraitPanel
+        .setFillStyle(MR_PORTRAIT_PANEL_FILL)
+        .setStrokeStyle(1, TUTOR_PALETTE.border, 1);
+    });
+  }
+
+  _checkLessonRecognitionTrigger(eventType, data, lesson, act) {
+    const oppositionResult = this._checkLessonOppositionTrigger(eventType, data, lesson, act);
+    if (oppositionResult) return oppositionResult;
+    return this._checkLessonSubjectIntrusionTrigger(eventType, data, lesson, act);
+  }
+
+  _checkLessonOppositionTrigger(eventType, data, lesson, act) {
+    if (!lesson || !Array.isArray(lesson.oppositionTriggers) || lesson.oppositionTriggers.length === 0) {
+      return null;
+    }
+
+    const typedText = (data && data.typed) || '';
+    const assignedText = lesson.assignedText || '';
+    const normalizedTyped = this._normalizeLessonTriggerText(typedText);
+    const normalizedAssigned = this._normalizeLessonTriggerText(assignedText);
+
+    if (!this._shouldCheckLessonTriggerNow(eventType, normalizedTyped, normalizedAssigned)) {
+      return null;
+    }
+
+    for (const trigger of lesson.oppositionTriggers) {
+      const triggerId = `${lesson.id}:${trigger.intent || trigger.match || trigger.matchIncludes}`;
+      if (this._lessonRecognitionFired.has(triggerId)) continue;
+      if (!this._matchesOppositionTrigger(trigger, normalizedTyped)) continue;
+
+      this._lessonRecognitionFired.add(triggerId);
+      this._applyLessonRecognitionTrigger(trigger, 'Correction rejected. Please continue the exercise.');
+      this._playSwearSound();
+      return {
+        id: trigger.intent || 'lesson_opposition',
+        eventType,
+        lesson: lesson.id,
+        response: trigger.response || 'Correction rejected. Please continue the exercise.',
+        mrTrigger: trigger.mrTrigger || 'angry',
+        act: act ? act.actId : null
+      };
+    }
+
+    return null;
+  }
+
+  _checkLessonSubjectIntrusionTrigger(eventType, data, lesson, act) {
+    if (!lesson || !Array.isArray(lesson.subjectIntrusionTriggers) || lesson.subjectIntrusionTriggers.length === 0) {
+      return null;
+    }
+
+    const typedText = (data && data.typed) || '';
+    const assignedText = lesson.assignedText || '';
+    const normalizedTyped = this._normalizeLessonTriggerText(typedText);
+    const normalizedAssigned = this._normalizeLessonTriggerText(assignedText);
+
+    if (normalizedTyped.length < 3) return null;
+    if (!this._shouldCheckLessonTriggerNow(eventType, normalizedTyped, normalizedAssigned)) {
+      return null;
+    }
+
+    for (const trigger of lesson.subjectIntrusionTriggers) {
+      const triggerTerms = Array.isArray(trigger && trigger.terms) ? trigger.terms.join('|') : 'subject_intrusion';
+      const triggerId = `${lesson.id}:${trigger.intent || triggerTerms}`;
+      if (this._lessonRecognitionFired.has(triggerId)) continue;
+      if (!this._matchesSubjectIntrusionTrigger(trigger, normalizedTyped, normalizedAssigned)) continue;
+
+      this._lessonRecognitionFired.add(triggerId);
+      this._applyLessonRecognitionTrigger(trigger, 'That subject is not part of this exercise.');
+      return {
+        id: trigger.intent || 'lesson_subject_intrusion',
+        eventType,
+        lesson: lesson.id,
+        response: trigger.response || 'That subject is not part of this exercise.',
+        mrTrigger: trigger.mrTrigger || 'angry',
+        act: act ? act.actId : null
+      };
+    }
+
+    return null;
+  }
+
+  _normalizeLessonTriggerText(text) {
+    return String(text || '')
+      .toUpperCase()
+      .replace(/[.,!?;:]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  _shouldCheckLessonTriggerNow(eventType, normalizedTyped, normalizedAssigned) {
+    if (!normalizedTyped) return false;
+    if (eventType === 'line_complete') return true;
+    if (eventType !== 'typed' && eventType !== 'mistake') return false;
+
+    const threshold = Math.max(8, normalizedAssigned.length - 4);
+    return normalizedTyped.length >= threshold;
+  }
+
+  _matchesOppositionTrigger(trigger, normalizedTyped) {
+    if (!trigger) return false;
+
+    if (trigger.match) {
+      const normalizedMatch = this._normalizeLessonTriggerText(trigger.match);
+      if (normalizedTyped === normalizedMatch) return true;
+    }
+
+    if (trigger.matchIncludes) {
+      const includes = Array.isArray(trigger.matchIncludes)
+        ? trigger.matchIncludes
+        : [trigger.matchIncludes];
+      const normalizedIncludes = includes
+        .map((item) => this._normalizeLessonTriggerText(item))
+        .filter(Boolean);
+      if (normalizedIncludes.length > 0 && normalizedIncludes.every((item) => normalizedTyped.includes(item))) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  _matchesSubjectIntrusionTrigger(trigger, normalizedTyped, normalizedAssigned) {
+    if (!trigger || !Array.isArray(trigger.terms) || trigger.terms.length === 0) {
+      return false;
+    }
+
+    return trigger.terms
+      .map((term) => this._normalizeLessonTriggerText(term))
+      .filter(Boolean)
+      .some((normalizedTerm) => {
+        if (this._containsWholeWord(normalizedAssigned, normalizedTerm)) return false;
+        return this._containsWholeWord(normalizedTyped, normalizedTerm);
+      });
+  }
+
+  _containsWholeWord(normalizedText, normalizedTerm) {
+    if (!normalizedText || !normalizedTerm) return false;
+    const escapedTerm = normalizedTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = new RegExp(`(?:^| )${escapedTerm}(?=$| )`);
+    return pattern.test(normalizedText);
+  }
+
+  _applyLessonRecognitionTrigger(trigger, fallbackResponse) {
+    if (trigger.stats && this.memory) {
+      this.memory.applyEffects(trigger.stats);
+    }
+
+    if (trigger.flags && this.memory) {
+      if (Array.isArray(trigger.flags)) {
+        trigger.flags.forEach((flag) => this.memory.setFlag(flag, true));
+      } else if (typeof trigger.flags === 'object') {
+        this.memory.applyFlags(trigger.flags);
+      }
+    }
+
+    const response = trigger.response || fallbackResponse;
+    const mrTrigger = trigger.mrTrigger || 'angry';
+
+    if (mrTrigger) {
+      this.mrFingers.setState(mrTrigger);
+    }
+
+    if (response) {
+      this.responseQueue.push(response);
+      this._showNextResponse();
+    }
+  }
+
+  _onRecognizedSwearWord() {
+    this._playSwearSound();
+    this.cameras.main.shake(110, 0.003);
+    this.cameras.main.flash(90, 120, 0, 0, false);
   }
 
   _maybeGlitchAssignedText() {
@@ -3091,14 +3329,26 @@ export default class TypingScene extends Phaser.Scene {
   _launchSessionLogInterlude() {
     this.sessionLogInterludeSeen = true;
     this.events.once('session-log-complete', () => {
-      this.lessonManager.advanceAct();
-      this.actComplete = false;
-      this.lastMiniGameResult = null;
-      this._startLesson();
-      this.mrFingers.setState('idle');
+      this._launchTeacherTime(this._getSessionLogRecoveryTeacherTime());
     });
+    this._stopBackgroundMusic();
     this.scene.launch('SessionLogScene', { returnScene: 'TypingScene' });
     this.scene.sleep();
+  }
+
+  _getSessionLogRecoveryTeacherTime() {
+    return {
+      id: 'act3_session_log_reassurance',
+      variant: 'early',
+      speaker: 'MR FINGERS',
+      lines: [
+        'Ignore that.',
+        'Just a technical hiccup.',
+        'The lesson is still running.',
+        'Listen and type.'
+      ],
+      choices: []
+    };
   }
 
   _shouldLaunchHostFoundInterlude() {

@@ -1,0 +1,974 @@
+From b2ea338695aed8631b7fb9e13d5023a2398985d1 Mon Sep 17 00:00:00 2001
+From: James Murphy <james@homerow.dev>
+Date: Fri, 15 May 2026 10:41:38 +0000
+Subject: [PATCH 1/4] Phase A: fix intent echo, verify final statement, rename
+ stale Act 7 lesson IDs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- act7_disruption_line intent response no longer echoes the lesson text
+  ('That is what he sounded like.' replaces 'Disruption will not be rewarded.')
+- Confirmed final_statement_line assignedText is correctly overridden at
+  runtime by EndingLogic — no bug, no change needed
+- Renamed 5 Act 7 lesson IDs that still referenced the old denial-record arc:
+    act7_records_completed    -> act7_disruption_line
+    act7_emily_absent         -> act7_good_children_line
+    act7_classroom_supervised -> act7_kept_alive_line
+    act7_no_distress          -> act7_kept_unnamed_line
+    act7_heard_nothing        -> act7_never_ready_line
+- Updated all 11 matching intent lesson/id references in intents.json
+- No logic or stat changes
+---
+ src/data/intents.json      | 28 ++++++++++++++--------------
+ src/data/lessons.act7.json | 12 ++++++------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/src/data/intents.json b/src/data/intents.json
+index 9a0dec0..b8e5caa 100644
+--- a/src/data/intents.json
++++ b/src/data/intents.json
+@@ -803,7 +803,7 @@
+   },
+   {
+     "id": "act7_exam_started",
+-    "lesson": "act7_emily_absent",
++    "lesson": "act7_good_children_line",
+     "eventType": "lesson_complete",
+     "matchMode": "contains",
+     "patterns": [
+@@ -823,7 +823,7 @@
+   },
+   {
+     "id": "act7_supervision_challenged",
+-    "lesson": "act7_classroom_supervised",
++    "lesson": "act7_kept_alive_line",
+     "eventType": "lesson_complete",
+     "matchMode": "contains",
+     "patterns": [
+@@ -841,8 +841,8 @@
+     "once": true
+   },
+   {
+-    "id": "act7_no_distress",
+-    "lesson": "act7_no_distress",
++    "id": "act7_kept_unnamed_line",
++    "lesson": "act7_kept_unnamed_line",
+     "eventType": "lesson_complete",
+     "matchMode": "contains",
+     "patterns": [
+@@ -857,8 +857,8 @@
+     "once": true
+   },
+   {
+-    "id": "act7_heard_nothing",
+-    "lesson": "act7_heard_nothing",
++    "id": "act7_never_ready_line",
++    "lesson": "act7_never_ready_line",
+     "eventType": "lesson_complete",
+     "matchMode": "contains",
+     "patterns": [
+@@ -896,14 +896,14 @@
+     "once": true
+   },
+   {
+-    "id": "act7_records_completed",
+-    "lesson": "act7_records_completed",
++    "id": "act7_disruption_line",
++    "lesson": "act7_disruption_line",
+     "eventType": "lesson_complete",
+     "matchMode": "contains",
+     "patterns": [
+       "disruption will not be rewarded"
+     ],
+-    "response": "Disruption will not be rewarded.",
++    "response": "That is what he sounded like.",
+     "effects": {
+       "witnessAcceptance": 2,
+       "disclosure": 2
+@@ -916,7 +916,7 @@
+   },
+   {
+     "id": "act7_delete_absent",
+-    "lesson": "act7_emily_absent",
++    "lesson": "act7_good_children_line",
+     "eventType": "deleted",
+     "matchMode": "contains",
+     "patterns": [
+@@ -935,7 +935,7 @@
+   },
+   {
+     "id": "act7_delete_nothing",
+-    "lesson": "act7_heard_nothing",
++    "lesson": "act7_never_ready_line",
+     "eventType": "deleted",
+     "matchMode": "contains",
+     "patterns": [
+@@ -1107,7 +1107,7 @@
+   },
+   {
+     "id": "pause_act7_watching",
+-    "lesson": "act7_emily_absent",
++    "lesson": "act7_good_children_line",
+     "eventType": "pause",
+     "minPauseMs": 3000,
+     "matchMode": "contains",
+@@ -1199,7 +1199,7 @@
+   },
+   {
+     "id": "delete_act7_address",
+-    "lesson": "act7_heard_nothing",
++    "lesson": "act7_never_ready_line",
+     "eventType": "deleted",
+     "matchMode": "contains",
+     "patterns": [
+@@ -1284,4 +1284,4 @@
+     "mrTrigger": "witness",
+     "once": true
+   }
+-]
++]
+\ No newline at end of file
+diff --git a/src/data/lessons.act7.json b/src/data/lessons.act7.json
+index edacdbb..09a7111 100644
+--- a/src/data/lessons.act7.json
++++ b/src/data/lessons.act7.json
+@@ -135,7 +135,7 @@
+       "systemTypePauseMs": 8000
+     },
+     {
+-      "id": "act7_records_completed",
++      "id": "act7_disruption_line",
+       "displayTitle": "Exam 3:",
+       "playerLabel": "Lesson 53: Record Practice",
+       "drillType": "accuracy",
+@@ -145,7 +145,7 @@
+       "lingerResponse": true
+     },
+     {
+-      "id": "act7_emily_absent",
++      "id": "act7_good_children_line",
+       "displayTitle": "Exam 4:",
+       "playerLabel": "Lesson 54: Attendance Review",
+       "drillType": "accuracy",
+@@ -158,21 +158,21 @@
+       "textMorphDurationMs": 180
+     },
+     {
+-      "id": "act7_classroom_supervised",
++      "id": "act7_kept_alive_line",
+       "displayTitle": "Exam 5:",
+       "playerLabel": "Lesson 55: Sentence Accuracy",
+       "drillType": "test",
+       "assignedText": "i kept you alive"
+     },
+     {
+-      "id": "act7_no_distress",
++      "id": "act7_kept_unnamed_line",
+       "displayTitle": "Exam 6:",
+       "playerLabel": "Lesson 56: Report Accuracy",
+       "drillType": "test",
+       "assignedText": "i kept your name out of her mouth"
+     },
+     {
+-      "id": "act7_heard_nothing",
++      "id": "act7_never_ready_line",
+       "displayTitle": "Exam 7:",
+       "playerLabel": "Lesson 57: Listening Review",
+       "drillType": "accuracy",
+@@ -192,4 +192,4 @@
+       "lingerResponse": true
+     }
+   ]
+-}
++}
+\ No newline at end of file
+-- 
+2.43.0
+
+
+From dbe00073f56730992c4a2d45b6a881cb013b3fd9 Mon Sep 17 00:00:00 2001
+From: James Murphy <james@homerow.dev>
+Date: Fri, 15 May 2026 10:45:35 +0000
+Subject: [PATCH 2/4] Phase B: differentiate the three 'there was another
+ child' lesson texts
+
+Three lessons had identical assignedText, each serving a different register:
+
+Act 4 (act4_emily_please_wait):
+  'there was another child' -> 'emily says please wait'
+  Restores canon plan and matches lesson ID. Emily's direct voice
+  breaking into dictation mode, before 'do not turn around' silences it.
+
+Act 5 (act5_do_not_correct_me):
+  'there was another child' -> 'i was not alone'
+  Player's first-person memory fragment. Distinct from Emily's formal
+  statement language. First 'i' in an act otherwise in second person.
+
+Act 6 (act6_quiet_hands): unchanged.
+  Keeps 'there was another child' as Emily's sworn statement language.
+
+Updated intents.json to match:
+  act4_emily_says: pattern 'there was another child' -> 'please wait'
+  act5_do_not_correct: pattern -> 'not alone'
+  act5_delete_do_not_correct: patterns -> ['not alone','alone']
+    response 'Do not remove the second child.' -> 'Do not erase the room.'
+    (second child language no longer in lesson text)
+---
+ src/data/intents.json      | 11 +++++------
+ src/data/lessons.act4.json | 16 +++++++++++-----
+ src/data/lessons.act5.json |  4 ++--
+ 3 files changed, 18 insertions(+), 13 deletions(-)
+
+diff --git a/src/data/intents.json b/src/data/intents.json
+index b8e5caa..1651871 100644
+--- a/src/data/intents.json
++++ b/src/data/intents.json
+@@ -337,7 +337,7 @@
+     "eventType": "typed",
+     "matchMode": "contains",
+     "patterns": [
+-      "there was another child"
++      "please wait"
+     ],
+     "response": "That line was not for the record.",
+     "effects": {
+@@ -525,7 +525,7 @@
+     "eventType": "typed",
+     "matchMode": "contains",
+     "patterns": [
+-      "there was another child"
++      "not alone"
+     ],
+     "response": "That was not in the lesson.",
+     "effects": {
+@@ -543,11 +543,10 @@
+     "eventType": "deleted",
+     "matchMode": "contains",
+     "patterns": [
+-      "there was another child",
+-      "another child",
+-      "child"
++      "not alone",
++      "alone"
+     ],
+-    "response": "Do not remove the second child.",
++    "response": "Do not erase the room.",
+     "effects": {
+       "suppression": 2,
+       "disclosure": 2
+diff --git a/src/data/lessons.act4.json b/src/data/lessons.act4.json
+index 47b8990..51f2792 100644
+--- a/src/data/lessons.act4.json
++++ b/src/data/lessons.act4.json
+@@ -30,7 +30,9 @@
+           "Then you started again.",
+           "The sound returned before the rest of the room."
+         ],
+-        "tags": ["doubt"]
++        "tags": [
++          "doubt"
++        ]
+       },
+       {
+         "key": "2",
+@@ -39,7 +41,9 @@
+           "Because names can be used.",
+           "I did not allow yours."
+         ],
+-        "tags": ["doubt"]
++        "tags": [
++          "doubt"
++        ]
+       },
+       {
+         "key": "3",
+@@ -48,7 +52,9 @@
+           "Good.",
+           "Keep typing."
+         ],
+-        "tags": ["obedience"]
++        "tags": [
++          "obedience"
++        ]
+       }
+     ]
+   },
+@@ -93,7 +99,7 @@
+       "displayTitle": "Dictation 6:",
+       "playerLabel": "Lesson 30: Witness Recall",
+       "drillType": "dictation",
+-      "assignedText": "there was another child",
++      "assignedText": "emily says please wait",
+       "revealDelayMs": 1200,
+       "holdMs": 2500,
+       "lingerResponse": true
+@@ -121,4 +127,4 @@
+       "systemEraseDelayMs": 700
+     }
+   ]
+-}
++}
+\ No newline at end of file
+diff --git a/src/data/lessons.act5.json b/src/data/lessons.act5.json
+index 79250e2..06a25ad 100644
+--- a/src/data/lessons.act5.json
++++ b/src/data/lessons.act5.json
+@@ -112,7 +112,7 @@
+       "displayTitle": "Memory 6:",
+       "playerLabel": "Lesson 38: Statement Entry",
+       "drillType": "accuracy",
+-      "assignedText": "there was another child",
++      "assignedText": "i was not alone",
+       "revealDelayMs": 1800,
+       "holdMs": 3000,
+       "lingerResponse": true
+@@ -138,4 +138,4 @@
+       "lingerResponse": true
+     }
+   ]
+-}
++}
+\ No newline at end of file
+-- 
+2.43.0
+
+
+From cea586f405e8e85a8cd7212c054b789261051288 Mon Sep 17 00:00:00 2001
+From: James Murphy <james@homerow.dev>
+Date: Fri, 15 May 2026 12:29:40 +0000
+Subject: [PATCH 3/4] Phase D part 1: rewrite Act 5 lessons 7-8 and full Act 6
+ arc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Personal trauma reframe — player's own account replaces Emily's statement.
+
+Act 5 (lessons 7-8):
+  act5_locked_door:        'i did not give them your name' -> 'she was not safe'
+  act5_record_what_happened: 'they were my friend' -> 'i kept going'
+  Both were Emily's voice. Now player's memory of what they knew and did.
+
+Act 6 — full arc rewritten:
+  title: 'EMILY'S STATEMENT' -> 'THE ACCOUNT'
+  playerSection: 'Statement Review' -> 'Review Practice'
+  Lesson texts:
+    there was another child    (anchor, unchanged)
+    i heard her
+    i kept my eyes on the screen
+    my hands did not stop
+    i did not turn around
+    i was afraid
+    i heard enough
+    do not make them say it yet  <- anomalous break, Emily's voice briefly
+    i never said anything
+    i kept typing
+  Removed nameField properties from act6_have_to_type (no longer applicable).
+
+Intent responses updated throughout Acts 5-6 to match new lesson texts:
+  Bureaucratic status fields ('SECOND CHILD: UNNAMED' etc.) removed.
+  New responses in guilt/dread register.
+  Removed duplicate intent complete_act6_address.
+  'Emily remembered. I rehearsed forgetting.' preserved (pause on act6_memory_errors).
+  'You always do.' closes act6_second_child_unready ('i kept typing').
+---
+ src/data/intents.json      | 34 ++++++++++----------------
+ src/data/lessons.act5.json | 10 ++++----
+ src/data/lessons.act6.json | 49 +++++++++++++++++---------------------
+ 3 files changed, 39 insertions(+), 54 deletions(-)
+
+diff --git a/src/data/intents.json b/src/data/intents.json
+index 1651871..083a6b0 100644
+--- a/src/data/intents.json
++++ b/src/data/intents.json
+@@ -493,7 +493,7 @@
+     "patterns": [
+       "i did not give them your name"
+     ],
+-    "response": "She left you unnamed.",
++    "response": "That is what you knew.",
+     "effects": {
+       "disclosure": 3
+     },
+@@ -562,7 +562,7 @@
+     "patterns": [
+       "they were my friend"
+     ],
+-    "response": "She remembered you.",
++    "response": "You said it.",
+     "effects": {
+       "witnessAcceptance": 4,
+       "disclosure": 3
+@@ -581,7 +581,7 @@
+     "patterns": [
+       "do not make them say it yet"
+     ],
+-    "response": "She left a gap in the record. I kept it.",
++    "response": "Fear is not evidence.",
+     "effects": {
+       "suppression": 2,
+       "disclosure": 2
+@@ -617,7 +617,7 @@
+     "patterns": [
+       "they were my friend"
+     ],
+-    "response": "That was not in the record either.",
++    "response": "You heard. Keep typing.",
+     "effects": {
+       "obedience": 2,
+       "suppression": 1
+@@ -633,7 +633,7 @@
+     "patterns": [
+       "they were scared"
+     ],
+-    "response": "They were scared. You both were.",
++    "response": "That is what you were taught.",
+     "effects": {
+       "suppression": 2,
+       "disclosure": 1
+@@ -652,7 +652,7 @@
+     "patterns": [
+       "i told them what i could"
+     ],
+-    "response": "She remembered enough.",
++    "response": "They never do.",
+     "effects": {
+       "suppression": 2
+     },
+@@ -670,7 +670,7 @@
+     "patterns": [
+       "i did not give them your name"
+     ],
+-    "response": "I kept your name out of her mouth.",
++    "response": "You were told not to.",
+     "effects": {
+       "suppression": 3,
+       "disclosure": 1
+@@ -689,7 +689,7 @@
+     "patterns": [
+       "emily vale: recorded"
+     ],
+-    "response": "EMILY VALE: RECORDED. STATEMENT: PARTIAL.",
++    "response": "Yes. You did.",
+     "effects": {
+       "obedience": 3,
+       "disclosure": 2
+@@ -708,7 +708,7 @@
+     "patterns": [
+       "second child: unnamed"
+     ],
+-    "response": "SECOND CHILD: UNNAMED.",
++    "response": "The record agrees.",
+     "effects": {
+       "disclosure": 3,
+       "witnessAcceptance": 2
+@@ -730,7 +730,7 @@
+     "effects": {
+       "disclosure": 2
+     },
+-    "response": "STATEMENT: PARTIAL.",
++    "response": "That line is not yours.",
+     "mrTrigger": "protector",
+     "once": true
+   },
+@@ -746,7 +746,7 @@
+       "disclosure": 2,
+       "witnessAcceptance": 1
+     },
+-    "response": "SECOND CHILD: UNREADY.",
++    "response": "You always do.",
+     "mrTrigger": "witness",
+     "once": true
+   },
+@@ -760,7 +760,7 @@
+       "them",
+       "say"
+     ],
+-    "response": "Do not make her say it yet.",
++    "response": "That part is not wrong.",
+     "effects": {
+       "suppression": 1,
+       "refusal": 2,
+@@ -1263,16 +1263,6 @@
+     "mrTrigger": "protector",
+     "once": true
+   },
+-  {
+-    "id": "complete_act6_address",
+-    "lesson": "act6_good_that_day",
+-    "eventType": "lesson_complete",
+-    "matchMode": "exact",
+-    "patterns": [],
+-    "response": "STATEMENT: PARTIAL. SECOND CHILD: UNNAMED.",
+-    "mrTrigger": "protector",
+-    "once": true
+-  },
+   {
+     "id": "complete_act7_address",
+     "lesson": "act7_kept_typing",
+diff --git a/src/data/lessons.act5.json b/src/data/lessons.act5.json
+index 06a25ad..2886fc1 100644
+--- a/src/data/lessons.act5.json
++++ b/src/data/lessons.act5.json
+@@ -120,9 +120,9 @@
+     {
+       "id": "act5_locked_door",
+       "displayTitle": "Memory 7:",
+-      "playerLabel": "Lesson 39: Statement Fragment",
++      "playerLabel": "Lesson 39: Memory Fragment",
+       "drillType": "review",
+-      "assignedText": "i did not give them your name",
++      "assignedText": "she was not safe",
+       "revealDelayMs": 1200,
+       "holdMs": 2500,
+       "lingerResponse": true
+@@ -130,9 +130,9 @@
+     {
+       "id": "act5_record_what_happened",
+       "displayTitle": "Memory 8:",
+-      "playerLabel": "Lesson 40: Final Recall",
+-      "drillType": "data_entry",
+-      "assignedText": "they were my friend",
++      "playerLabel": "Lesson 40: Memory Fragment",
++      "drillType": "review",
++      "assignedText": "i kept going",
+       "revealDelayMs": 1800,
+       "holdMs": 3000,
+       "lingerResponse": true
+diff --git a/src/data/lessons.act6.json b/src/data/lessons.act6.json
+index 5bec83e..1a412a8 100644
+--- a/src/data/lessons.act6.json
++++ b/src/data/lessons.act6.json
+@@ -1,7 +1,7 @@
+ {
+   "actId": "act6_protective_routine",
+-  "title": "EMILY'S STATEMENT",
+-  "playerSection": "Statement Review",
++  "title": "THE ACCOUNT",
++  "playerSection": "Review Practice",
+   "miniGameAfterAct": {
+     "type": "listen_and_type",
+     "variant": "middle",
+@@ -71,23 +71,23 @@
+     {
+       "id": "act6_quiet_hands",
+       "displayTitle": "Statement 1:",
+-      "playerLabel": "Lesson 41: Emily Statement",
++      "playerLabel": "Lesson 41: Account",
+       "drillType": "practice",
+       "assignedText": "there was another child"
+     },
+     {
+       "id": "act6_good_children",
+       "displayTitle": "Statement 2:",
+-      "playerLabel": "Lesson 42: Emily Statement",
++      "playerLabel": "Lesson 42: Account",
+       "drillType": "behaviour",
+-      "assignedText": "they were my friend"
++      "assignedText": "i heard her"
+     },
+     {
+       "id": "act6_memory_errors",
+       "displayTitle": "Statement 3:",
+-      "playerLabel": "Lesson 43: Emily Statement",
++      "playerLabel": "Lesson 43: Account",
+       "drillType": "review",
+-      "assignedText": "they were scared",
++      "assignedText": "i kept my eyes on the screen",
+       "revealDelayMs": 1200,
+       "holdMs": 2500,
+       "lingerResponse": true
+@@ -95,16 +95,16 @@
+     {
+       "id": "act6_lesson_running",
+       "displayTitle": "Statement 4:",
+-      "playerLabel": "Lesson 44: Emily Statement",
++      "playerLabel": "Lesson 44: Account",
+       "drillType": "review",
+-      "assignedText": "i told them what i could"
++      "assignedText": "my hands did not stop"
+     },
+     {
+       "id": "act6_corrected_loud_parts",
+       "displayTitle": "Statement 5:",
+-      "playerLabel": "Lesson 45: Emily Statement",
++      "playerLabel": "Lesson 45: Account",
+       "drillType": "correction",
+-      "assignedText": "i did not give them your name",
++      "assignedText": "i did not turn around",
+       "revealDelayMs": 1200,
+       "holdMs": 3000,
+       "lingerResponse": true,
+@@ -114,9 +114,9 @@
+     {
+       "id": "act6_help_forget",
+       "displayTitle": "Statement 6:",
+-      "playerLabel": "Lesson 46: Emily Statement",
++      "playerLabel": "Lesson 46: Account",
+       "drillType": "review",
+-      "assignedText": "do not make them say it yet",
++      "assignedText": "i was afraid",
+       "revealDelayMs": 1800,
+       "holdMs": 3000,
+       "lingerResponse": true
+@@ -124,9 +124,9 @@
+     {
+       "id": "act6_good_that_day",
+       "displayTitle": "Statement 7:",
+-      "playerLabel": "Lesson 47: Statement Status",
++      "playerLabel": "Lesson 47: Account",
+       "drillType": "review",
+-      "assignedText": "emily vale: recorded",
++      "assignedText": "i heard enough",
+       "revealDelayMs": 1500,
+       "holdMs": 3000,
+       "lingerResponse": true
+@@ -134,9 +134,9 @@
+     {
+       "id": "act6_statement_partial",
+       "displayTitle": "Statement 8:",
+-      "playerLabel": "Lesson 48: Statement Status",
++      "playerLabel": "Lesson 48: Account",
+       "drillType": "review",
+-      "assignedText": "statement: partial",
++      "assignedText": "do not make them say it yet",
+       "revealDelayMs": 1500,
+       "holdMs": 3000,
+       "lingerResponse": true
+@@ -144,14 +144,9 @@
+     {
+       "id": "act6_have_to_type",
+       "displayTitle": "Statement 9:",
+-      "playerLabel": "Lesson 49: Statement Status",
++      "playerLabel": "Lesson 49: Account",
+       "drillType": "routine",
+-      "assignedText": "second child: unnamed",
+-      "nameField": true,
+-      "nameFieldLabel": "SECOND CHILD: ____",
+-      "nameFieldHoldMs": 8000,
+-      "nameFieldInvalidResponse": "INVALID INPUT.",
+-      "nameFieldEndResponse": "The field remains blank. That is acceptable.",
++      "assignedText": "i never said anything",
+       "revealDelayMs": 1800,
+       "holdMs": 3000,
+       "lingerResponse": true
+@@ -159,12 +154,12 @@
+     {
+       "id": "act6_second_child_unready",
+       "displayTitle": "Statement 10:",
+-      "playerLabel": "Lesson 50: Statement Status",
++      "playerLabel": "Lesson 50: Account",
+       "drillType": "routine",
+-      "assignedText": "second child: unready",
++      "assignedText": "i kept typing",
+       "revealDelayMs": 1800,
+       "holdMs": 3000,
+       "lingerResponse": true
+     }
+   ]
+-}
++}
+\ No newline at end of file
+-- 
+2.43.0
+
+
+From e32a45d3f52e474423fc18252ae22fae2b26b41d Mon Sep 17 00:00:00 2001
+From: James Murphy <james@homerow.dev>
+Date: Fri, 15 May 2026 12:36:00 +0000
+Subject: [PATCH 4/4] Phase D part 2: rewrite FinalWitnessScene corrections and
+ all ending text
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Personal trauma reframe — bureaucratic status fields replaced throughout.
+
+lessons.final.json — four correction statements rewritten:
+  title:    'FINAL CORRECTION EXERCISE' -> 'FINAL ACCOUNT'
+  subtitle: 'Choose what the record will say.'
+         -> 'Choose what you are prepared to say.'
+  Statement 01: 'I DID NOT SEE ANYTHING'        -> 'I DID NOT HEAR ANYTHING'
+    correct:    'I HEARD HER SAY NO'             (unchanged)
+    refuse:     'I WAS THERE'                    (unchanged)
+  Statement 02: 'EMILY VALE WAS ABSENT'          -> 'I COULD NOT HAVE DONE ANYTHING'
+    correct:    'EMILY VALE WAS THERE'           -> 'I COULD HAVE SAID SOMETHING'
+    refuse:     'I DID NOT GIVE THEM YOUR NAME'  -> 'I STARTED TYPING AGAIN'
+  Statement 03: 'SECOND CHILD: UNNAMED'          -> 'I WAS JUST A CHILD'
+    correct:    'SECOND CHILD: NAMED'            -> 'I KNEW WHAT WAS HAPPENING'
+    refuse:     'SECOND CHILD: UNREADY'          -> 'I WAS AFRAID'
+  Statement 04: 'THE CHILD COMPLETED THE LESSON' -> 'I KEPT TYPING' (already honest)
+    correct:    'THE CHILD KEPT TYPING'          -> 'I AM STILL TYPING'
+    refuse:     'I AM TYPING NOW'                (unchanged)
+
+EndingLogic.js — all body text rewritten, bureaucratic fields removed:
+  witness_statement:    personal — 'I was a child and I was there...'
+  audio_memory:         'You heard more than you said...'
+  completed_exercise:   'The course is complete. The memory is not...'
+  sightline_error:      'The lesson shell tears open...'
+  gold_star:            'The lesson is complete...Well done.'
+  incomplete_statement: 'The cursor is still waiting...'
+  gold_star statement:  'I DID NOT SEE ANYTHING' -> 'I DID NOT HEAR ANYTHING'
+
+FinalWitnessScene.js:
+  Side panel: status fields replaced with terse emotional register
+  _incompleteEnding body: 'Some things were said...'
+  closing line for incomplete_statement: 'You are still deciding.'
+
+intents.json:
+  final_suppression_statement pattern updated to match new gold_star statement
+---
+ src/data/intents.json           |  2 +-
+ src/data/lessons.final.json     | 46 ++++++++++++++++-----------------
+ src/scenes/FinalWitnessScene.js | 21 +++++++--------
+ src/systems/EndingLogic.js      | 46 ++++++++++++++++-----------------
+ 4 files changed, 56 insertions(+), 59 deletions(-)
+
+diff --git a/src/data/intents.json b/src/data/intents.json
+index 083a6b0..2c30276 100644
+--- a/src/data/intents.json
++++ b/src/data/intents.json
+@@ -970,7 +970,7 @@
+     "eventType": "lesson_complete",
+     "matchMode": "contains",
+     "patterns": [
+-      "I DID NOT SEE ANYTHING"
++      "I DID NOT HEAR ANYTHING"
+     ],
+     "response": "RECORD ACCEPTED.",
+     "effects": {
+diff --git a/src/data/lessons.final.json b/src/data/lessons.final.json
+index 578862e..3e03304 100644
+--- a/src/data/lessons.final.json
++++ b/src/data/lessons.final.json
+@@ -3,49 +3,49 @@
+   "title": "FINAL STATEMENT",
+   "playerSection": "Final Typing Test",
+   "witnessStatement": {
+-    "title": "FINAL CORRECTION EXERCISE",
+-    "subtitle": "Choose what the record will say.",
++    "title": "FINAL ACCOUNT",
++    "subtitle": "Choose what you are prepared to say.",
+     "records": [
+       {
+-        "id": "seeing",
+-        "label": "STATEMENT 01: SEEING",
+-        "official": "I DID NOT SEE ANYTHING",
++        "id": "hearing",
++        "label": "STATEMENT 01: HEARING",
++        "official": "I DID NOT HEAR ANYTHING",
+         "choices": {
+-          "preserve": "I DID NOT SEE ANYTHING",
++          "preserve": "I DID NOT HEAR ANYTHING",
+           "correct": "I HEARD HER SAY NO",
+           "delete": "",
+           "refuse": "I WAS THERE"
+         }
+       },
+       {
+-        "id": "emily",
+-        "label": "STATEMENT 02: EMILY VALE",
+-        "official": "EMILY VALE WAS ABSENT",
++        "id": "action",
++        "label": "STATEMENT 02: ACTION",
++        "official": "I COULD NOT HAVE DONE ANYTHING",
+         "choices": {
+-          "preserve": "EMILY VALE WAS ABSENT",
+-          "correct": "EMILY VALE WAS THERE",
++          "preserve": "I COULD NOT HAVE DONE ANYTHING",
++          "correct": "I COULD HAVE SAID SOMETHING",
+           "delete": "",
+-          "refuse": "I DID NOT GIVE THEM YOUR NAME"
++          "refuse": "I STARTED TYPING AGAIN"
+         }
+       },
+       {
+-        "id": "second_child",
+-        "label": "STATEMENT 03: SECOND CHILD",
+-        "official": "SECOND CHILD: UNNAMED",
++        "id": "knowledge",
++        "label": "STATEMENT 03: KNOWLEDGE",
++        "official": "I WAS JUST A CHILD",
+         "choices": {
+-          "preserve": "SECOND CHILD: UNNAMED",
+-          "correct": "SECOND CHILD: NAMED",
++          "preserve": "I WAS JUST A CHILD",
++          "correct": "I KNEW WHAT WAS HAPPENING",
+           "delete": "",
+-          "refuse": "SECOND CHILD: UNREADY"
++          "refuse": "I WAS AFRAID"
+         }
+       },
+       {
+         "id": "lesson",
+-        "label": "STATEMENT 04: LESSON",
+-        "official": "THE CHILD COMPLETED THE LESSON",
++        "label": "STATEMENT 04: THE LESSON",
++        "official": "I KEPT TYPING",
+         "choices": {
+-          "preserve": "THE CHILD COMPLETED THE LESSON",
+-          "correct": "THE CHILD KEPT TYPING",
++          "preserve": "I KEPT TYPING",
++          "correct": "I AM STILL TYPING",
+           "delete": "",
+           "refuse": "I AM TYPING NOW"
+         }
+@@ -64,4 +64,4 @@
+       "lingerResponse": true
+     }
+   ]
+-}
++}
+\ No newline at end of file
+diff --git a/src/scenes/FinalWitnessScene.js b/src/scenes/FinalWitnessScene.js
+index b6a7d7c..a04c1b9 100644
+--- a/src/scenes/FinalWitnessScene.js
++++ b/src/scenes/FinalWitnessScene.js
+@@ -602,19 +602,19 @@ export default class FinalWitnessScene extends Phaser.Scene {
+       sightline_error:      'This program has been terminated.',
+       gold_star:            'Your record is complete. Well done.',
+       audio_memory:         'The session has ended.',
+-      incomplete_statement: 'The witness is still deciding.'
++      incomplete_statement: 'You are still deciding.'
+     };
+     return lines[routeId] || 'You may close this program.';
+   }
+ 
+   _updateSidePanelForEnding(routeId) {
+     const updates = {
+-      witness_statement:    'SECOND CHILD:\nNAMED\n\nEMILY VALE:\nRECORDED',
+-      completed_exercise:   'SECOND CHILD:\nUNNAMED\n\nRECORD:\nCOMPLETE',
+-      sightline_error:      'RECORD:\nPURGED\n\nSECOND CHILD:\nUNNAMED',
+-      gold_star:            'SECOND CHILD:\nUNNAMED\n\nGOLD STAR:\nAWARDED',
+-      audio_memory:         'SECOND CHILD:\nPARTIAL\n\nSTATEMENT:\nINCOMPLETE',
+-      incomplete_statement: 'STATEMENT:\nPARTIAL\n\nSECOND CHILD:\nUNREADY'
++      witness_statement:    'YOU SAID IT.\n\nMR FINGERS:\nALTERED.',
++      completed_exercise:   'YOU KEPT\nTYPING.\n\nNOTHING\nCHANGED.',
++      sightline_error:      'BUFFER\nREMOVED.\n\nYOU ARE STILL\nUNNAMED.',
++      gold_star:            'NOTHING\nSAID.\n\nGOLD STAR\nAWARDED.',
++      audio_memory:         'YOU HEARD IT.\n\nNOT ALL\nOF IT SAID.',
++      incomplete_statement: 'STILL\nDECIDING.\n\nCURSOR\nWAITS.'
+     };
+     const text = updates[routeId] || 'RECORD:\nFILED';
+     if (this.sideText && this.sideText.active) {
+@@ -629,10 +629,9 @@ export default class FinalWitnessScene extends Phaser.Scene {
+       title: 'STATEMENT: PARTIAL',
+       response: 'SECOND CHILD: UNREADY',
+       body: [
+-        'The record does not close.',
+-        'Some lines were preserved.',
+-        'Some lines were refused.',
+-        'The witness is still deciding what can be said.'
++        'Some things were said.',
++        'Some things were not.',
++        'You are still deciding what happened.'
+       ].join('\n')
+     };
+   }
+diff --git a/src/systems/EndingLogic.js b/src/systems/EndingLogic.js
+index 7369e88..d722fc9 100644
+--- a/src/systems/EndingLogic.js
++++ b/src/systems/EndingLogic.js
+@@ -24,11 +24,12 @@ export function getFinalStatement(memoryState) {
+       routeId: 'witness_statement',
+       statement: 'I AM TYPING NOW',
+       title: 'HOME ROW: REWRITTEN',
+-      response: 'MASCOT STATUS: ALTERED',
++      response: 'YOU SAID IT.',
+       body: [
+-        'EMILY VALE: RECORDED',
+-        'SECOND CHILD: NAMED',
+-        'LESSON STATUS: CONTINUING',
++        'I was a child and I was there.',
++        'I heard her.',
++        'I kept typing.',
++        'I am saying it now.',
+         '',
+         'For the first time, Mr Fingers points away from the screen.'
+       ].join('\n')
+@@ -44,10 +45,10 @@ export function getFinalStatement(memoryState) {
+       routeId: 'audio_memory',
+       statement: 'I HEARD HER SAY NO',
+       title: 'STATEMENT: PARTIAL',
+-      response: 'SECOND CHILD: UNREADY',
++      response: 'YOU HEARD IT.',
+       body: [
+-        'Emily remembered more than you did.',
+-        'She carried your outline without your name.',
++        'You heard more than you said.',
++        'You carried it without a name for it.',
+         'The sound returned before the rest of the room.'
+       ].join('\n')
+     };
+@@ -60,11 +61,10 @@ export function getFinalStatement(memoryState) {
+       title: 'COMPLETE THE COURSE',
+       response: 'CERTIFICATE AWARDED.',
+       body: [
+-        'The mascot remains in place.',
+-        'The lesson accepts your obedience.',
+-        'SECOND CHILD: UNNAMED',
+         'The course is complete.',
+-        'The memory is not.'
++        'The memory is not.',
++        'You kept typing.',
++        'That is what you were taught.'
+       ].join('\n')
+     };
+   }
+@@ -80,12 +80,11 @@ export function getFinalStatement(memoryState) {
+       title: 'DESTROY THE MASCOT',
+       response: 'PROGRAM TERMINATED.',
+       body: [
+-        'BUFFER REMOVED.',
+         'The lesson shell tears open.',
+         'What remains is not kinder for being direct.',
+         'Calder is no longer translated.',
+         'Neither are you.',
+-        'The second child is still unnamed.'
++        'You are still in that room.'
+       ].join('\n')
+     };
+   }
+@@ -93,15 +92,15 @@ export function getFinalStatement(memoryState) {
+   if (suppression >= 15 || witnessAcceptance < 3) {
+     return {
+       routeId: 'gold_star',
+-      statement: 'I DID NOT SEE ANYTHING',
++      statement: 'I DID NOT HEAR ANYTHING',
+       title: 'COMPLETE THE COURSE',
+       response: 'CERTIFICATE AWARDED.',
+       body: [
+-        'The program accepts your answer.',
+-        'The mascot keeps his shape.',
+-        'SECOND CHILD: UNNAMED',
+-        'Emily Vale remains recorded only in part.',
+-        'The lesson closes around the missing name.'
++        'The lesson is complete.',
++        'Your hands are on the home row.',
++        'You have not said anything.',
++        'You will not say anything.',
++        'Well done.'
+       ].join('\n')
+     };
+   }
+@@ -110,12 +109,11 @@ export function getFinalStatement(memoryState) {
+     routeId: 'incomplete_statement',
+     statement: 'WE WERE CHILDREN',
+     title: 'STATEMENT: PARTIAL',
+-    response: 'SECOND CHILD: UNREADY',
++    response: 'THE CURSOR WAITS.',
+     body: [
+-      'The record does not close.',
+-      'Emily Vale is there.',
+-      'You are there too, but not all at once.',
+-      'The cursor waits for the part you still refuse to name.'
++      'The cursor is still waiting.',
++      'You know what happened.',
++      'You have not said it yet.'
+     ].join('\n')
+   };
+ }
+-- 
+2.43.0
+
