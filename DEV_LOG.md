@@ -2,6 +2,39 @@
 
 ---
 
+## 2026-05-15 — Phases A–D patch applied
+
+> **STATUS: STOP. No new features until playtest.**
+> Next work is Phase 4 route playtest only. See `HOME_ROW_REMAINING_TODO.md`.
+
+### What changed this session
+
+**Swear word detection (all acts)**
+- 5 new intents (`swear_word_early/mid/late/final/fallback`) fire when the player types profanity.
+- Responses escalate across acts: *"Language errors will be corrected."* → *"Good. That is closer than silence."*
+- Two new audio assets: `incorrect.wav` (wrong lesson sound) and `swear.wav` (swear response sound).
+- `TypingScene` wires both sounds and plays `swear.wav` on swear-word intent.
+
+**Act 7 lesson ID rename**
+- Stale IDs (`act7_emily_absent`, `act7_classroom_supervised`, `act7_no_distress`, `act7_heard_nothing`, `act7_records_completed`) renamed to line-keyed IDs (`act7_good_children_line`, `act7_kept_alive_line`, `act7_kept_unnamed_line`, `act7_never_ready_line`, `act7_disruption_line`).
+- Matching `lesson` references in `intents.json` updated.
+- `disruption_line` response changed from echo to *"That is what he sounded like."*
+
+**EndingLogic route content**
+- Witness route body lines revised (e.g. *"I was a child and I was there."*).
+- Audio Memory route body lines revised.
+- Obedience/Gold Star route body revised.
+- `mr_fingers_music` stopped cleanly on interlude handoff (fixes lingering music bug).
+
+**SessionLogScene**
+- Minor additions (details in diff).
+
+**lessons.act2 / act4 / act5 / act6 / act7 / final**
+- Various `assignedText` and lesson content updates across acts as part of the phase cleanup.
+- `act6_have_to_type` conflict resolved: kept `nameField`/`oppositionTriggers` structure, updated `assignedText` to *"i never said anything"*.
+
+---
+
 ## 2026-05-14 — Ending scene improvements
 
 > **STATUS: STOP. No new features until playtest.**
