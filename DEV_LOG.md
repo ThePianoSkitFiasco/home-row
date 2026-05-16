@@ -2,10 +2,44 @@
 
 ---
 
+## 2026-05-16 — Visual effects pass
+
+> **STATUS: STOP. Playtest all three passes before new features.**
+> Next step: full playthrough focusing on visual intensity curve. Does Acts 1-4 feel subtle? Does Act 7 feel aggressive? Does the RecoveryScene slip land physically?
+
+### What changed this session
+
+**Visual effects pass**
+Goal: add physical sensation layer — screen flashes, shakes, static bursts — tied to specific narrative moments. Progressive intensity: barely perceptible in Acts 1-4, clearly purposeful in Acts 5-6, aggressive in Act 7.
+
+- **Graduated vignette (Acts 1-4):** vignette was zero across all early acts, jumping to 0.42 at Act 5. Now: Act 2 = 0.03 (subliminal), Act 3 = 0.07, Act 4 = 0.13. The screen narrows as wrongness builds.
+- **`cameraEffect` preset system:** new lesson JSON property triggering camera flash/shake on lesson completion. Five presets: `ghost` (faint white flash), `slip` (white flash + light shake), `static` (muted flash + shake), `rupture` (strong flash + long shake), `red` (red flash + shake). Wired into `_onLineComplete()`.
+- **Auto morph pulse (Acts 5+):** when `textMorphFlash` fires in Act 5 or later, a 60ms micro-flash accompanies the text slip. Acts 1-4 morphs stay purely textual — quiet wrongness.
+- **RecoveryScene visual beat:** the second "Type what you hear." (the slip moment) now triggers a white flash + shake as it finishes typing, before transitioning to Act 5.
+- **Lesson beats:**
+  - Act 2 L13 "emily vale" (with ghost text SECOND CHILD): `ghost` — memory intrusion, barely felt
+  - Act 3 L23 "teacher override accepted" (Calder footer morph): `ghost` — name surfaces from the system
+  - Act 4 L31 "do not turn around": `slip` — command completes, something shifted
+  - Act 5 L36 "he said your name" (mrSilentCompletion): `static` — flash before the void
+  - Act 7 L55 "i kept you alive": `static` — the claim hitting
+  - Act 7 L57 "you were never ready" (tense morph): `rupture` — most direct accusation
+  - Act 7 L58 "now type" (final command): `rupture` — the ending choice approaches
+
+### Files changed
+
+- `src/scenes/TypingScene.js`
+- `src/scenes/RecoveryScene.js`
+- `src/data/lessons.act2.json`
+- `src/data/lessons.act3.json`
+- `src/data/lessons.act4.json`
+- `src/data/lessons.act5.json`
+- `src/data/lessons.act7.json`
+
+---
+
 ## 2026-05-16 — Narrative pacing + horror escalation pass
 
-> **STATUS: STOP. Playtest both passes before new features.**
-> Next step: full playthrough focusing on pacing across all 7 acts. Check transitions feel right, silence lands, morphs aren't distracting.
+> **STATUS: COMPLETE. See visual effects pass above for current state.**
 
 ### What changed this session
 

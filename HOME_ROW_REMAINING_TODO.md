@@ -2,11 +2,13 @@
 
 > ## ⛔ STOP — DO NOT START NEW FEATURES
 >
-> **Last session completed:** Narrative pacing pass (Acts 1–4) + horror escalation pass (Acts 5–7, boot anomaly, RecoveryScene).
-> **Repo is clean and pushed (`91322d6`).**
+> **Last session completed:** Visual effects pass — graduated vignette, `cameraEffect` presets, auto morph pulse, RecoveryScene visual beat.
+> **Three passes now merged: narrative pacing, horror escalation, visual effects.**
 >
 > **Next step is PLAYTEST ONLY — full run through all 7 acts.**
-> Focus: does the wrongness build correctly? Do the silences land? Does RecoveryScene feel like a slip or just a delay?
+> Focus: does the visual intensity curve feel right? Acts 1-4 subtle, Acts 5-6 purposeful, Act 7 aggressive?
+> Does the RecoveryScene slip land physically?
+> Does the flash-before-silence on "he said your name" work?
 > Then run the Phase 4 ending route tests below.
 > Do not write new code until playtest is reported.
 > See `DEV_LOG.md` for full session summary.
