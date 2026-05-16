@@ -264,14 +264,29 @@ export default class TeacherTimeScene extends Phaser.Scene {
 
   _renderCurrentLine() {
     const activeLines = this.mode === 'reply' ? this.replyLines : this.lines;
-    const line = activeLines[this.lineIndex] || '';
-    this.choiceText.setText('');
-    this.choiceText.setVisible(false);
-    this.lineText.setVisible(true);
-    this.lineText.setText(`"${line}"`);
-    this.footerText.setText('PRESS SPACE TO CONTINUE');
-    this._startSpeakingAnimation();
-    this._playCalderVoiceSting();
+    const entry = activeLines[this.lineIndex];
+    const line = typeof entry === 'object' ? (entry.text || '') : (entry || '');
+    const pauseMs = typeof entry === 'object' ? (entry.pauseBeforeMs || 0) : 0;
+
+    const doRender = () => {
+      this.choiceText.setText('');
+      this.choiceText.setVisible(false);
+      this.lineText.setVisible(true);
+      this.lineText.setText(`"${line}"`);
+      this.footerText.setText('PRESS SPACE TO CONTINUE');
+      this._startSpeakingAnimation();
+      this._playCalderVoiceSting();
+    };
+
+    if (pauseMs > 0) {
+      this.lineText.setText('');
+      this.lineText.setVisible(false);
+      this.footerText.setText('');
+      this._stopSpeakingAnimation();
+      this.time.delayedCall(pauseMs, doRender, [], this);
+    } else {
+      doRender();
+    }
   }
 
   _showChoices() {

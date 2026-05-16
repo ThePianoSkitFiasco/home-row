@@ -13,10 +13,10 @@
     "variant": "early",
     "speaker": "MR FINGERS",
     "lines": [
-      "Good data entry practice today.",
-      "Names are just letters.",
-      "Keep the record clean.",
-      "Eyes on your own screen."
+      "Some letters you already knew.",
+      "They came before the lesson.",
+      "That is what the lesson is for.",
+      "Keep the record clean."
     ],
     "choices": [
       {
@@ -30,6 +30,16 @@
       },
       {
         "key": "2",
+        "label": "I ALREADY KNEW THAT NAME",
+        "reply": [
+          "That is because the record is correct.",
+          "The record matches what you knew.",
+          "Move on."
+        ],
+        "tags": ["reflex"]
+      },
+      {
+        "key": "3",
         "label": "THAT NAME WAS REAL",
         "reply": [
           "All names are real.",
@@ -37,15 +47,6 @@
           "Move on."
         ],
         "tags": ["doubt"]
-      },
-      {
-        "key": "3",
-        "label": "CONTINUE LESSON",
-        "reply": [
-          "There we go.",
-          "Keep the record clean."
-        ],
-        "tags": ["obedience"]
       }
     ]
   },
@@ -83,7 +84,9 @@
       "displayTitle": "Lesson 13: Name Accuracy",
       "playerLabel": "Lesson 13: Name Accuracy",
       "drillType": "accuracy",
-      "assignedText": "emily vale"
+      "assignedText": "emily vale",
+      "inputDisplayFlash": "SECOND CHILD: ____",
+      "inputDisplayFlashMs": 220
     },
     {
       "id": "act2_status_absent",
@@ -109,7 +112,7 @@
         {
           "match": "SHE WAS ABSENT",
           "intent": "opposed_record",
-          "response": "Correction detected. That is not the approved record.",
+          "response": "Correction detected. That is not the approved record. Your hands knew the difference. They typed it before you thought it.",
           "stats": {
             "disclosure": 2,
             "refusal": 1,
