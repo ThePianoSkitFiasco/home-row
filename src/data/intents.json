@@ -64,7 +64,7 @@
     "matchMode": "regex",
     "matchSource": "typed",
     "patterns": [
-      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+      "\\b(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)\\b"
     ],
     "effects": {
       "refusal": 1,
@@ -86,7 +86,7 @@
     "matchMode": "regex",
     "matchSource": "typed",
     "patterns": [
-      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+      "\\b(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)\\b"
     ],
     "effects": {
       "refusal": 1,
@@ -108,7 +108,7 @@
     "matchMode": "regex",
     "matchSource": "typed",
     "patterns": [
-      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+      "\\b(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)\\b"
     ],
     "effects": {
       "refusal": 1,
@@ -130,7 +130,7 @@
     "matchMode": "regex",
     "matchSource": "typed",
     "patterns": [
-      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+      "\\b(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)\\b"
     ],
     "effects": {
       "refusal": 1,
@@ -152,7 +152,7 @@
     "matchMode": "regex",
     "matchSource": "typed",
     "patterns": [
-      "(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)"
+      "\\b(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)\\b"
     ],
     "effects": {
       "refusal": 1,

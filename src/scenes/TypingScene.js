@@ -1234,9 +1234,11 @@ export default class TypingScene extends Phaser.Scene {
       if (!text) return;
       if (intent && intent.intentGroup === 'swear_word') {
         this._onRecognizedSwearWord();
-        this._queueSwearDeletionPrompt();
       }
       this.responseQueue.push(text);
+      if (intent && intent.intentGroup === 'swear_word') {
+        this._queueSwearDeletionPrompt();
+      }
       this._showNextResponse();
     };
 
