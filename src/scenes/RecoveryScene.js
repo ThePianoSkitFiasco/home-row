@@ -188,6 +188,9 @@ export default class RecoveryScene extends Phaser.Scene {
           this._firstTypeWheardDone = true;
           pauseMs = 2000;
         } else {
+          // slip — the loop is visible
+          this.cameras.main.flash(160, 255, 255, 255, false);
+          this.cameras.main.shake(120, 0.002);
           pauseMs = 600;
         }
       }

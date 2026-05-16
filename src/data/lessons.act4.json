@@ -120,6 +120,7 @@
       "playerLabel": "Lesson 31: Command Practice",
       "drillType": "dictation",
       "assignedText": "do not turn around",
+      "cameraEffect": "slip",
       "subjectIntrusionTriggers": [
         {
           "terms": ["I", "YOU", "EMILY"],

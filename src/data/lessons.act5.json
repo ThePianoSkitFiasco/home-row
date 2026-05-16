@@ -102,7 +102,8 @@
       "textMorphFlash": "out loud. she heard.",
       "textMorphDelayMs": 900,
       "textMorphDurationMs": 170,
-      "mrSilentCompletion": true
+      "mrSilentCompletion": true,
+      "cameraEffect": "static"
     },
     {
       "id": "act5_kept_behind",

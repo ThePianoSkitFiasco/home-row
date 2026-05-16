@@ -124,7 +124,8 @@
       "assignedText": "teacher override accepted",
       "footerMorphFlash": "CALDER, J.",
       "footerMorphDelayMs": 1000,
-      "footerMorphDurationMs": 180
+      "footerMorphDurationMs": 180,
+      "cameraEffect": "ghost"
     },
     {
       "id": "act3_typing_pattern_match",
