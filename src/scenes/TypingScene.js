@@ -249,6 +249,7 @@ const ACT_THEMES = {
     bg: '#c8ccd0',
     gridAlpha: 0,
     overlayAlpha: 0,
+    vignetteAlpha: 0.03,
     light: true,
     panelBg: '#f0f0f0',
     panelBorder: '#888888',
@@ -270,6 +271,7 @@ const ACT_THEMES = {
     bg: '#b8beb8',
     gridAlpha: 0.04,
     overlayAlpha: 0.02,
+    vignetteAlpha: 0.07,
     light: true,
     panelBg: '#e8eee8',
     panelBorder: '#778877',
@@ -291,6 +293,7 @@ const ACT_THEMES = {
     bg: '#4a4a40',
     gridAlpha: 0.06,
     overlayAlpha: 0.03,
+    vignetteAlpha: 0.13,
     panelBg: '#2a2a24',
     panelBorder: '#5a5a4a',
     textCorrect: '#66bb66',
@@ -1516,6 +1519,9 @@ export default class TypingScene extends Phaser.Scene {
       this._morphTimer = this.time.delayedCall(morphDelay, () => {
         if (this.inputLocked || this.actComplete) return;
         this.assignedText.setText(lesson.textMorphFlash);
+        if (this.lessonManager && this.lessonManager.currentActIndex >= 4) {
+          this.cameras.main.flash(60, 200, 200, 200, false);
+        }
         this._morphTimer = this.time.delayedCall(morphDuration, () => {
           if (!this.actComplete) this.assignedText.setText(assignedText);
           this._morphTimer = null;
@@ -1577,6 +1583,19 @@ export default class TypingScene extends Phaser.Scene {
       // deliberate silence — Mr Fingers does not respond
     } else if (completionMrState) {
       this.mrFingers.setState(completionMrState);
+    }
+
+    if (lesson && lesson.cameraEffect) {
+      const CAMERA_EFFECTS = {
+        ghost:   () => { this.cameras.main.flash(120, 255, 255, 255, false); },
+        slip:    () => { this.cameras.main.flash(180, 255, 255, 255, false); this.cameras.main.shake(80, 0.002); },
+        static:  () => { this.cameras.main.flash(60,  200, 200, 200, false); this.cameras.main.shake(100, 0.003); },
+        rupture: () => { this.cameras.main.flash(140, 255, 255, 255, false); this.cameras.main.shake(200, 0.006); },
+        red:     () => { this.cameras.main.flash(90,  120,   0,   0, false); this.cameras.main.shake(110, 0.003); },
+      };
+      if (CAMERA_EFFECTS[lesson.cameraEffect]) {
+        CAMERA_EFFECTS[lesson.cameraEffect]();
+      }
     }
 
     if (lesson && lesson.systemErase) {

@@ -86,7 +86,8 @@
       "drillType": "accuracy",
       "assignedText": "emily vale",
       "inputDisplayFlash": "SECOND CHILD: ____",
-      "inputDisplayFlashMs": 220
+      "inputDisplayFlashMs": 220,
+      "cameraEffect": "ghost"
     },
     {
       "id": "act2_status_absent",
