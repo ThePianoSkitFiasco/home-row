@@ -113,6 +113,7 @@ const CALDER_CYCLES = {
 const MR_PORTRAIT_PANEL_FILL = 0xfff4d8;
 const MR_PORTRAIT_PANEL_ERROR_FILL = 0xffc4c4;
 const MR_PORTRAIT_PANEL_ERROR_STROKE = 0xb94a3b;
+const SWEAR_WORD_PATTERN = /\b(?:fuck|fucking|fucked|fucker|shit|shitty|bullshit|bastard|bollocks|wanker|twat|arse|asshole|cunt|bitch|damn|crap|piss|shag)\b/gi;
 const SHOW_DEV_TOUCH_CONTROLS = false;
 const TUTOR_PALETTE = {
   background: 0xf4e6bd,
@@ -1184,18 +1185,15 @@ export default class TypingScene extends Phaser.Scene {
 
       if (eventType === 'typed') {
         this._errorStreak = 0;
-        firedIntents = firedIntents.concat(
-          this.intentEngine.processEvent('input', data, lesson.id, act ? act.actId : null)
-        );
+        firedIntents = firedIntents.concat(this._processSwearInputIfNeeded(data, lesson, act));
       } else if (eventType === 'mistake') {
         this._errorStreak++;
         this._lessonErrorCount++;
         this._onMistake();
-        firedIntents = firedIntents.concat(
-          this.intentEngine.processEvent('input', data, lesson.id, act ? act.actId : null)
-        );
+        firedIntents = firedIntents.concat(this._processSwearInputIfNeeded(data, lesson, act));
       } else if (eventType === 'deleted') {
         this._errorStreak = 0;
+        this._maybeResolveSwearDeletion(data && data.typed);
         if (this.typingEngine.typedChars.length === 0 && !this._deletionEmptyFired) {
           this._onDeletedToEmpty();
         }
@@ -1236,6 +1234,7 @@ export default class TypingScene extends Phaser.Scene {
       if (!text) return;
       if (intent && intent.intentGroup === 'swear_word') {
         this._onRecognizedSwearWord();
+        this._queueSwearDeletionPrompt();
       }
       this.responseQueue.push(text);
       this._showNextResponse();
@@ -1258,6 +1257,41 @@ export default class TypingScene extends Phaser.Scene {
 
     this.events.once('shutdown', () => this._destroyAudio());
     this.events.once('destroy', () => this._destroyAudio());
+  }
+
+  _processSwearInputIfNeeded(data, lesson, act) {
+    const detectedWords = this._getDetectedSwearWords(data && data.typed);
+    const newWords = detectedWords.filter((word) => !this._lessonSwearWordsTriggered.has(word));
+    if (newWords.length === 0) return [];
+
+    const firedIntents = [];
+    newWords.forEach((word) => {
+      this._lessonSwearWordsTriggered.add(word);
+      firedIntents.push(
+        ...this.intentEngine.processEvent('input', { ...data, typed: word }, lesson.id, act ? act.actId : null)
+      );
+    });
+    return firedIntents;
+  }
+
+  _getDetectedSwearWords(text) {
+    const matches = String(text || '').match(SWEAR_WORD_PATTERN);
+    if (!matches) return [];
+    return [...new Set(matches.map((word) => word.toLowerCase()))];
+  }
+
+  _queueSwearDeletionPrompt() {
+    if (this._swearDeletionPending) return;
+    this._swearDeletionPending = true;
+    this.responseQueue.push('Delete that. Continue properly.');
+  }
+
+  _maybeResolveSwearDeletion(typedText) {
+    if (!this._swearDeletionPending) return;
+    if (this._getDetectedSwearWords(typedText).length > 0) return;
+    this._swearDeletionPending = false;
+    this.responseQueue.push('Good. Continue the lesson.');
+    this._showNextResponse();
   }
 
   _audioExists(key) {
@@ -1386,6 +1420,9 @@ export default class TypingScene extends Phaser.Scene {
     this._lessonErrorCount = 0;
     this._lessonResetDone = false;
     this._deletionEmptyFired = false;
+    this._lessonRecognitionFired = new Set();
+    this._lessonSwearWordsTriggered = new Set();
+    this._swearDeletionPending = false;
 
     this.intentEngine.resetLessonCaps();
 
