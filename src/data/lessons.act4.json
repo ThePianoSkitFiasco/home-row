@@ -17,6 +17,9 @@
     "variant": "early",
     "speaker": "MR FINGERS",
     "lines": [
+      "Your hands did not stop.",
+      "Even then.",
+      "That is what I am.",
       "There did not need to be a second child in the record.",
       "You were safer unnamed.",
       "You will keep your eyes on the screen."
@@ -71,7 +74,10 @@
       "displayTitle": "Dictation 2:",
       "playerLabel": "Lesson 26: Room Description",
       "drillType": "dictation",
-      "assignedText": "the room is quiet"
+      "assignedText": "the room is quiet",
+      "textMorphFlash": "the room was not quiet",
+      "textMorphDelayMs": 700,
+      "textMorphDurationMs": 175
     },
     {
       "id": "act4_bell_gone",
@@ -92,7 +98,8 @@
       "displayTitle": "Dictation 5:",
       "playerLabel": "Lesson 29: Instruction Entry",
       "drillType": "dictation",
-      "assignedText": "mr calder says keep typing"
+      "assignedText": "mr calder says keep typing",
+      "revealDelayMs": 300
     },
     {
       "id": "act4_emily_please_wait",
@@ -102,7 +109,10 @@
       "assignedText": "emily says please wait",
       "revealDelayMs": 1200,
       "holdMs": 2500,
-      "lingerResponse": true
+      "lingerResponse": true,
+      "footerMorphFlash": "DO NOT TURN AROUND",
+      "footerMorphDelayMs": 200,
+      "footerMorphDurationMs": 160
     },
     {
       "id": "act4_do_not_turn_around",

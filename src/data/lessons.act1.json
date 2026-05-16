@@ -2,6 +2,7 @@
   "actId": "act1_home_row",
   "title": "HOME ROW",
   "playerSection": "Beginning Typing",
+  "mrEncourageVariant": "[ Mr. Fingers smiles. He has always smiled like that. ]",
   "miniGameAfterAct": {
     "type": "catch_falling_keys",
     "variant": "early",
@@ -15,7 +16,8 @@
     "lines": [
       "Well done.",
       "HOME ROW is a good place to start.",
-      "Some things come back faster than you expect."
+      { "text": "Some things come back faster than you expect.", "pauseBeforeMs": 1400 },
+      "You have done this before."
     ],
     "performanceLines": {
       "excellent": [
@@ -47,21 +49,21 @@
       },
       {
         "key": "2",
+        "label": "I'VE DONE THIS BEFORE",
+        "reply": [
+          "Then you know where to put your hands.",
+          "Begin the next lesson."
+        ],
+        "tags": ["reflex"]
+      },
+      {
+        "key": "3",
         "label": "MY HANDS FEEL STIFF",
         "reply": [
           "That is normal.",
           "They will loosen up."
         ],
         "tags": ["neutral"]
-      },
-      {
-        "key": "3",
-        "label": "CONTINUE LESSON",
-        "reply": [
-          "There you go.",
-          "Eyes on the screen."
-        ],
-        "tags": ["obedience"]
       }
     ]
   },
@@ -71,7 +73,10 @@
       "displayTitle": "Lesson 1: Home Row",
       "playerLabel": "Lesson 1: Home Row Keys",
       "drillType": "keys",
-      "assignedText": "asdf jkl; asdf jkl;"
+      "assignedText": "asdf jkl; asdf jkl;",
+      "footerMorphFlash": "HOME ROW. YOU KNOW WHERE TO START.",
+      "footerMorphDelayMs": 2000,
+      "footerMorphDurationMs": 180
     },
     {
       "id": "act1_alternating",
@@ -120,7 +125,10 @@
       "displayTitle": "Lesson 8: Muscle Memory",
       "playerLabel": "Lesson 8: Muscle Memory",
       "drillType": "phrase",
-      "assignedText": "your hands remember"
+      "assignedText": "your hands remember",
+      "textMorphFlash": "your hands never stopped",
+      "textMorphDelayMs": 800,
+      "textMorphDurationMs": 160
     }
   ]
 }

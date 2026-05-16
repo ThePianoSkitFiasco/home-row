@@ -29,6 +29,9 @@
     "variant": "early",
     "speaker": "MR FINGERS",
     "lines": [
+      "The supervisor's record was retained.",
+      "The lesson continued.",
+      "That is what you learned to do.",
       "There was only one active session that day.",
       "Both workstations are on the log.",
       "Good children finish.",
@@ -50,7 +53,9 @@
         "reply": [
           "That workstation was not assigned to you.",
           "Do not ask again.",
-          "The question arrived before you could stop it."
+          "The question arrived before you could stop it.",
+          "You already know.",
+          "That is not the part you are here to remember."
         ],
         "tags": ["doubt"]
       },
@@ -92,7 +97,10 @@
       "displayTitle": "Lesson 20: Screen Focus",
       "playerLabel": "Lesson 20: Screen Focus",
       "drillType": "drill",
-      "assignedText": "screen focus maintained"
+      "assignedText": "screen focus maintained",
+      "textMorphFlash": "you did not look up",
+      "textMorphDelayMs": 600,
+      "textMorphDurationMs": 170
     },
     {
       "id": "act3_workstation_one",
@@ -113,7 +121,10 @@
       "displayTitle": "Lesson 23: System Command",
       "playerLabel": "Lesson 23: System Command",
       "drillType": "data_entry",
-      "assignedText": "teacher override accepted"
+      "assignedText": "teacher override accepted",
+      "footerMorphFlash": "CALDER, J.",
+      "footerMorphDelayMs": 1000,
+      "footerMorphDurationMs": 180
     },
     {
       "id": "act3_typing_pattern_match",

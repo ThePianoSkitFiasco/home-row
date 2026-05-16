@@ -579,6 +579,7 @@ export default class TypingScene extends Phaser.Scene {
     this._autoTypeTimer = null;
     this._autoTypeCancelled = false;
     this._morphTimer = null;
+    this._mrEncourageVariantFired = false;
     this.hostFoundInterludeSeen = false;
     this.sessionLogInterludeSeen = false;
     this._errorStreak = 0;
@@ -1227,7 +1228,13 @@ export default class TypingScene extends Phaser.Scene {
     };
 
     this.mrFingers.onStateChange = (state, label, config) => {
-      this._updateMrFingersVisual(state, label, config);
+      let effectiveLabel = label;
+      const act = this.lessonManager.getCurrentAct();
+      if (state === 'encourage' && act?.mrEncourageVariant && !this._mrEncourageVariantFired) {
+        effectiveLabel = act.mrEncourageVariant;
+        this._mrEncourageVariantFired = true;
+      }
+      this._updateMrFingersVisual(state, effectiveLabel, config);
     };
 
     this.intentEngine.onResponse = (text, trigger, intent) => {
@@ -1523,6 +1530,34 @@ export default class TypingScene extends Phaser.Scene {
       this._autoTypeTimer = this.time.delayedCall(pauseMs, () => {
         if (this._autoTypeCancelled || this.inputLocked || this.actComplete || this.typingEngine.isComplete) return;
         this._doSystemAutoType(assignedText);
+      });
+    }
+
+    if (lesson.inputDisplayFlash) {
+      this.inputLocked = true;
+      this.typedTextDisplay.setText(lesson.inputDisplayFlash);
+      this.typedTextDisplay.setAlpha(0.55);
+      this.time.delayedCall(lesson.inputDisplayFlashMs || 200, () => {
+        this.typedTextDisplay.setText('');
+        this.typedTextDisplay.setAlpha(1);
+        this.inputLocked = false;
+      });
+    }
+
+    if (lesson.footerMorphFlash) {
+      const fmDelay = lesson.footerMorphDelayMs || 1200;
+      const fmDuration = lesson.footerMorphDurationMs || 180;
+      this.time.delayedCall(fmDelay, () => {
+        if (this.inputLocked || this.actComplete) return;
+        const savedFooter = this.footerHintText.text;
+        const savedColor = this.footerHintText.style.color;
+        this.footerHintText.setText(lesson.footerMorphFlash);
+        this.time.delayedCall(fmDuration, () => {
+          if (!this.actComplete && this.footerHintText) {
+            this.footerHintText.setText(savedFooter);
+            this.footerHintText.setColor(savedColor);
+          }
+        });
       });
     }
   }
@@ -3353,6 +3388,7 @@ export default class TypingScene extends Phaser.Scene {
     this.lessonManager.advanceAct();
     this.actComplete = false;
     this.lastMiniGameResult = null;
+    this._mrEncourageVariantFired = false;
     this._startLesson();
     this.mrFingers.setState('idle');
   }
