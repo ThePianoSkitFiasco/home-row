@@ -2,6 +2,53 @@
 
 ---
 
+## 2026-05-16 — Narrative pacing + horror escalation pass
+
+> **STATUS: STOP. Playtest both passes before new features.**
+> Next step: full playthrough focusing on pacing across all 7 acts. Check transitions feel right, silence lands, morphs aren't distracting.
+
+### What changed this session
+
+**Narrative pacing pass (Acts 1–4)**
+Goal: distribute the wrongness from Act 1 instead of saving all horror for the end.
+
+- **4 new engine mechanics** added to `TypingScene.js` and `TeacherTimeScene.js`:
+  - `footerMorphFlash` — briefly replaces footer text with wrong text, then corrects
+  - `inputDisplayFlash` — ghost text in the typed input area before clearing
+  - `mrEncourageVariant` — one-shot override of Mr Fingers' first "Great job!" per act
+  - `linePauseBeforeMs` — silent pause before a teacher time line renders
+- **Act 1:** footer flashes "YOU KNOW WHERE TO START", lesson 8 flickers "your hands never stopped", Mr Fingers' first smile is "He has always smiled like that.", teacher time pauses before "Some things come back faster than you expect." then adds "You have done this before.", new choice "I'VE DONE THIS BEFORE"
+- **Act 2:** teacher time rewritten from Emily's record to the player's prior knowledge ("Some letters you already knew."), ghost text "SECOND CHILD: ____" flashes before Emily's name lesson, opposition trigger adds "Your hands knew the difference. They typed it before you thought it."
+- **Act 3:** "screen focus maintained" morphs to "you did not look up", footer flashes "CALDER, J." during the teacher override lesson (Calder named in system before dialogue), teacher time opens with "The supervisor's record was retained. The lesson continued. That is what you learned to do.", WHO WAS THERE reply extended: "You already know. That is not the part you are here to remember."
+- **Act 4:** "the room is quiet" morphs to "the room was not quiet", 300ms hesitation before "mr calder says keep typing" appears, footer flashes "DO NOT TURN AROUND" before Emily's phrase, teacher time opens "Your hands did not stop. Even then. That is what I am."
+
+**Horror escalation pass (Acts 5–7 + Boot + RecoveryScene)**
+Goal: build on the pacing pass — the horror deepens as the lesson structure collapses.
+
+- **Boot anomaly:** "RESUMING SESSION..." flashes for 210ms in the top-centre of the boot screen before clearing. Signals the trauma loop before the first keystroke.
+- **New `RecoveryScene`** (between Acts 4 and 5): Mr Fingers attempts to reset the system. Stalls. Reassures the player. Then says "Type what you hear." — the phrase that opens Act 5 — twice. The second one is a slip. The loop is showing.
+- **`mrSilentCompletion` mechanic:** a lesson flag that suppresses Mr Fingers' feedback on completion. Applied to Act 5 L36 — lesson completes, Mr Fingers says nothing, 3.5s of dead air.
+- **Act 5 text morphs:** L35 "your fingers stopped" → "you wanted them to stop"; L36 "he said your name" → "out loud. she heard." (then silence); L39 "she was not safe" → "you knew that"
+- **Act 6 teacher time weaponises the session log:** after "I kept you alive." — 2.2s silence — then "14:32:44. INPUT: REDUCED. / 14:33:11. INPUT: RESUMED. / That is the record. That is what your hands did." Clinical timestamps land immediately after the emotional claim.
+- **Act 7 L57:** "you were never ready" → "you are still not ready" (tense collapse — past becomes present, player is still in the room)
+
+### Files changed
+
+- `src/scenes/RecoveryScene.js` *(new)*
+- `src/scenes/TypingScene.js`
+- `src/scenes/TeacherTimeScene.js`
+- `src/scenes/BootScene.js`
+- `src/main.js`
+- `src/data/lessons.act1.json`
+- `src/data/lessons.act2.json`
+- `src/data/lessons.act3.json`
+- `src/data/lessons.act4.json`
+- `src/data/lessons.act5.json`
+- `src/data/lessons.act6.json`
+- `src/data/lessons.act7.json`
+
+---
+
 ## 2026-05-15 — Phases A–D patch applied
 
 > **STATUS: STOP. No new features until playtest.**

@@ -2,11 +2,13 @@
 
 > ## ⛔ STOP — DO NOT START NEW FEATURES
 >
-> **Last session completed:** Phases A–D patch — swear word intents + audio, Act 7 lesson ID rename, EndingLogic route content, act lesson text updates.
-> **Repo is clean and pushed (`f8bbf0e`).**
+> **Last session completed:** Narrative pacing pass (Acts 1–4) + horror escalation pass (Acts 5–7, boot anomaly, RecoveryScene).
+> **Repo is clean and pushed (`91322d6`).**
 >
-> **Next step is PLAYTEST ONLY — Phase 4 (see below).**
-> Do not write new code until all ending routes have been manually tested and reported.
+> **Next step is PLAYTEST ONLY — full run through all 7 acts.**
+> Focus: does the wrongness build correctly? Do the silences land? Does RecoveryScene feel like a slip or just a delay?
+> Then run the Phase 4 ending route tests below.
+> Do not write new code until playtest is reported.
 > See `DEV_LOG.md` for full session summary.
 
 ---
