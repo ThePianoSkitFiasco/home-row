@@ -7,6 +7,7 @@ import TeacherTimeScene from './scenes/TeacherTimeScene.js';
 import HostFoundScene from './scenes/HostFoundScene.js';
 import NoSignalScene from './scenes/NoSignalScene.js';
 import SessionLogScene from './scenes/SessionLogScene.js';
+import RecoveryScene from './scenes/RecoveryScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -14,7 +15,7 @@ const config = {
   height: 768,
   parent: 'game-container',
   backgroundColor: '#d8c7a1',
-  scene: [BootScene, TypingScene, MiniGameScene, TeacherTimeScene, NoSignalScene, HostFoundScene, SessionLogScene, FinalWitnessScene, TypingTutorScene],
+  scene: [BootScene, TypingScene, MiniGameScene, TeacherTimeScene, NoSignalScene, HostFoundScene, SessionLogScene, RecoveryScene, FinalWitnessScene, TypingTutorScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH

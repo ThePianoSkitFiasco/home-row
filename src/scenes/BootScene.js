@@ -68,6 +68,18 @@ export default class BootScene extends Phaser.Scene {
       repeat: -1
     });
 
+    this.time.delayedCall(400, () => {
+      const anomaly = this.add.text(this.cameras.main.centerX, 28, 'RESUMING SESSION...', {
+        fontFamily: 'Courier New, monospace',
+        fontSize: '11px',
+        color: '#888866',
+        alpha: 0.7
+      }).setOrigin(0.5, 0.5);
+      this.time.delayedCall(210, () => {
+        anomaly.destroy();
+      });
+    });
+
     const startGame = () => {
       if (this.hasStarted) return;
       this.hasStarted = true;
