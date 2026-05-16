@@ -580,6 +580,7 @@ export default class TypingScene extends Phaser.Scene {
     this._autoTypeCancelled = false;
     this._morphTimer = null;
     this._mrEncourageVariantFired = false;
+    this.recoveryInterludeSeen = false;
     this.hostFoundInterludeSeen = false;
     this.sessionLogInterludeSeen = false;
     this._errorStreak = 0;
@@ -1572,7 +1573,9 @@ export default class TypingScene extends Phaser.Scene {
       this._playSectionClearSound();
     }
 
-    if (completionMrState) {
+    if (lesson && lesson.mrSilentCompletion) {
+      // deliberate silence — Mr Fingers does not respond
+    } else if (completionMrState) {
       this.mrFingers.setState(completionMrState);
     }
 
@@ -3373,6 +3376,11 @@ export default class TypingScene extends Phaser.Scene {
   }
 
   _advanceToNextAct() {
+    if (this._shouldLaunchRecoveryInterlude()) {
+      this._launchRecoveryInterlude();
+      return;
+    }
+
     if (this._shouldLaunchSessionLogInterlude()) {
       this._launchSessionLogInterlude();
       return;
@@ -3389,6 +3397,29 @@ export default class TypingScene extends Phaser.Scene {
     this._mrEncourageVariantFired = false;
     this._startLesson();
     this.mrFingers.setState('idle');
+  }
+
+  _shouldLaunchRecoveryInterlude() {
+    const act = this.lessonManager.getCurrentAct();
+    if (!act || this.recoveryInterludeSeen) return false;
+    if (act.actId !== 'act4_dictation_mode') return false;
+    const nextAct = this.lessonManager.acts[this.lessonManager.currentActIndex + 1];
+    return !!(nextAct && nextAct.actId === 'act5_unsanctioned_statement');
+  }
+
+  _launchRecoveryInterlude() {
+    this.recoveryInterludeSeen = true;
+    this._stopBackgroundMusic();
+    this.events.once('recovery-complete', () => {
+      this.lessonManager.advanceAct();
+      this.actComplete = false;
+      this.lastMiniGameResult = null;
+      this._mrEncourageVariantFired = false;
+      this._startLesson();
+      this.mrFingers.setState('idle');
+    });
+    this.scene.launch('RecoveryScene', { returnScene: 'TypingScene' });
+    this.scene.sleep();
   }
 
   _shouldLaunchSessionLogInterlude() {

@@ -28,7 +28,12 @@
     "lines": [
       "Emily remembered enough.",
       "I kept your name out of her mouth.",
-      "I kept you alive."
+      "I kept you alive.",
+      { "text": "14:32:44.", "pauseBeforeMs": 2200 },
+      "INPUT: REDUCED.",
+      { "text": "14:33:11. INPUT: RESUMED.", "pauseBeforeMs": 700 },
+      "That is the record.",
+      "That is what your hands did."
     ],
     "choices": [
       {

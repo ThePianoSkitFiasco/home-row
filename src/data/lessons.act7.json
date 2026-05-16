@@ -232,7 +232,10 @@
       "assignedText": "you were never ready",
       "revealDelayMs": 1800,
       "holdMs": 3000,
-      "lingerResponse": true
+      "lingerResponse": true,
+      "textMorphFlash": "you are still not ready",
+      "textMorphDelayMs": 700,
+      "textMorphDurationMs": 160
     },
     {
       "id": "act7_kept_typing",

@@ -85,7 +85,10 @@
       "stutterFlashMs": 320,
       "revealDelayMs": 1500,
       "holdMs": 2500,
-      "lingerResponse": true
+      "lingerResponse": true,
+      "textMorphFlash": "you wanted them to stop",
+      "textMorphDelayMs": 700,
+      "textMorphDurationMs": 160
     },
     {
       "id": "act5_emily_name",
@@ -94,11 +97,12 @@
       "drillType": "accuracy",
       "assignedText": "he said your name",
       "revealDelayMs": 1200,
-      "holdMs": 2500,
+      "holdMs": 3500,
       "lingerResponse": true,
-      "textMorphFlash": "he said your name out loud",
-      "textMorphDelayMs": 700,
-      "textMorphDurationMs": 200
+      "textMorphFlash": "out loud. she heard.",
+      "textMorphDelayMs": 900,
+      "textMorphDurationMs": 170,
+      "mrSilentCompletion": true
     },
     {
       "id": "act5_kept_behind",
@@ -125,7 +129,10 @@
       "assignedText": "she was not safe",
       "revealDelayMs": 1200,
       "holdMs": 2500,
-      "lingerResponse": true
+      "lingerResponse": true,
+      "textMorphFlash": "you knew that",
+      "textMorphDelayMs": 600,
+      "textMorphDurationMs": 160
     },
     {
       "id": "act5_record_what_happened",
